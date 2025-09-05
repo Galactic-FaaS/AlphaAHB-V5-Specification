@@ -10,10 +10,16 @@ This document defines the complete register architecture for the AlphaAHB V5 ISA
 2. [General Purpose Registers](#2-general-purpose-registers)
 3. [Floating-Point Registers](#3-floating-point-registers)
 4. [Vector Registers](#4-vector-registers)
-5. [Special Purpose Registers](#5-special-purpose-registers)
-6. [Control and Status Registers](#6-control-and-status-registers)
-7. [Register Aliasing](#7-register-aliasing)
-8. [Register Access Patterns](#8-register-access-patterns)
+5. [AI/ML Registers](#5-aiml-registers)
+6. [Security Registers](#6-security-registers)
+7. [MIMD Registers](#7-mimd-registers)
+8. [Scientific Computing Registers](#8-scientific-computing-registers)
+9. [Real-Time Registers](#9-real-time-registers)
+10. [Debug and Profiling Registers](#10-debug-and-profiling-registers)
+11. [Special Purpose Registers](#11-special-purpose-registers)
+12. [Control and Status Registers](#12-control-and-status-registers)
+13. [Register Aliasing](#13-register-aliasing)
+14. [Register Access Patterns](#14-register-access-patterns)
 
 ---
 
@@ -45,6 +51,41 @@ The AlphaAHB V5 ISA implements a **unified register file** with multiple registe
 │  ├── V24-V27: 128-bit vector registers                        │
 │  └── V28-V31: 64-bit vector registers                         │
 ├─────────────────────────────────────────────────────────────────┤
+│  AI/ML Registers (AIR) - 32 registers                         │
+│  ├── A0-A15: Neural network weights (512-bit)                 │
+│  ├── A16-A23: Activation registers (256-bit)                  │
+│  ├── A24-A27: Gradient registers (128-bit)                    │
+│  └── A28-A31: Quantization registers (64-bit)                 │
+├─────────────────────────────────────────────────────────────────┤
+│  Security Registers (SEC) - 16 registers                      │
+│  ├── MPK_CTRL, MPK_MASK, MPK_KEYS: Memory protection         │
+│  ├── CFI_TABLE, CFI_MASK, CFI_HASH: Control flow integrity   │
+│  ├── PA_KEY, PA_CTRL, PA_MASK: Pointer authentication        │
+│  └── SE_CTRL, SE_BASE, SE_SIZE, SE_ATTR: Secure enclaves     │
+├─────────────────────────────────────────────────────────────────┤
+│  MIMD Registers (MIMD) - 16 registers                         │
+│  ├── CORE_ID, THREAD_ID, NODE_ID: Core identification        │
+│  ├── HTM_CTRL, HTM_STATUS: Hardware transactions             │
+│  ├── NUMA_CTRL, NUMA_DISTANCE: NUMA management               │
+│  └── MPI_TAG, MPI_RANK, MPI_SIZE: Message passing            │
+├─────────────────────────────────────────────────────────────────┤
+│  Scientific Computing Registers (SCR) - 16 registers          │
+│  ├── DFP0-DFP7: Decimal floating-point registers              │
+│  ├── INT0-INT3: Interval arithmetic registers                 │
+│  ├── COMPLEX0-COMPLEX3: Complex number registers              │
+│  └── MATRIX0-MATRIX3: Matrix operation registers              │
+├─────────────────────────────────────────────────────────────────┤
+│  Real-Time Registers (RTR) - 8 registers                      │
+│  ├── RT_PRIORITY, RT_DEADLINE: Real-time control              │
+│  ├── SAFETY_CTRL, SAFETY_STATUS: Safety systems               │
+│  └── WATCHDOG_CTRL, WATCHDOG_TIMER: Watchdog timers           │
+├─────────────────────────────────────────────────────────────────┤
+│  Debug and Profiling Registers (DPR) - 16 registers           │
+│  ├── PERF_CTRL0-PERF_CTRL7: Performance counters              │
+│  ├── TRACE_CTRL, TRACE_BUFFER: Trace collection               │
+│  ├── BP_CTRL0-BP_CTRL3: Breakpoint control                    │
+│  └── DEBUG_CTRL, DEBUG_STATUS: Debug interface                │
+├─────────────────────────────────────────────────────────────────┤
 │  Special Purpose Registers (SPR) - 16 registers               │
 │  ├── PC, SP, FP, LR: Control registers                        │
 │  ├── FLAGS, CORE_ID, THREAD_ID: Status registers              │
@@ -54,7 +95,7 @@ The AlphaAHB V5 ISA implements a **unified register file** with multiple registe
 
 ### 1.2 Register File Characteristics
 
-- **Total Registers**: 176 registers
+- **Total Registers**: 280 registers
 - **Register Width**: 64-bit base width
 - **Access Ports**: 8 read ports, 4 write ports
 - **Bypass Network**: Full bypass for single-cycle operations
@@ -294,7 +335,243 @@ The AlphaAHB V5 ISA implements a **unified register file** with multiple registe
 
 ---
 
-## 5. Special Purpose Registers
+## 5. AI/ML Registers
+
+### 5.1 Neural Network Weight Registers (A0-A15)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| A0 | 000000 | A0 | Neural network weight register 0 | 512-bit |
+| A1 | 000001 | A1 | Neural network weight register 1 | 512-bit |
+| A2 | 000010 | A2 | Neural network weight register 2 | 512-bit |
+| A3 | 000011 | A3 | Neural network weight register 3 | 512-bit |
+| A4 | 000100 | A4 | Neural network weight register 4 | 512-bit |
+| A5 | 000101 | A5 | Neural network weight register 5 | 512-bit |
+| A6 | 000110 | A6 | Neural network weight register 6 | 512-bit |
+| A7 | 000111 | A7 | Neural network weight register 7 | 512-bit |
+| A8 | 001000 | A8 | Neural network weight register 8 | 512-bit |
+| A9 | 001001 | A9 | Neural network weight register 9 | 512-bit |
+| A10 | 001010 | A10 | Neural network weight register 10 | 512-bit |
+| A11 | 001011 | A11 | Neural network weight register 11 | 512-bit |
+| A12 | 001100 | A12 | Neural network weight register 12 | 512-bit |
+| A13 | 001101 | A13 | Neural network weight register 13 | 512-bit |
+| A14 | 001110 | A14 | Neural network weight register 14 | 512-bit |
+| A15 | 001111 | A15 | Neural network weight register 15 | 512-bit |
+
+### 5.2 Activation Registers (A16-A23)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| A16 | 010000 | A16 | Activation register 0 | 256-bit |
+| A17 | 010001 | A17 | Activation register 1 | 256-bit |
+| A18 | 010010 | A18 | Activation register 2 | 256-bit |
+| A19 | 010011 | A19 | Activation register 3 | 256-bit |
+| A20 | 010100 | A20 | Activation register 4 | 256-bit |
+| A21 | 010101 | A21 | Activation register 5 | 256-bit |
+| A22 | 010110 | A22 | Activation register 6 | 256-bit |
+| A23 | 010111 | A23 | Activation register 7 | 256-bit |
+
+### 5.3 Gradient Registers (A24-A27)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| A24 | 011000 | A24 | Gradient register 0 | 128-bit |
+| A25 | 011001 | A25 | Gradient register 1 | 128-bit |
+| A26 | 011010 | A26 | Gradient register 2 | 128-bit |
+| A27 | 011011 | A27 | Gradient register 3 | 128-bit |
+
+### 5.4 Quantization Registers (A28-A31)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| A28 | 011100 | A28 | Quantization register 0 | 64-bit |
+| A29 | 011101 | A29 | Quantization register 1 | 64-bit |
+| A30 | 011110 | A30 | Quantization register 2 | 64-bit |
+| A31 | 011111 | A31 | Quantization register 3 | 64-bit |
+
+---
+
+## 6. Security Registers
+
+### 6.1 Memory Protection Key Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| MPK_CTRL | 000000 | MPK_CTRL | Memory Protection Key Control | 64-bit |
+| MPK_MASK | 000001 | MPK_MASK | Memory Protection Key Mask | 64-bit |
+| MPK_KEYS | 000010 | MPK_KEYS | Memory Protection Key Values | 64-bit |
+
+### 6.2 Control Flow Integrity Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| CFI_TABLE | 000011 | CFI_TABLE | CFI Target Table Base | 64-bit |
+| CFI_MASK | 000100 | CFI_MASK | CFI Target Mask | 64-bit |
+| CFI_HASH | 000101 | CFI_HASH | CFI Target Hash | 64-bit |
+
+### 6.3 Pointer Authentication Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| PA_KEY | 000110 | PA_KEY | Pointer Authentication Key | 64-bit |
+| PA_CTRL | 000111 | PA_CTRL | Pointer Authentication Control | 64-bit |
+| PA_MASK | 001000 | PA_MASK | Pointer Authentication Mask | 64-bit |
+
+### 6.4 Secure Enclave Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| SE_CTRL | 001001 | SE_CTRL | Secure Enclave Control | 64-bit |
+| SE_BASE | 001010 | SE_BASE | Secure Enclave Base Address | 64-bit |
+| SE_SIZE | 001011 | SE_SIZE | Secure Enclave Size | 64-bit |
+| SE_ATTR | 001100 | SE_ATTR | Secure Enclave Attributes | 64-bit |
+
+---
+
+## 7. MIMD Registers
+
+### 7.1 Core Identification Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| CORE_ID | 000000 | CORE_ID | Core Identifier | 64-bit |
+| THREAD_ID | 000001 | THREAD_ID | Thread Identifier | 64-bit |
+| NODE_ID | 000010 | NODE_ID | NUMA Node Identifier | 64-bit |
+
+### 7.2 Hardware Transactional Memory Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| HTM_CTRL | 000011 | HTM_CTRL | HTM Control | 64-bit |
+| HTM_STATUS | 000100 | HTM_STATUS | HTM Status | 64-bit |
+
+### 7.3 NUMA Management Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| NUMA_CTRL | 000101 | NUMA_CTRL | NUMA Control | 64-bit |
+| NUMA_DISTANCE | 000110 | NUMA_DISTANCE | NUMA Distance Matrix | 64-bit |
+
+### 7.4 Message Passing Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| MPI_TAG | 000111 | MPI_TAG | MPI Message Tag | 64-bit |
+| MPI_RANK | 001000 | MPI_RANK | MPI Process Rank | 64-bit |
+| MPI_SIZE | 001001 | MPI_SIZE | MPI Communicator Size | 64-bit |
+
+---
+
+## 8. Scientific Computing Registers
+
+### 8.1 Decimal Floating-Point Registers (DFP0-DFP7)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| DFP0 | 000000 | DFP0 | Decimal FP register 0 | 128-bit |
+| DFP1 | 000001 | DFP1 | Decimal FP register 1 | 128-bit |
+| DFP2 | 000010 | DFP2 | Decimal FP register 2 | 128-bit |
+| DFP3 | 000011 | DFP3 | Decimal FP register 3 | 128-bit |
+| DFP4 | 000100 | DFP4 | Decimal FP register 4 | 128-bit |
+| DFP5 | 000101 | DFP5 | Decimal FP register 5 | 128-bit |
+| DFP6 | 000110 | DFP6 | Decimal FP register 6 | 128-bit |
+| DFP7 | 000111 | DFP7 | Decimal FP register 7 | 128-bit |
+
+### 8.2 Interval Arithmetic Registers (INT0-INT3)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| INT0 | 001000 | INT0 | Interval register 0 | 128-bit |
+| INT1 | 001001 | INT1 | Interval register 1 | 128-bit |
+| INT2 | 001010 | INT2 | Interval register 2 | 128-bit |
+| INT3 | 001011 | INT3 | Interval register 3 | 128-bit |
+
+### 8.3 Complex Number Registers (COMPLEX0-COMPLEX3)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| COMPLEX0 | 001100 | COMPLEX0 | Complex register 0 | 128-bit |
+| COMPLEX1 | 001101 | COMPLEX1 | Complex register 1 | 128-bit |
+| COMPLEX2 | 001110 | COMPLEX2 | Complex register 2 | 128-bit |
+| COMPLEX3 | 001111 | COMPLEX3 | Complex register 3 | 128-bit |
+
+### 8.4 Matrix Operation Registers (MATRIX0-MATRIX3)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| MATRIX0 | 010000 | MATRIX0 | Matrix register 0 | 512-bit |
+| MATRIX1 | 010001 | MATRIX1 | Matrix register 1 | 512-bit |
+| MATRIX2 | 010010 | MATRIX2 | Matrix register 2 | 512-bit |
+| MATRIX3 | 010011 | MATRIX3 | Matrix register 3 | 512-bit |
+
+---
+
+## 9. Real-Time Registers
+
+### 9.1 Real-Time Control Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| RT_PRIORITY | 000000 | RT_PRIORITY | Real-time Priority | 64-bit |
+| RT_DEADLINE | 000001 | RT_DEADLINE | Task Deadline | 64-bit |
+
+### 9.2 Safety System Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| SAFETY_CTRL | 000010 | SAFETY_CTRL | Safety Control | 64-bit |
+| SAFETY_STATUS | 000011 | SAFETY_STATUS | Safety Status | 64-bit |
+
+### 9.3 Watchdog Timer Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| WATCHDOG_CTRL | 000100 | WATCHDOG_CTRL | Watchdog Control | 64-bit |
+| WATCHDOG_TIMER | 000101 | WATCHDOG_TIMER | Watchdog Timer | 64-bit |
+
+---
+
+## 10. Debug and Profiling Registers
+
+### 10.1 Performance Counter Registers (PERF_CTRL0-PERF_CTRL7)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| PERF_CTRL0 | 000000 | PERF_CTRL0 | Performance Counter 0 | 64-bit |
+| PERF_CTRL1 | 000001 | PERF_CTRL1 | Performance Counter 1 | 64-bit |
+| PERF_CTRL2 | 000010 | PERF_CTRL2 | Performance Counter 2 | 64-bit |
+| PERF_CTRL3 | 000011 | PERF_CTRL3 | Performance Counter 3 | 64-bit |
+| PERF_CTRL4 | 000100 | PERF_CTRL4 | Performance Counter 4 | 64-bit |
+| PERF_CTRL5 | 000101 | PERF_CTRL5 | Performance Counter 5 | 64-bit |
+| PERF_CTRL6 | 000110 | PERF_CTRL6 | Performance Counter 6 | 64-bit |
+| PERF_CTRL7 | 000111 | PERF_CTRL7 | Performance Counter 7 | 64-bit |
+
+### 10.2 Trace Collection Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| TRACE_CTRL | 001000 | TRACE_CTRL | Trace Control | 64-bit |
+| TRACE_BUFFER | 001001 | TRACE_BUFFER | Trace Buffer | 64-bit |
+
+### 10.3 Breakpoint Control Registers (BP_CTRL0-BP_CTRL3)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| BP_CTRL0 | 001010 | BP_CTRL0 | Breakpoint Control 0 | 64-bit |
+| BP_CTRL1 | 001011 | BP_CTRL1 | Breakpoint Control 1 | 64-bit |
+| BP_CTRL2 | 001100 | BP_CTRL2 | Breakpoint Control 2 | 64-bit |
+| BP_CTRL3 | 001101 | BP_CTRL3 | Breakpoint Control 3 | 64-bit |
+
+### 10.4 Debug Interface Registers
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| DEBUG_CTRL | 001110 | DEBUG_CTRL | Debug Control | 64-bit |
+| DEBUG_STATUS | 001111 | DEBUG_STATUS | Debug Status | 64-bit |
+
+---
+
+## 11. Special Purpose Registers
 
 ### 5.1 Control Registers
 

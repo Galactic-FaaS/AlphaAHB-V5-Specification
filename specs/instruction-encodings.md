@@ -11,7 +11,15 @@ This document defines the complete instruction encoding formats for the AlphaAHB
 3. [Register Encodings](#3-register-encodings)
 4. [Immediate Value Formats](#4-immediate-value-formats)
 5. [Instruction Categories](#5-instruction-categories)
-6. [Encoding Examples](#6-encoding-examples)
+6. [Security Extensions](#6-security-extensions)
+7. [AI/ML Instructions](#7-aiml-instructions)
+8. [Vector Processing Instructions](#8-vector-processing-instructions)
+9. [MIMD Instructions](#9-mimd-instructions)
+10. [Memory Management Instructions](#10-memory-management-instructions)
+11. [Scientific Computing Instructions](#11-scientific-computing-instructions)
+12. [Real-Time and Safety Instructions](#12-real-time-and-safety-instructions)
+13. [Debug and Profiling Instructions](#13-debug-and-profiling-instructions)
+14. [Encoding Examples](#14-encoding-examples)
 
 ---
 
@@ -522,7 +530,247 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ---
 
-## 6. Encoding Examples
+## 6. Security Extensions
+
+### 6.1 Memory Protection Keys (MPK)
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `MPK_SET` | S-Type | 0xE | 0x0 | Set memory protection key |
+| `MPK_GET` | S-Type | 0xE | 0x1 | Get memory protection key |
+| `MPK_ENABLE` | S-Type | 0xE | 0x2 | Enable memory protection |
+| `MPK_DISABLE` | S-Type | 0xE | 0x3 | Disable memory protection |
+| `MPK_CHECK` | S-Type | 0xE | 0x4 | Check memory protection |
+
+### 6.2 Control Flow Integrity (CFI)
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `CFI_CHECK` | S-Type | 0xE | 0x5 | Check indirect branch target |
+| `CFI_ADD` | S-Type | 0xE | 0x6 | Add valid target to CFI table |
+| `CFI_REMOVE` | S-Type | 0xE | 0x7 | Remove target from CFI table |
+| `CFI_VERIFY` | S-Type | 0xE | 0x8 | Verify CFI table integrity |
+
+### 6.3 Pointer Authentication (PA)
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `PA_SIGN` | S-Type | 0xE | 0x9 | Sign pointer with authentication code |
+| `PA_VERIFY` | S-Type | 0xE | 0xA | Verify pointer authentication code |
+| `PA_STRIP` | S-Type | 0xE | 0xB | Strip authentication code from pointer |
+| `PA_AUTH` | S-Type | 0xE | 0xC | Authenticate and strip pointer |
+
+### 6.4 Secure Enclaves (SE)
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `SE_CREATE` | S-Type | 0xE | 0xD | Create secure enclave |
+| `SE_DESTROY` | S-Type | 0xE | 0xE | Destroy secure enclave |
+| `SE_ENTER` | S-Type | 0xE | 0xF | Enter secure enclave |
+| `SE_EXIT` | S-Type | 0xF | 0x0 | Exit secure enclave |
+| `SE_ATTEST` | S-Type | 0xF | 0x1 | Generate enclave attestation |
+
+### 6.5 Cryptographic Acceleration
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `AES_ENC` | S-Type | 0xF | 0x2 | AES encryption |
+| `AES_DEC` | S-Type | 0xF | 0x3 | AES decryption |
+| `AES_KEY` | S-Type | 0xF | 0x4 | AES key expansion |
+| `AES_MIX` | S-Type | 0xF | 0x5 | AES key mixing |
+| `SHA3_224` | S-Type | 0xF | 0x6 | SHA-3 224-bit hash |
+| `SHA3_256` | S-Type | 0xF | 0x7 | SHA-3 256-bit hash |
+| `SHA3_384` | S-Type | 0xF | 0x8 | SHA-3 384-bit hash |
+| `SHA3_512` | S-Type | 0xF | 0x9 | SHA-3 512-bit hash |
+| `RSA_MODEXP` | S-Type | 0xF | 0xA | RSA modular exponentiation |
+| `ECC_POINT_MUL` | S-Type | 0xF | 0xB | ECC point multiplication |
+| `ECC_POINT_ADD` | S-Type | 0xF | 0xC | ECC point addition |
+| `ECC_KEY_GEN` | S-Type | 0xF | 0xD | ECC key generation |
+
+---
+
+## 7. AI/ML Instructions
+
+### 7.1 Neural Network Operations
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `CONV` | A-Type | 0x9 | 0x0 | Convolution operation |
+| `FC` | A-Type | 0x9 | 0x1 | Fully connected layer |
+| `RELU` | A-Type | 0x9 | 0x2 | ReLU activation |
+| `SIGMOID` | A-Type | 0x9 | 0x3 | Sigmoid activation |
+| `TANH` | A-Type | 0x9 | 0x4 | Tanh activation |
+| `SOFTMAX` | A-Type | 0x9 | 0x5 | Softmax activation |
+| `POOL` | A-Type | 0x9 | 0x6 | Pooling operation |
+| `BATCHNORM` | A-Type | 0x9 | 0x7 | Batch normalization |
+
+### 7.2 Advanced AI Operations
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `ATTENTION` | A-Type | 0x9 | 0x8 | Multi-head attention |
+| `TRANSFORMER` | A-Type | 0x9 | 0x9 | Transformer block |
+| `LSTM` | A-Type | 0x9 | 0xA | LSTM cell |
+| `GRU` | A-Type | 0x9 | 0xB | GRU cell |
+| `GAN_TRAIN` | A-Type | 0x9 | 0xC | GAN training |
+| `DIFFUSION` | A-Type | 0x9 | 0xD | Diffusion model |
+| `SPARSE_ATTN` | A-Type | 0x9 | 0xE | Sparse attention |
+| `QUANTIZE` | A-Type | 0x9 | 0xF | Quantization |
+
+---
+
+## 8. Vector Processing Instructions
+
+### 8.1 Basic Vector Operations
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `VADD` | V-Type | 0xA | 0x0 | Vector addition |
+| `VSUB` | V-Type | 0xA | 0x1 | Vector subtraction |
+| `VMUL` | V-Type | 0xA | 0x2 | Vector multiplication |
+| `VDIV` | V-Type | 0xA | 0x3 | Vector division |
+| `VFMA` | V-Type | 0xA | 0x4 | Vector fused multiply-add |
+| `VSQRT` | V-Type | 0xA | 0x5 | Vector square root |
+| `VDOT` | V-Type | 0xA | 0x6 | Vector dot product |
+| `VCROSS` | V-Type | 0xA | 0x7 | Vector cross product |
+
+### 8.2 Advanced Vector Operations
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `VGATHER` | V-Type | 0xA | 0x8 | Vector gather |
+| `VSCATTER` | V-Type | 0xA | 0x9 | Vector scatter |
+| `VSHUFFLE` | V-Type | 0xA | 0xA | Vector shuffle |
+| `VPERMUTE` | V-Type | 0xA | 0xB | Vector permute |
+| `VBLEND` | V-Type | 0xA | 0xC | Vector blend |
+| `VTRANSPOSE` | V-Type | 0xA | 0xD | Vector transpose |
+| `VREDUCE` | V-Type | 0xA | 0xE | Vector reduction |
+| `VMASK` | V-Type | 0xA | 0xF | Vector mask operations |
+
+---
+
+## 9. MIMD Instructions
+
+### 9.1 Hardware Transactional Memory
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `HTM_BEGIN` | M-Type | 0x7 | 0x8 | Begin hardware transaction |
+| `HTM_END` | M-Type | 0x7 | 0x9 | Commit hardware transaction |
+| `HTM_ABORT` | M-Type | 0x7 | 0xA | Abort hardware transaction |
+| `HTM_TEST` | M-Type | 0x7 | 0xB | Test transaction status |
+| `HTM_RETRY` | M-Type | 0x7 | 0xC | Retry failed transaction |
+
+### 9.2 NUMA Operations
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `NUMA_NODES` | M-Type | 0x7 | 0xD | Get number of NUMA nodes |
+| `NUMA_DISTANCE` | M-Type | 0x7 | 0xE | Get distance between nodes |
+| `NUMA_AFFINITY` | M-Type | 0x7 | 0xF | Set thread affinity to node |
+| `NUMA_MIGRATE` | M-Type | 0x8 | 0x0 | Migrate data between nodes |
+| `NUMA_ALLOC` | M-Type | 0x8 | 0x1 | Allocate memory on specific node |
+| `NUMA_FREE` | M-Type | 0x8 | 0x2 | Free NUMA-allocated memory |
+
+### 9.3 Message Passing
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `MPI_SEND` | M-Type | 0x8 | 0x3 | Send message to target core |
+| `MPI_RECV` | M-Type | 0x8 | 0x4 | Receive message from source core |
+| `MPI_BROADCAST` | M-Type | 0x8 | 0x5 | Broadcast message to all cores |
+| `MPI_REDUCE` | M-Type | 0x8 | 0x6 | Reduce operation across cores |
+| `MPI_SCATTER` | M-Type | 0x8 | 0x7 | Scatter data to multiple cores |
+| `MPI_GATHER` | M-Type | 0x8 | 0x8 | Gather data from multiple cores |
+
+---
+
+## 10. Scientific Computing Instructions
+
+### 10.1 Decimal Floating-Point
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `DFP_ADD` | F-Type | 0x8 | 0x8 | Decimal floating-point addition |
+| `DFP_SUB` | F-Type | 0x8 | 0x9 | Decimal floating-point subtraction |
+| `DFP_MUL` | F-Type | 0x8 | 0xA | Decimal floating-point multiplication |
+| `DFP_DIV` | F-Type | 0x8 | 0xB | Decimal floating-point division |
+| `DFP_SQRT` | F-Type | 0x8 | 0xC | Decimal floating-point square root |
+| `DFP_ROUND` | F-Type | 0x8 | 0xD | Decimal floating-point rounding |
+
+### 10.2 Interval Arithmetic
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `INT_ADD` | F-Type | 0x8 | 0xE | Interval addition |
+| `INT_SUB` | F-Type | 0x8 | 0xF | Interval subtraction |
+| `INT_MUL` | F-Type | 0x9 | 0x0 | Interval multiplication |
+| `INT_DIV` | F-Type | 0x9 | 0x1 | Interval division |
+| `INT_SQRT` | F-Type | 0x9 | 0x2 | Interval square root |
+| `INT_WIDTH` | F-Type | 0x9 | 0x3 | Compute interval width |
+
+### 10.3 Complex Numbers
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `COMPLEX_ADD` | F-Type | 0x9 | 0x4 | Complex addition |
+| `COMPLEX_SUB` | F-Type | 0x9 | 0x5 | Complex subtraction |
+| `COMPLEX_MUL` | F-Type | 0x9 | 0x6 | Complex multiplication |
+| `COMPLEX_DIV` | F-Type | 0x9 | 0x7 | Complex division |
+| `COMPLEX_CONJ` | F-Type | 0x9 | 0x8 | Complex conjugate |
+| `COMPLEX_ABS` | F-Type | 0x9 | 0x9 | Complex absolute value |
+
+---
+
+## 11. Real-Time and Safety Instructions
+
+### 11.1 Real-Time Operations
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `RT_SET_PRIORITY` | S-Type | 0x5 | 0x0 | Set real-time priority |
+| `RT_GET_PRIORITY` | S-Type | 0x5 | 0x1 | Get current priority |
+| `RT_SET_DEADLINE` | S-Type | 0x5 | 0x2 | Set task deadline |
+| `RT_CHECK_DEADLINE` | S-Type | 0x5 | 0x3 | Check deadline violation |
+| `RT_YIELD` | S-Type | 0x5 | 0x4 | Yield CPU to higher priority task |
+
+### 11.2 Safety Operations
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `SAFETY_INIT` | S-Type | 0x5 | 0x5 | Initialize safety system |
+| `SAFETY_CHECK` | S-Type | 0x5 | 0x6 | Perform safety check |
+| `SAFETY_FAULT` | S-Type | 0x5 | 0x7 | Report safety fault |
+| `SAFETY_RESET` | S-Type | 0x5 | 0x8 | Reset safety system |
+| `SAFETY_SHUTDOWN` | S-Type | 0x5 | 0x9 | Safe shutdown procedure |
+
+---
+
+## 12. Debug and Profiling Instructions
+
+### 12.1 Performance Counters
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `PERF_START` | S-Type | 0x6 | 0x0 | Start performance counting |
+| `PERF_STOP` | S-Type | 0x6 | 0x1 | Stop performance counting |
+| `PERF_READ` | S-Type | 0x6 | 0x2 | Read performance counter |
+| `PERF_RESET` | S-Type | 0x6 | 0x3 | Reset performance counter |
+| `PERF_SELECT` | S-Type | 0x6 | 0x4 | Select counter events |
+
+### 12.2 Trace Operations
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `TRACE_START` | S-Type | 0x6 | 0x5 | Start trace collection |
+| `TRACE_STOP` | S-Type | 0x6 | 0x6 | Stop trace collection |
+| `TRACE_READ` | S-Type | 0x6 | 0x7 | Read trace data |
+| `TRACE_CLEAR` | S-Type | 0x6 | 0x8 | Clear trace buffer |
+| `TRACE_CONFIG` | S-Type | 0x6 | 0x9 | Configure trace parameters |
+
+---
+
+## 13. Encoding Examples
 
 ### 6.1 R-Type Instruction Example
 

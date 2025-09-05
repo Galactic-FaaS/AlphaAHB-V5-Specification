@@ -4,8 +4,8 @@
 
 **Title**: Alpha Advanced High-performance Instruction Set Architecture V5 Specification  
 **Version**: 5.0  
-**Date**: September 2025  
-**Status**: Draft  
+**Date**: December 2024  
+**Status**: Production Ready  
 **Authors**: GLCTC Corp.  
 **Maintained by**: GLCTC Corp.  
 **Based on**: [Alpha Architecture Handbook V4](http://www.o3one.org/hwdocs/alpha/alphaahb.pdf) by Compaq Computer Corporation

@@ -4,7 +4,7 @@
 
 **Title**: Alpha Advanced High-performance Instruction Set Architecture V5 Specification  
 **Version**: 5.0  
-**Date**: December 2024  
+**Date**: September 5th 2025  
 **Status**: Production Ready  
 **Authors**: GLCTC Corp.  
 **Maintained by**: GLCTC Corp.  

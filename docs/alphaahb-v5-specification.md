@@ -837,39 +837,328 @@ Multiple Instruction, Multiple Data (MIMD) allows different cores to execute dif
 
 ## 10. Security Features
 
-### 10.1 Hardware Security
+### 10.1 Hardware Security Extensions (HSE)
 
-#### 10.1.1 Encryption Units
-- AES-256 encryption/decryption
-- RSA-4096 key operations
-- Elliptic curve cryptography (P-521)
-- Post-quantum cryptography support
+The AlphaAHB V5 implements comprehensive hardware-level security features designed to protect against modern threats including side-channel attacks, memory corruption, control flow hijacking, and unauthorized access.
 
-#### 8.1.2 Secure Boot
-- Hardware root of trust
-- Secure key storage
-- Chain of trust verification
-- Anti-tampering protection
+#### 10.1.1 Security Architecture
 
-#### 8.1.3 Memory Protection
-- Memory encryption
-- Address space layout randomization (ASLR)
-- Control flow integrity (CFI)
-- Stack canaries
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Security Architecture                       │
+├─────────────────────────────────────────────────────────────────┤
+│  🔐 Hardware Security Extensions (HSE)                        │
+│  ├── Memory Protection Keys (MPK)                             │
+│  ├── Control Flow Integrity (CFI)                             │
+│  ├── Pointer Authentication (PA)                              │
+│  └── Secure Enclaves (SE)                                     │
+├─────────────────────────────────────────────────────────────────┤
+│  🛡️ Cryptographic Acceleration                               │
+│  ├── AES-256 Encryption/Decryption                            │
+│  ├── SHA-3 Hashing                                            │
+│  ├── RSA/ECC Public Key Crypto                                │
+│  └── ChaCha20-Poly1305 AEAD                                   │
+├─────────────────────────────────────────────────────────────────┤
+│  🔒 Threat Detection and Mitigation                           │
+│  ├── Side-Channel Attack Prevention                           │
+│  ├── Spectre/Meltdown Mitigation                              │
+│  ├── ROP/JOP Attack Prevention                                │
+│  └── Memory Corruption Detection                              │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-### 8.2 Threat Detection
+#### 10.1.2 Security Levels
 
-#### 8.2.1 Hardware Monitors
-- Cache side-channel attack detection
-- Spectre/Meltdown mitigation
-- Rowhammer attack prevention
-- Timing attack detection
+| Level | Name | Description | Access Control |
+|-------|------|-------------|----------------|
+| 0 | **User** | Application level | Basic protection |
+| 1 | **Supervisor** | OS kernel level | Enhanced protection |
+| 2 | **Hypervisor** | Virtualization level | VM isolation |
+| 3 | **Machine** | Firmware level | Full system control |
+| 4 | **Secure** | Security monitor | Hardware root of trust |
 
-#### 8.2.2 AI-Powered Security
-- Anomaly detection
-- Behavioral analysis
-- Threat pattern recognition
-- Automated response
+### 10.2 Memory Protection Keys (MPK)
+
+#### 10.2.1 Overview
+Memory Protection Keys provide hardware-enforced memory isolation without requiring page table modifications, enabling efficient memory protection for applications and libraries.
+
+#### 10.2.2 MPK Registers
+
+| Register | Bits | Description |
+|----------|------|-------------|
+| `MPK_CTRL` | 63:0 | Memory Protection Key Control |
+| `MPK_MASK` | 63:0 | Memory Protection Key Mask |
+| `MPK_KEYS` | 63:0 | Memory Protection Key Values |
+
+#### 10.2.3 MPK Instructions
+
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `MPK_SET` | `0xE0` | Set memory protection key |
+| `MPK_GET` | `0xE1` | Get memory protection key |
+| `MPK_ENABLE` | `0xE2` | Enable memory protection |
+| `MPK_DISABLE` | `0xE3` | Disable memory protection |
+| `MPK_CHECK` | `0xE4` | Check memory protection |
+
+#### 10.2.4 MPK Usage Example
+
+```assembly
+# Set memory protection key for sensitive data
+MPK_SET R1, #0x1F        # Set key 31 for sensitive data
+MPK_ENABLE R1, #0x8000   # Enable protection for 32KB region
+
+# Access protected memory
+LOAD R2, [R3 + #0x1000]  # Access protected memory
+MPK_CHECK R2, R1         # Verify access is allowed
+```
+
+### 10.3 Control Flow Integrity (CFI)
+
+#### 10.3.1 Overview
+Control Flow Integrity prevents control flow hijacking attacks by ensuring that indirect branches target valid destinations.
+
+#### 10.3.2 CFI Registers
+
+| Register | Bits | Description |
+|----------|------|-------------|
+| `CFI_TABLE` | 63:0 | CFI Target Table Base |
+| `CFI_MASK` | 63:0 | CFI Target Mask |
+| `CFI_HASH` | 63:0 | CFI Target Hash |
+
+#### 10.3.3 CFI Instructions
+
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `CFI_CHECK` | `0xE5` | Check indirect branch target |
+| `CFI_ADD` | `0xE6` | Add valid target to CFI table |
+| `CFI_REMOVE` | `0xE7` | Remove target from CFI table |
+| `CFI_VERIFY` | `0xE8` | Verify CFI table integrity |
+
+#### 10.3.4 CFI Usage Example
+
+```assembly
+# Add valid function targets to CFI table
+CFI_ADD R1, #0x1000      # Add function at 0x1000
+CFI_ADD R1, #0x2000      # Add function at 0x2000
+
+# Check indirect branch target
+CFI_CHECK R2, R1         # Verify R2 is valid target
+JUMP R2                  # Safe indirect jump
+```
+
+### 10.4 Pointer Authentication (PA)
+
+#### 10.4.1 Overview
+Pointer Authentication provides hardware-based pointer integrity by cryptographically signing pointers to prevent tampering.
+
+#### 10.4.2 PA Registers
+
+| Register | Bits | Description |
+|----------|------|-------------|
+| `PA_KEY` | 63:0 | Pointer Authentication Key |
+| `PA_CTRL` | 63:0 | Pointer Authentication Control |
+| `PA_MASK` | 63:0 | Pointer Authentication Mask |
+
+#### 10.4.3 PA Instructions
+
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `PA_SIGN` | `0xE9` | Sign pointer with authentication code |
+| `PA_VERIFY` | `0xEA` | Verify pointer authentication code |
+| `PA_STRIP` | `0xEB` | Strip authentication code from pointer |
+| `PA_AUTH` | `0xEC` | Authenticate and strip pointer |
+
+#### 10.4.4 PA Usage Example
+
+```assembly
+# Sign pointer with authentication code
+PA_SIGN R1, R2, #0x1234  # Sign R2 with key 0x1234, store in R1
+
+# Verify and use authenticated pointer
+PA_AUTH R3, R1, #0x1234  # Verify R1 with key 0x1234, store in R3
+LOAD R4, [R3]            # Use authenticated pointer
+```
+
+### 10.5 Secure Enclaves (SE)
+
+#### 10.5.1 Overview
+Secure Enclaves provide hardware-isolated execution environments for sensitive code and data.
+
+#### 10.5.2 SE Registers
+
+| Register | Bits | Description |
+|----------|------|-------------|
+| `SE_CTRL` | 63:0 | Secure Enclave Control |
+| `SE_BASE` | 63:0 | Secure Enclave Base Address |
+| `SE_SIZE` | 63:0 | Secure Enclave Size |
+| `SE_ATTR` | 63:0 | Secure Enclave Attributes |
+
+#### 10.5.3 SE Instructions
+
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `SE_CREATE` | `0xED` | Create secure enclave |
+| `SE_DESTROY` | `0xEE` | Destroy secure enclave |
+| `SE_ENTER` | `0xEF` | Enter secure enclave |
+| `SE_EXIT` | `0xF0` | Exit secure enclave |
+| `SE_ATTEST` | `0xF1` | Generate enclave attestation |
+
+#### 10.5.4 SE Usage Example
+
+```assembly
+# Create secure enclave
+SE_CREATE R1, #0x10000, #0x1000  # Create 4KB enclave at 0x10000
+
+# Enter secure enclave
+SE_ENTER R1, #0x1000             # Enter enclave at offset 0x1000
+
+# Execute secure code
+ADD R2, R3, R4                   # Secure computation
+STORE R2, [R5]                   # Store result
+
+# Exit secure enclave
+SE_EXIT R1                       # Exit enclave
+```
+
+### 10.6 Cryptographic Acceleration
+
+#### 10.6.1 Overview
+Hardware-accelerated cryptographic operations for high-performance encryption, decryption, and hashing.
+
+#### 10.6.2 Crypto Instructions
+
+**AES Encryption/Decryption:**
+
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `AES_ENC` | `0xF2` | AES encryption |
+| `AES_DEC` | `0xF3` | AES decryption |
+| `AES_KEY` | `0xF4` | AES key expansion |
+| `AES_MIX` | `0xF5` | AES key mixing |
+
+**SHA-3 Hashing:**
+
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `SHA3_224` | `0xF6` | SHA-3 224-bit hash |
+| `SHA3_256` | `0xF7` | SHA-3 256-bit hash |
+| `SHA3_384` | `0xF8` | SHA-3 384-bit hash |
+| `SHA3_512` | `0xF9` | SHA-3 512-bit hash |
+
+**Public Key Cryptography:**
+
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `RSA_MODEXP` | `0xFA` | RSA modular exponentiation |
+| `ECC_POINT_MUL` | `0xFB` | ECC point multiplication |
+| `ECC_POINT_ADD` | `0xFC` | ECC point addition |
+| `ECC_KEY_GEN` | `0xFD` | ECC key generation |
+
+#### 10.6.3 Crypto Usage Example
+
+```assembly
+# AES-256 encryption
+AES_KEY R1, R2, #256            # Expand 256-bit key
+AES_ENC R3, R4, R1              # Encrypt data in R4 with key R1
+
+# SHA-3 256-bit hashing
+SHA3_256 R5, R6, #64            # Hash 64 bytes from R6, store in R5
+
+# RSA modular exponentiation
+RSA_MODEXP R7, R8, R9, R10      # R7 = R8^R9 mod R10
+```
+
+### 10.7 Threat Detection and Mitigation
+
+#### 10.7.1 Side-Channel Attack Prevention
+
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `SCA_MASK` | `0xFE` | Mask sensitive data |
+| `SCA_FLUSH` | `0xFF` | Flush cache to prevent leaks |
+| `SCA_BARRIER` | `0x100` | Memory barrier for timing |
+| `SCA_RANDOMIZE` | `0x101` | Randomize execution timing |
+
+#### 10.7.2 Spectre/Meltdown Mitigation
+
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `SPECTRE_BARRIER` | `0x102` | Spectre speculation barrier |
+| `MELTDOWN_FENCE` | `0x103` | Meltdown memory fence |
+| `SPEC_CTRL` | `0x104` | Speculation control |
+| `PRED_CTRL` | `0x105` | Prediction control |
+
+#### 10.7.3 ROP/JOP Attack Prevention
+
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `ROP_DETECT` | `0x106` | Detect ROP gadgets |
+| `JOP_DETECT` | `0x107` | Detect JOP gadgets |
+| `CFI_ENFORCE` | `0x108` | Enforce CFI policies |
+| `GADGET_SCAN` | `0x109` | Scan for attack gadgets |
+
+### 10.8 Security Exception Handling
+
+#### 10.8.1 Security Exception Types
+
+| Exception | Code | Description |
+|-----------|------|-------------|
+| `SEC_MPK_VIOLATION` | 0x10 | Memory Protection Key violation |
+| `SEC_CFI_VIOLATION` | 0x11 | Control Flow Integrity violation |
+| `SEC_PA_VIOLATION` | 0x12 | Pointer Authentication violation |
+| `SEC_SE_VIOLATION` | 0x13 | Secure Enclave violation |
+| `SEC_CRYPTO_ERROR` | 0x14 | Cryptographic operation error |
+| `SEC_THREAT_DETECTED` | 0x15 | Threat detection alert |
+
+#### 10.8.2 Security Exception Handler
+
+```assembly
+# Security exception handler
+security_exception_handler:
+    # Save context
+    PUSH R0-R31
+    PUSH F0-F31
+    
+    # Determine exception type
+    LOAD R1, [SEC_EXC_CODE]
+    
+    # Handle specific security exception
+    CMP R1, #0x10
+    BEQ handle_mpk_violation
+    CMP R1, #0x11
+    BEQ handle_cfi_violation
+    CMP R1, #0x12
+    BEQ handle_pa_violation
+    
+    # Default security response
+    SEC_ALERT #0xFF
+    HALT
+    
+handle_mpk_violation:
+    # Log MPK violation
+    SEC_LOG #0x10, R2, R3
+    # Terminate violating process
+    SEC_TERMINATE R4
+    RET
+```
+
+### 10.9 Security Performance Considerations
+
+#### 10.9.1 Security Overhead
+
+| Feature | Overhead | Mitigation |
+|---------|----------|------------|
+| MPK | 2-5% | Hardware-optimized key checking |
+| CFI | 3-8% | Cached target validation |
+| PA | 1-3% | Parallel authentication |
+| SE | 10-20% | Optimized enclave switching |
+| Crypto | 0% | Hardware acceleration |
+
+#### 10.9.2 Security vs Performance Trade-offs
+
+- **High Security**: Enable all features, accept performance overhead
+- **Balanced**: Enable critical features, optimize for performance
+- **High Performance**: Enable minimal features, focus on speed
 
 ---
 

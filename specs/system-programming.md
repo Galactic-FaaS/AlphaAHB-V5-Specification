@@ -10,10 +10,15 @@ This document defines the complete system programming interface for the AlphaAHB
 2. [Exception Handling](#2-exception-handling)
 3. [Interrupt System](#3-interrupt-system)
 4. [Virtual Memory Management](#4-virtual-memory-management)
-5. [System Control Operations](#5-system-control-operations)
-6. [Debug Interface](#6-debug-interface)
-7. [Performance Monitoring](#7-performance-monitoring)
-8. [Power Management](#8-power-management)
+5. [Security System Programming](#5-security-system-programming)
+6. [AI/ML System Programming](#6-aiml-system-programming)
+7. [MIMD System Programming](#7-mimd-system-programming)
+8. [Scientific Computing System Programming](#8-scientific-computing-system-programming)
+9. [Real-Time System Programming](#9-real-time-system-programming)
+10. [System Control Operations](#10-system-control-operations)
+11. [Debug Interface](#11-debug-interface)
+12. [Performance Monitoring](#12-performance-monitoring)
+13. [Power Management](#13-power-management)
 
 ---
 
@@ -232,7 +237,242 @@ The AlphaAHB V5 ISA implements a **64-bit virtual address space** with **48-bit 
 
 ---
 
-## 5. System Control Operations
+## 5. Security System Programming
+
+### 5.1 Security Privilege Levels
+
+| Level | Name | Description | Security Features |
+|-------|------|-------------|-------------------|
+| 0 | User | Application level | Basic protection |
+| 1 | Supervisor | OS kernel level | Enhanced protection |
+| 2 | Hypervisor | Virtualization level | VM isolation |
+| 3 | Machine | Firmware level | Full system control |
+| 4 | Secure | Security monitor | Hardware root of trust |
+
+### 5.2 Memory Protection Key Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Set Key | `MPK_SET Rd, Rs1, #imm` | Set memory protection key | Supervisor |
+| Get Key | `MPK_GET Rd, Rs1` | Get memory protection key | Supervisor |
+| Enable Protection | `MPK_ENABLE Rs1, #imm` | Enable memory protection | Supervisor |
+| Disable Protection | `MPK_DISABLE Rs1, #imm` | Disable memory protection | Supervisor |
+| Check Access | `MPK_CHECK Rd, Rs1, Rs2` | Check memory protection | User |
+
+### 5.3 Control Flow Integrity Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Add Target | `CFI_ADD Rs1, #imm` | Add valid target to CFI table | Supervisor |
+| Remove Target | `CFI_REMOVE Rs1, #imm` | Remove target from CFI table | Supervisor |
+| Check Target | `CFI_CHECK Rs1, Rs2` | Check indirect branch target | User |
+| Verify Table | `CFI_VERIFY Rs1` | Verify CFI table integrity | Supervisor |
+
+### 5.4 Secure Enclave Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Create Enclave | `SE_CREATE Rd, Rs1, Rs2` | Create secure enclave | Supervisor |
+| Destroy Enclave | `SE_DESTROY Rs1` | Destroy secure enclave | Supervisor |
+| Enter Enclave | `SE_ENTER Rs1, #imm` | Enter secure enclave | User |
+| Exit Enclave | `SE_EXIT Rs1` | Exit secure enclave | User |
+| Generate Attestation | `SE_ATTEST Rd, Rs1` | Generate enclave attestation | User |
+
+### 5.5 Cryptographic Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| AES Encryption | `AES_ENC Vd, Vs1, Vs2` | AES encryption | User |
+| AES Decryption | `AES_DEC Vd, Vs1, Vs2` | AES decryption | User |
+| SHA-3 Hashing | `SHA3_256 Vd, Vs1, #imm` | SHA-3 256-bit hash | User |
+| RSA Operations | `RSA_MODEXP Rd, Rs1, Rs2, Rs3` | RSA modular exponentiation | User |
+| ECC Operations | `ECC_POINT_MUL Vd, Vs1, Vs2` | ECC point multiplication | User |
+
+---
+
+## 6. AI/ML System Programming
+
+### 6.1 AI/ML Privilege Levels
+
+| Level | Name | Description | AI/ML Features |
+|-------|------|-------------|----------------|
+| 0 | User | Application level | Basic AI/ML operations |
+| 1 | Supervisor | OS kernel level | AI/ML resource management |
+| 2 | Hypervisor | Virtualization level | AI/ML VM isolation |
+| 3 | Machine | Firmware level | AI/ML hardware control |
+| 4 | AI/ML | AI/ML monitor | AI/ML model management |
+
+### 6.2 Neural Network Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Convolution | `CONV Ad, As1, As2, #imm` | Convolution operation | User |
+| Fully Connected | `FC Ad, As1, As2` | Fully connected layer | User |
+| Activation | `RELU Ad, As1` | ReLU activation | User |
+| Pooling | `POOL Ad, As1, #imm` | Pooling operation | User |
+| Batch Normalization | `BATCHNORM Ad, As1, As2` | Batch normalization | User |
+
+### 6.3 Advanced AI Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Attention | `ATTENTION Ad, As1, As2, As3` | Multi-head attention | User |
+| Transformer | `TRANSFORMER Ad, As1, As2` | Transformer block | User |
+| LSTM | `LSTM Ad, As1, As2, As3` | LSTM cell | User |
+| GRU | `GRU Ad, As1, As2` | GRU cell | User |
+| GAN Training | `GAN_TRAIN Ad, As1, As2` | GAN training | User |
+| Quantization | `QUANTIZE Ad, As1, #imm` | Quantization | User |
+
+### 6.4 AI/ML Resource Management
+
+| Resource | Description | Management Level |
+|----------|-------------|------------------|
+| Neural Network Weights | A0-A15 registers | User |
+| Activation Data | A16-A23 registers | User |
+| Gradient Data | A24-A27 registers | User |
+| Quantization Data | A28-A31 registers | User |
+| Model Storage | Persistent memory | Supervisor |
+| Training Data | Cache/memory | Supervisor |
+
+---
+
+## 7. MIMD System Programming
+
+### 7.1 MIMD Privilege Levels
+
+| Level | Name | Description | MIMD Features |
+|-------|------|-------------|---------------|
+| 0 | User | Application level | Basic parallel operations |
+| 1 | Supervisor | OS kernel level | Thread/process management |
+| 2 | Hypervisor | Virtualization level | VM parallelization |
+| 3 | Machine | Firmware level | Hardware parallelization |
+| 4 | MIMD | MIMD monitor | Parallel resource management |
+
+### 7.2 Hardware Transactional Memory Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Begin Transaction | `HTM_BEGIN #imm` | Begin hardware transaction | User |
+| End Transaction | `HTM_END` | Commit hardware transaction | User |
+| Abort Transaction | `HTM_ABORT #imm` | Abort hardware transaction | User |
+| Test Transaction | `HTM_TEST Rd` | Test transaction status | User |
+| Retry Transaction | `HTM_RETRY #imm` | Retry failed transaction | User |
+
+### 7.3 NUMA Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Get Nodes | `NUMA_NODES Rd` | Get number of NUMA nodes | User |
+| Get Distance | `NUMA_DISTANCE Rd, Rs1, Rs2` | Get distance between nodes | User |
+| Set Affinity | `NUMA_AFFINITY Rs1, #imm` | Set thread affinity to node | Supervisor |
+| Migrate Data | `NUMA_MIGRATE Rs1, Rs2, #imm` | Migrate data between nodes | Supervisor |
+| Allocate Memory | `NUMA_ALLOC Rd, Rs1, #imm` | Allocate memory on specific node | Supervisor |
+
+### 7.4 Message Passing Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Send Message | `MPI_SEND Rs1, Rs2, Rs3, #imm` | Send message to target core | User |
+| Receive Message | `MPI_RECV Rd, Rs1, Rs2, #imm` | Receive message from source core | User |
+| Broadcast | `MPI_BROADCAST Rs1, Rs2, #imm` | Broadcast message to all cores | User |
+| Reduce | `MPI_REDUCE Rd, Rs1, Rs2, #imm` | Reduce operation across cores | User |
+| Scatter | `MPI_SCATTER Rs1, Rs2, Rs3, #imm` | Scatter data to multiple cores | User |
+| Gather | `MPI_GATHER Rd, Rs1, Rs2, #imm` | Gather data from multiple cores | User |
+
+---
+
+## 8. Scientific Computing System Programming
+
+### 8.1 Scientific Computing Privilege Levels
+
+| Level | Name | Description | Scientific Features |
+|-------|------|-------------|-------------------|
+| 0 | User | Application level | Basic scientific operations |
+| 1 | Supervisor | OS kernel level | Scientific resource management |
+| 2 | Hypervisor | Virtualization level | Scientific VM isolation |
+| 3 | Machine | Firmware level | Scientific hardware control |
+| 4 | Scientific | Scientific monitor | Scientific computation management |
+
+### 8.2 Decimal Floating-Point Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Decimal Add | `DFP_ADD DFPd, DFP1, DFP2` | Decimal floating-point addition | User |
+| Decimal Subtract | `DFP_SUB DFPd, DFP1, DFP2` | Decimal floating-point subtraction | User |
+| Decimal Multiply | `DFP_MUL DFPd, DFP1, DFP2` | Decimal floating-point multiplication | User |
+| Decimal Divide | `DFP_DIV DFPd, DFP1, DFP2` | Decimal floating-point division | User |
+| Decimal Square Root | `DFP_SQRT DFPd, DFP1` | Decimal floating-point square root | User |
+| Decimal Round | `DFP_ROUND DFPd, DFP1, #imm` | Decimal floating-point rounding | User |
+
+### 8.3 Interval Arithmetic Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Interval Add | `INT_ADD INTd, INT1, INT2` | Interval addition | User |
+| Interval Subtract | `INT_SUB INTd, INT1, INT2` | Interval subtraction | User |
+| Interval Multiply | `INT_MUL INTd, INT1, INT2` | Interval multiplication | User |
+| Interval Divide | `INT_DIV INTd, INT1, INT2` | Interval division | User |
+| Interval Square Root | `INT_SQRT INTd, INT1` | Interval square root | User |
+| Interval Width | `INT_WIDTH Rd, INT1` | Compute interval width | User |
+
+### 8.4 Complex Number Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Complex Add | `COMPLEX_ADD COMPLEXd, COMPLEX1, COMPLEX2` | Complex addition | User |
+| Complex Subtract | `COMPLEX_SUB COMPLEXd, COMPLEX1, COMPLEX2` | Complex subtraction | User |
+| Complex Multiply | `COMPLEX_MUL COMPLEXd, COMPLEX1, COMPLEX2` | Complex multiplication | User |
+| Complex Divide | `COMPLEX_DIV COMPLEXd, COMPLEX1, COMPLEX2` | Complex division | User |
+| Complex Conjugate | `COMPLEX_CONJ COMPLEXd, COMPLEX1` | Complex conjugate | User |
+| Complex Absolute | `COMPLEX_ABS Fd, COMPLEX1` | Complex absolute value | User |
+
+---
+
+## 9. Real-Time System Programming
+
+### 9.1 Real-Time Privilege Levels
+
+| Level | Name | Description | Real-Time Features |
+|-------|------|-------------|-------------------|
+| 0 | User | Application level | Basic real-time operations |
+| 1 | Supervisor | OS kernel level | Real-time scheduling |
+| 2 | Hypervisor | Virtualization level | Real-time VM management |
+| 3 | Machine | Firmware level | Real-time hardware control |
+| 4 | Real-Time | Real-time monitor | Real-time system management |
+
+### 9.2 Real-Time Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Set Priority | `RT_SET_PRIORITY #imm` | Set real-time priority | Supervisor |
+| Get Priority | `RT_GET_PRIORITY Rd` | Get current priority | User |
+| Set Deadline | `RT_SET_DEADLINE #imm` | Set task deadline | Supervisor |
+| Check Deadline | `RT_CHECK_DEADLINE Rd` | Check deadline violation | User |
+| Yield CPU | `RT_YIELD` | Yield CPU to higher priority task | User |
+
+### 9.3 Safety Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| Initialize Safety | `SAFETY_INIT #imm` | Initialize safety system | Machine |
+| Safety Check | `SAFETY_CHECK Rd` | Perform safety check | User |
+| Report Fault | `SAFETY_FAULT #imm` | Report safety fault | User |
+| Reset Safety | `SAFETY_RESET` | Reset safety system | Machine |
+| Safe Shutdown | `SAFETY_SHUTDOWN #imm` | Safe shutdown procedure | Machine |
+
+### 9.4 Real-Time Resource Management
+
+| Resource | Description | Management Level |
+|----------|-------------|------------------|
+| Priority Levels | 0-255 priority levels | Supervisor |
+| Deadlines | Task deadline management | Supervisor |
+| Watchdog Timers | Safety timer management | Machine |
+| Error Detection | ECC and fault detection | Machine |
+| Safety Systems | ISO 26262 compliance | Machine |
+
+---
+
+## 10. System Control Operations
 
 ### 5.1 Cache Control
 

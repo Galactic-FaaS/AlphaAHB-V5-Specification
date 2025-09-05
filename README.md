@@ -22,7 +22,6 @@ This specification defines a modern, high-performance bus architecture designed 
 ### V5 Enhancements
 - **Vector Processing Units (VPU)**: Advanced SIMD capabilities with 512-bit vector registers
 - **Neural Processing Units (NPU)**: Dedicated AI/ML acceleration hardware
-- **Quantum Simulation Support**: Hardware acceleration for quantum computing algorithms
 - **Advanced Memory Management**: NUMA-aware memory hierarchy with intelligent caching
 - **Security Co-processors**: Hardware-based encryption and threat detection
 - **Real-time Scheduling**: Deterministic task scheduling with microsecond precision

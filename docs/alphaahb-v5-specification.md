@@ -74,7 +74,6 @@ The AlphaAHB V5 architecture follows these core principles:
 ├─────────────────────────────────────────────────────────────────┤
 │  🧠 AI/ML Co-processors                                        │
 │  ├── Neural Processing Units (NPU)                             │
-│  ├── Quantum Simulation Units (QSU)                            │
 │  └── Vector Processing Units (VPU)                             │
 ├─────────────────────────────────────────────────────────────────┤
 │  🔧 Core Processing Units                                      │
@@ -123,11 +122,6 @@ The AlphaAHB V5 architecture follows these core principles:
 - Hardware-accelerated training and inference
 - Dynamic model loading and execution
 
-#### 3.2.3 Quantum Simulation Units (QSU)
-- Hardware acceleration for quantum algorithms
-- Quantum state simulation
-- Quantum gate operations
-- Error correction and fault tolerance
 
 #### 3.2.4 Advanced Memory Management
 - NUMA-aware memory hierarchy
@@ -404,7 +398,6 @@ Multiple Instruction, Multiple Data (MIMD) allows different cores to execute dif
 - **Vector Cores**: Specialized for SIMD operations
 - **Matrix Cores**: Optimized for matrix operations
 - **Neural Cores**: Dedicated AI/ML processing
-- **Quantum Cores**: Quantum simulation acceleration
 - **Arithmetic Cores**: High-precision arithmetic
 - **BFP Cores**: Block floating-point processing
 
@@ -474,25 +467,6 @@ Multiple Instruction, Multiple Data (MIMD) allows different cores to execute dif
 - ONNX models
 - Custom model formats
 
-### 9.2 Quantum Simulation Units (QSU)
-
-#### 9.2.1 Quantum State Representation
-- Up to 40 qubits simulation
-- Complex amplitude storage
-- Quantum state compression
-- Error correction codes
-
-#### 9.2.2 Quantum Operations
-- Single-qubit gates (X, Y, Z, H, S, T)
-- Two-qubit gates (CNOT, CZ, SWAP)
-- Multi-qubit gates
-- Quantum measurement
-
-#### 9.2.3 Quantum Algorithms
-- Quantum Fourier Transform (QFT)
-- Grover's algorithm
-- Shor's algorithm
-- Variational Quantum Eigensolver (VQE)
 
 ---
 

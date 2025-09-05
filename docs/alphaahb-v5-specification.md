@@ -1,8 +1,8 @@
-# AlphaAHB V5 Specification
+# AlphaAHB V5 ISA Specification
 
 ## Document Information
 
-**Title**: Alpha Advanced High-performance Bus V5 Specification  
+**Title**: Alpha Advanced High-performance Instruction Set Architecture V5 Specification  
 **Version**: 5.0  
 **Date**: September 2025  
 **Status**: Draft  
@@ -16,7 +16,7 @@
 1. [Introduction](#1-introduction)
 2. [Architecture Overview](#2-architecture-overview)
 3. [V5 Enhancements](#3-v5-enhancements)
-4. [Bus Architecture](#4-bus-architecture)
+4. [Instruction Set Architecture](#4-instruction-set-architecture)
 5. [Memory Management](#5-memory-management)
 6. [Vector Processing](#6-vector-processing)
 7. [Advanced Floating-Point Arithmetic](#7-advanced-floating-point-arithmetic)
@@ -131,11 +131,11 @@ The AlphaAHB V5 architecture follows these core principles:
 
 ---
 
-## 4. Bus Architecture
+## 4. Instruction Set Architecture
 
-### 4.1 AHB 5.0 Compliance
+### 4.1 AHB 5.0 Bus Compliance
 
-AlphaAHB V5 is fully compliant with ARM AMBA AHB 5.0 specification with the following extensions:
+AlphaAHB V5 ISA is designed to work with ARM AMBA AHB 5.0 bus specification with the following extensions:
 
 #### 4.1.1 Bus Signals
 
@@ -180,7 +180,40 @@ AlphaAHB V5 is fully compliant with ARM AMBA AHB 5.0 specification with the foll
 | 110 | WRAP16 | 16-beat wrapping burst |
 | 111 | INCR16 | 16-beat incrementing burst |
 
-### 4.2 Bus Matrix
+### 4.2 Instruction Set Overview
+
+The AlphaAHB V5 ISA provides a comprehensive instruction set including:
+
+#### 4.2.1 Integer Instructions
+- **Arithmetic**: ADD, SUB, MUL, DIV, MOD
+- **Logical**: AND, OR, XOR, NOT, SHL, SHR
+- **Comparison**: CMP, TEST, conditional branches
+- **Bit Manipulation**: CLZ, CTZ, POPCNT, ROTATE
+
+#### 4.2.2 Floating-Point Instructions
+- **IEEE 754-2019**: All standard operations with multiple precisions
+- **Block Floating-Point**: BFPADD, BFPMUL, BFPDIV, BFPSQRT
+- **Arbitrary-Precision**: APADD, APMUL, APDIV, APMOD
+- **Tapered Operations**: TAPERED_OP with dynamic precision
+
+#### 4.2.3 Vector Instructions
+- **SIMD Operations**: 512-bit vector arithmetic and logical operations
+- **Matrix Operations**: GEMM, GEMV, matrix decomposition
+- **Memory Operations**: Vector load/store, gather/scatter
+- **Reduction Operations**: Vector sum, product, min, max
+
+#### 4.2.4 AI/ML Instructions
+- **Neural Network**: CONV, FC, ACTIVATION, POOL
+- **Matrix Operations**: Batch operations, transpose, reshape
+- **Activation Functions**: ReLU, Sigmoid, Tanh, Softmax
+- **Optimization**: Gradient operations, weight updates
+
+#### 4.2.5 MIMD Instructions
+- **Synchronization**: BARRIER, LOCK, UNLOCK, ATOMIC
+- **Communication**: SEND, RECV, BROADCAST, REDUCE
+- **Task Management**: SPAWN, JOIN, YIELD, PRIORITY
+
+### 4.3 Bus Matrix
 
 The AlphaAHB V5 bus matrix supports:
 - Up to 16 masters
@@ -642,9 +675,9 @@ The V5 specification includes:
 
 ## Conclusion
 
-The AlphaAHB V5 Specification represents a significant advancement in high-performance computing architecture, providing the foundation for next-generation systems that require exceptional performance, security, and AI capabilities.
+The AlphaAHB V5 ISA Specification represents a significant advancement in high-performance computing instruction set architecture, providing the foundation for next-generation systems that require exceptional performance, security, and AI capabilities.
 
-This specification serves as the definitive guide for implementing AlphaAHB V5-compliant systems with comprehensive support for advanced floating-point arithmetic, MIMD processing, and cutting-edge AI/ML acceleration.
+This specification serves as the definitive guide for implementing AlphaAHB V5-compliant processors and systems with comprehensive support for advanced floating-point arithmetic, MIMD processing, and cutting-edge AI/ML acceleration.
 
 ---
 

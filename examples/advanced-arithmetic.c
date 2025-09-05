@@ -1,8 +1,9 @@
 /*
- * AlphaAHB V5 Advanced Arithmetic Examples
+ * AlphaAHB V5 ISA Advanced Arithmetic Examples
  * 
  * This example demonstrates the advanced floating-point arithmetic capabilities
- * including IEEE 754-2019, block floating-point, arbitrary-precision, tapered FP, and MIMD.
+ * of the AlphaAHB V5 ISA including IEEE 754-2019, block floating-point, 
+ * arbitrary-precision, tapered FP, and MIMD instructions.
  */
 
 #include <stdio.h>
@@ -367,7 +368,7 @@ void* mimd_worker(void* arg) {
 
 // Main function
 int main(void) {
-    printf("AlphaAHB V5 Advanced Arithmetic Examples\n");
+    printf("AlphaAHB V5 ISA Advanced Arithmetic Examples\n");
     printf("========================================\n\n");
     
     // Initialize MIMD barrier

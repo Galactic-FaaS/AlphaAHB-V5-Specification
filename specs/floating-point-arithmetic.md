@@ -1,8 +1,8 @@
-# AlphaAHB V5 Advanced Floating-Point Arithmetic Specification
+# AlphaAHB V5 ISA Advanced Floating-Point Arithmetic Specification
 
 ## Overview
 
-This document defines the advanced floating-point arithmetic capabilities of AlphaAHB V5, including IEEE 754-2019 compliance, block floating-point, arbitrary-precision arithmetic, tapered floating-point, and MIMD support.
+This document defines the advanced floating-point arithmetic capabilities of AlphaAHB V5 ISA, including IEEE 754-2019 compliance, block floating-point, arbitrary-precision arithmetic, tapered floating-point, and MIMD support.
 
 ## Table of Contents
 

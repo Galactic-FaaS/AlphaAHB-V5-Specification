@@ -1,15 +1,15 @@
-# AlphaAHB V5 Specification
+# AlphaAHB V5 ISA Specification
 
 ## Overview
 
-The AlphaAHB V5 Specification represents the fifth generation of the Alpha Advanced High-performance Bus (AHB) architecture, building upon the foundation established by the original Alpha Architecture Handbook (Version 4) from Compaq Computer Corporation.
+The AlphaAHB V5 ISA Specification represents the fifth generation of the Alpha Instruction Set Architecture, building upon the foundation established by the original Alpha Architecture Handbook (Version 4) from Compaq Computer Corporation.
 
-This specification defines a modern, high-performance bus architecture designed for next-generation computing systems, featuring advanced floating-point arithmetic, MIMD capabilities, and cutting-edge AI/ML acceleration.
+This specification defines a modern, high-performance instruction set architecture designed for next-generation computing systems, featuring advanced floating-point arithmetic, MIMD capabilities, and cutting-edge AI/ML acceleration.
 
 ## Key Features
 
 - **Enhanced Performance**: 5x improvement over V4 specification
-- **Modern Bus Architecture**: Based on ARM AMBA AHB 5.0 standards
+- **Modern ISA Architecture**: Based on ARM AMBA AHB 5.0 bus standards with full instruction set
 - **Advanced Floating-Point**: IEEE 754-2019, block FP, arbitrary-precision, tapered FP
 - **MIMD Support**: Multiple Instruction, Multiple Data parallel processing
 - **AI Integration**: Built-in support for machine learning and neural network operations
@@ -26,12 +26,13 @@ This specification defines a modern, high-performance bus architecture designed 
 - **Security Co-processors**: Hardware-based encryption and threat detection
 - **Real-time Scheduling**: Deterministic task scheduling with microsecond precision
 
-### Bus Specifications
-- **Data Width**: 512-bit data bus with burst transfer capabilities
+### ISA Specifications
+- **Data Width**: 512-bit data operations with burst transfer capabilities
 - **Address Space**: 64-bit addressing with 48-bit physical address support
 - **Clock Speed**: Up to 5 GHz with dynamic frequency scaling
 - **Bandwidth**: Up to 2.56 TB/s theoretical maximum bandwidth
 - **Latency**: Sub-nanosecond access times for L1 cache operations
+- **Instruction Set**: Complete instruction set with advanced floating-point and MIMD support
 
 ## Documentation Structure
 
@@ -64,4 +65,4 @@ This specification is released under the MIT License. See `LICENSE` for details.
 
 ---
 
-**AlphaAHB V5 Specification** - The Future of High-Performance Computing Architecture
+**AlphaAHB V5 ISA Specification** - The Future of High-Performance Computing Architecture

@@ -1,7 +1,7 @@
 /*
- * AlphaAHB V5 Neural Processing Unit (NPU) Example
+ * AlphaAHB V5 ISA Neural Processing Unit (NPU) Example
  * 
- * This example demonstrates the usage of AlphaAHB V5 NPU capabilities
+ * This example demonstrates the usage of AlphaAHB V5 ISA NPU capabilities
  * for neural network inference and training operations.
  */
 
@@ -411,7 +411,7 @@ void npu_model_forward(npu_controller_t* npu, npu_model_t* model,
 
 // Example usage
 int main(void) {
-    printf("AlphaAHB V5 Neural Processing Unit Example\n");
+    printf("AlphaAHB V5 ISA Neural Processing Unit Example\n");
     printf("==========================================\n\n");
     
     // Initialize NPU

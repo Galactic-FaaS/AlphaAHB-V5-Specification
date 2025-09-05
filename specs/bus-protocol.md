@@ -1,8 +1,8 @@
-# AlphaAHB V5 Bus Protocol Specification
+# AlphaAHB V5 ISA Bus Protocol Specification
 
 ## Overview
 
-This document defines the detailed bus protocol for AlphaAHB V5, including signal definitions, timing diagrams, and protocol state machines.
+This document defines the detailed bus protocol for AlphaAHB V5 ISA, including signal definitions, timing diagrams, and protocol state machines. This protocol supports the full instruction set architecture implementation.
 
 ## Signal Definitions
 

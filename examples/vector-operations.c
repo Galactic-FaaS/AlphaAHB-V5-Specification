@@ -1,7 +1,7 @@
 /*
- * AlphaAHB V5 Vector Operations Example
+ * AlphaAHB V5 ISA Vector Operations Example
  * 
- * This example demonstrates the usage of AlphaAHB V5 vector processing
+ * This example demonstrates the usage of AlphaAHB V5 ISA vector processing
  * capabilities including 512-bit vector registers and SIMD operations.
  */
 

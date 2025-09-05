@@ -1,16 +1,17 @@
-# AlphaAHB V5 Tooling Suite
+# Alpham Tooling Suite
 
 *Developed and Maintained by GLCTC Corp.*
 
 ## Overview
 
-This comprehensive tooling suite provides complete development, testing, and analysis capabilities for the AlphaAHB V5 Instruction Set Architecture. The tooling supports all ISA features including advanced arithmetic, AI/ML operations, vector processing, MIMD support, security extensions, and more.
+This comprehensive tooling suite provides complete development, testing, and analysis capabilities for the Alpham (Alpha + MIMD) Instruction Set Architecture. The tooling supports both original Alpha (legacy compatibility) and modern Alpham (MIMD-enhanced) targets, including advanced arithmetic, AI/ML operations, vector processing, MIMD support, security extensions, and more.
 
 ## Tool Categories
 
 ### 1. Assembler (`assembler/`)
-- **alphaahb-as**: Full-featured assembler supporting all AlphaAHB V5 instructions
+- **alpham-as**: Full-featured assembler supporting both Alpha and Alpham instructions
 - **Features**:
+  - Dual target support (Alpha legacy, Alpham MIMD-enhanced)
   - Complete instruction set support (Basic, Advanced Arithmetic, AI/ML, Vector, MIMD, Security, Scientific Computing, Real-Time, Debug)
   - Macro support and conditional assembly
   - Multiple output formats (binary, ELF, Intel HEX)
@@ -18,8 +19,9 @@ This comprehensive tooling suite provides complete development, testing, and ana
   - Advanced optimization and code generation
 
 ### 2. Disassembler (`disassembler/`)
-- **alphaahb-objdump**: Binary analysis and disassembly tool
+- **alpham-objdump**: Binary analysis and disassembly tool
 - **Features**:
+  - Dual target support (Alpha, Alpham)
   - Complete instruction disassembly
   - Symbol table analysis
   - Control flow analysis
@@ -27,31 +29,34 @@ This comprehensive tooling suite provides complete development, testing, and ana
   - Multiple input formats
 
 ### 3. Simulator (`simulator/`)
-- **alphaahb-sim**: Cycle-accurate architectural simulator
+- **alpham-sim**: Cycle-accurate architectural simulator
 - **Features**:
+  - Dual target support (Alpha, Alpham)
   - Full pipeline simulation (12-stage)
-  - Multi-core MIMD support
+  - Multi-core MIMD support (Alpham target)
   - Memory hierarchy simulation
   - Performance counters and profiling
   - Debug interface support
   - Real-time execution
 
 ### 4. Compiler Backend (`compiler/`)
-- **LLVM Backend**: Complete LLVM target for AlphaAHB V5
+- **LLVM Backend**: Complete LLVM targets for Alpha and Alpham
 - **Features**:
+  - Dual target support (alpha-linux-gnu, alpham-linux-gnu)
   - C/C++ compilation support
   - Advanced optimization passes
-  - Vectorization support
-  - AI/ML operation optimization
+  - Vectorization support (Alpham target)
+  - AI/ML operation optimization (Alpham target)
   - Cross-compilation support
 
 ### 5. Debugger (`debugger/`)
-- **alphaahb-gdb**: GDB-compatible debugger
+- **alpham-gdb**: GDB-compatible debugger
 - **Features**:
+  - Dual target support (Alpha, Alpham)
   - Full GDB protocol support
   - Hardware breakpoint support
   - Performance monitoring
-  - Multi-core debugging
+  - Multi-core debugging (Alpham target)
   - Real-time debugging
 
 ### 6. Test Framework (`tests/`)

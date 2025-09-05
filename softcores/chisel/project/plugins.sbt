@@ -1,5 +1,5 @@
 // Chisel plugin
-addSbtPlugin("org.chipsalliance" % "chisel-plugin" % "3.6.0")
+addSbtPlugin("org.chipsalliance" % "chisel-plugin" % "3.6.1")
 
 // ScalaTest plugin
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")

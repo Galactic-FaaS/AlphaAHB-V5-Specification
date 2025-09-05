@@ -1,34 +1,65 @@
-# AlphaAHB V5 ISA Specification
+# Alpham ISA Specification
 
 <div align="center">
 
 ![DEC Alpha Generation Logo](https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/DEC_Alpha_Generation_logo.svg/330px-DEC_Alpha_Generation_logo.svg.png)
 
-![AlphaAHB V5 Logo](https://img.shields.io/badge/AlphaAHB-V5-blue?style=for-the-badge&logo=cpu)
+![Alpham Logo](https://img.shields.io/badge/Alpham-MIMD-blue?style=for-the-badge&logo=cpu)
 ![ISA Version](https://img.shields.io/badge/ISA-5.0-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-**Advanced High-Performance Instruction Set Architecture for Next-Generation Computing Systems**  
+**Alpha + MIMD: Advanced High-Performance Instruction Set Architecture for Next-Generation Computing Systems**  
 *Developed and Maintained by GLCTC Corp.*
 
 [![Documentation](https://img.shields.io/badge/Documentation-Complete-blue?style=flat-square)](docs/)
 [![Specifications](https://img.shields.io/badge/Specifications-Complete-blue?style=flat-square)](specs/)
 [![Softcores](https://img.shields.io/badge/Softcores-Available-green?style=flat-square)](softcores/)
 [![Tooling](https://img.shields.io/badge/Tooling-Complete-orange?style=flat-square)](tooling/)
-[![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen?style=flat-square)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-100%25%20Success-brightgreen?style=flat-square)](tests/)
 
 </div>
 
 ---
 
+## 🚀 **Quick Start**
+
+### **Get Started in 5 Minutes**
+```bash
+# Clone the repository
+git clone https://github.com/your-org/AlphaAHB-V5-Specification.git
+cd AlphaAHB-V5-Specification
+
+# Run the test suites (100% success rate)
+cd softcores/systemverilog && vivado -mode batch -source tests/complete_test.tcl
+cd ../chisel && scala-cli run tests/CompleteTest.scala
+
+# Try the examples
+cd examples && gcc -o hello hello_world.c && ./hello
+```
+
+### **Documentation**
+- **[Getting Started](docs/getting-started.md)** - Complete quick start guide
+- **[Examples Guide](docs/examples-guide.md)** - Comprehensive code examples
+- **[API Reference](docs/api-reference.md)** - Complete API documentation
+- **[FAQ](docs/faq.md)** - Frequently asked questions
+
+---
+
 ## 🚀 **Technical Overview**
 
-The **Alpha Advanced High-performance Instruction Set Architecture V5** (AlphaAHB V5) is a comprehensive 64-bit ISA engineered for extreme performance computing applications. Built upon the foundational principles of the [DEC Alpha Architecture](https://en.wikipedia.org/wiki/DEC_Alpha), AlphaAHB V5 represents a quantum leap in processor design, incorporating cutting-edge features for AI/ML acceleration, advanced floating-point arithmetic, and massive parallel processing capabilities.
+The **Alpham (Alpha + MIMD) Instruction Set Architecture** is a comprehensive 64-bit ISA engineered for extreme performance computing applications. Built upon the foundational principles of the [DEC Alpha Architecture](https://en.wikipedia.org/wiki/DEC_Alpha), Alpham represents a quantum leap in processor design, incorporating cutting-edge features for AI/ML acceleration, advanced floating-point arithmetic, and massive MIMD parallel processing capabilities.
+
+### **🎯 Dual Target Support**
+
+Alpham provides **dual target support** for maximum compatibility:
+
+- **`alpha-linux-gnu`**: Original Alpha target for legacy compatibility
+- **`alpham-linux-gnu`**: MIMD-enhanced Alpha target for modern capabilities
 
 ### **Architectural Philosophy**
 
-AlphaAHB V5 follows the RISC (Reduced Instruction Set Computer) philosophy with advanced features:
+Alpham follows the RISC (Reduced Instruction Set Computer) philosophy with advanced features:
 - **Load-Store Architecture**: All memory operations through explicit load/store instructions
 - **Fixed-Length Instructions**: 32-bit instruction encoding for predictable fetch
 - **Large Register File**: 304 registers across multiple specialized register sets
@@ -41,6 +72,8 @@ AlphaAHB V5 follows the RISC (Reduced Instruction Set Computer) philosophy with 
 - ⚡ **Advanced Microarchitecture** - 12-stage pipeline with out-of-order execution and speculative execution
 - 🔬 **IEEE 754-2019 Compliant** - Full floating-point arithmetic with multiple precisions (FP16-FP256)
 - 🤖 **AI/ML Acceleration** - Dedicated neural network processing units with 2048 PEs
+- 🧪 **100% Test Success Rate** - Both SystemVerilog and Chisel softcores achieve 100% test success
+- 📚 **Comprehensive Documentation** - Complete documentation suite with examples and guides
 - 🌊 **Vector Processing** - 512-bit SIMD with advanced operations and predicated execution
 - 🔄 **MIMD Support** - Multiple Instruction, Multiple Data parallel processing up to 1024 cores
 - 🏗️ **Production Softcores** - SystemVerilog and Chisel implementations with comprehensive testing

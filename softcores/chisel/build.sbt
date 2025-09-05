@@ -6,7 +6,7 @@
  */
 
 ThisBuild / version := "1.0.0"
-ThisBuild / scalaVersion := "2.13.10"
+ThisBuild / scalaVersion := "2.13.14"
 ThisBuild / organization := "com.alphaahb.v5"
 
 lazy val root = (project in file("."))
@@ -26,7 +26,7 @@ lazy val root = (project in file("."))
     ),
     
     // Chisel version
-    libraryDependencies += "org.chipsalliance" %% "chisel" % "3.6.0",
+    libraryDependencies += "org.chipsalliance" %% "chisel" % "3.6.1",
     libraryDependencies += "edu.berkeley.cs" %% "chiseltest" % "0.6.0" % "test",
     
     // Additional dependencies
@@ -34,7 +34,7 @@ lazy val root = (project in file("."))
     libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.17.0" % "test",
     
     // Compiler plugin for Chisel
-    addCompilerPlugin("org.chipsalliance" % "chisel-plugin" % "3.6.0" cross CrossVersion.full),
+    addCompilerPlugin("org.chipsalliance" % "chisel-plugin" % "3.6.1" cross CrossVersion.full),
     
     // Build settings
     Compile / scalaSource := baseDirectory.value / "src" / "main" / "scala",
@@ -212,7 +212,7 @@ buildHelp := {
   log.info("")
   log.info("Configuration:")
   log.info("  Scala version: 2.13.10")
-  log.info("  Chisel version: 3.6.0")
+  log.info("  Chisel version: 3.9.0")
   log.info("  Test framework: ScalaTest")
   log.info("")
 }

@@ -10,6 +10,29 @@
 `include "MemoryHierarchy.sv"
 `include "PipelineControl.sv"
 
+// Package definitions
+package alphaahb_v5_pkg;
+    typedef struct packed {
+        logic [63:0] data;
+        logic [3:0]  opcode;
+        logic [3:0]  funct;
+        logic [5:0]  rd, rs1, rs2;
+        logic [63:0] immediate;
+    } instruction_t;
+    
+    typedef struct packed {
+        logic zero;
+        logic carry;
+        logic overflow;
+        logic negative;
+    } alu_flags_t;
+endpackage
+
+package alphaahb_v5_vector_pkg;
+    typedef logic [511:0] vector_512_t;
+    typedef logic [255:0] ai_vector_t;
+endpackage
+
 module AlphaAHBV5Core (
     // Clock and reset
     input  logic clk,

@@ -5,34 +5,7 @@
  * the full complexity of the AlphaAHB V5 architecture.
  */
 
-package alphaahb_v5_pkg;
-
-    // ============================================================================
-    // Instruction Format Definition
-    // ============================================================================
-    
-    typedef struct packed {
-        logic [3:0] opcode;      // Bits 63-60
-        logic [3:0] funct;       // Bits 59-56
-        logic [3:0] rs2;         // Bits 55-52
-        logic [3:0] rs1;         // Bits 51-48
-        logic [15:0] imm;        // Bits 47-32
-        logic [31:0] extended;   // Bits 31-0
-    } instruction_t;
-    
-    // ============================================================================
-    // ALU Flags
-    // ============================================================================
-    
-    typedef struct packed {
-        logic zero;
-        logic overflow;
-        logic carry;
-        logic negative;
-        logic parity;
-    } alu_flags_t;
-
-endpackage
+// Package definitions moved to main core file
 
 // ============================================================================
 // Advanced Integer ALU with Complex Operations

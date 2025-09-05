@@ -1,18 +1,19 @@
-# AlphaAHB V5 Compiler Backend
+# Alpham Compiler Backend
 
 *Developed and Maintained by GLCTC Corp.*
 
 ## Overview
 
-This directory contains the LLVM backend for the AlphaAHB V5 Instruction Set Architecture. The compiler backend provides complete support for C/C++ compilation targeting the AlphaAHB V5 ISA, including advanced optimizations for AI/ML, vector processing, and MIMD operations.
+This directory contains the LLVM backend for the Alpham (Alpha + MIMD) Instruction Set Architecture. The compiler backend provides complete support for C/C++ compilation targeting both the original Alpha ISA (for legacy compatibility) and the modern Alpham ISA (with MIMD capabilities), including advanced optimizations for AI/ML, vector processing, and MIMD operations.
 
 ## Features
 
 ### Core Compilation Support
 - **C/C++ Support**: Complete C and C++ language support
 - **Standard Libraries**: Full standard library implementation
-- **Cross-Compilation**: Compile for AlphaAHB V5 from any supported host platform
-- **Optimization**: Advanced optimization passes for AlphaAHB V5
+- **Cross-Compilation**: Compile for Alpha/Alpham from any supported host platform
+- **Dual Target Support**: Both original Alpha and modern Alpham targets
+- **Optimization**: Advanced optimization passes for both Alpha and Alpham
 
 ### Advanced ISA Support
 - **IEEE 754-2019**: Complete floating-point arithmetic support
@@ -37,43 +38,67 @@ compiler/
 ├── README.md                 # This file
 ├── CMakeLists.txt           # CMake build configuration
 ├── src/                     # Source code
-│   ├── AlphaAHB/           # LLVM target implementation
-│   │   ├── AlphaAHBAsmPrinter.cpp
-│   │   ├── AlphaAHBAsmPrinter.h
-│   │   ├── AlphaAHBFrameLowering.cpp
-│   │   ├── AlphaAHBFrameLowering.h
-│   │   ├── AlphaAHBISelDAGToDAG.cpp
-│   │   ├── AlphaAHBISelDAGToDAG.h
-│   │   ├── AlphaAHBISelLowering.cpp
-│   │   ├── AlphaAHBISelLowering.h
-│   │   ├── AlphaAHBInstrInfo.cpp
-│   │   ├── AlphaAHBInstrInfo.h
-│   │   ├── AlphaAHBInstrInfo.td
-│   │   ├── AlphaAHBMCInstLower.cpp
-│   │   ├── AlphaAHBMCInstLower.h
-│   │   ├── AlphaAHBRegisterInfo.cpp
-│   │   ├── AlphaAHBRegisterInfo.h
-│   │   ├── AlphaAHBRegisterInfo.td
-│   │   ├── AlphaAHBSubtarget.cpp
-│   │   ├── AlphaAHBSubtarget.h
-│   │   ├── AlphaAHBSubtarget.td
-│   │   ├── AlphaAHBTargetMachine.cpp
-│   │   ├── AlphaAHBTargetMachine.h
-│   │   └── AlphaAHBTargetMachine.td
+│   ├── Alpha/               # Original Alpha target (legacy compatibility)
+│   │   ├── AlphaAsmPrinter.cpp
+│   │   ├── AlphaAsmPrinter.h
+│   │   ├── AlphaFrameLowering.cpp
+│   │   ├── AlphaFrameLowering.h
+│   │   ├── AlphaISelDAGToDAG.cpp
+│   │   ├── AlphaISelDAGToDAG.h
+│   │   ├── AlphaISelLowering.cpp
+│   │   ├── AlphaISelLowering.h
+│   │   ├── AlphaInstrInfo.cpp
+│   │   ├── AlphaInstrInfo.h
+│   │   ├── AlphaInstrInfo.td
+│   │   ├── AlphaMCInstLower.cpp
+│   │   ├── AlphaMCInstLower.h
+│   │   ├── AlphaRegisterInfo.cpp
+│   │   ├── AlphaRegisterInfo.h
+│   │   ├── AlphaRegisterInfo.td
+│   │   ├── AlphaSubtarget.cpp
+│   │   ├── AlphaSubtarget.h
+│   │   ├── AlphaSubtarget.td
+│   │   ├── AlphaTargetMachine.cpp
+│   │   ├── AlphaTargetMachine.h
+│   │   └── AlphaTargetMachine.td
+│   ├── Alpham/              # Alpham target (MIMD-enhanced)
+│   │   ├── AlphamAsmPrinter.cpp
+│   │   ├── AlphamAsmPrinter.h
+│   │   ├── AlphamFrameLowering.cpp
+│   │   ├── AlphamFrameLowering.h
+│   │   ├── AlphamISelDAGToDAG.cpp
+│   │   ├── AlphamISelDAGToDAG.h
+│   │   ├── AlphamISelLowering.cpp
+│   │   ├── AlphamISelLowering.h
+│   │   ├── AlphamInstrInfo.cpp
+│   │   ├── AlphamInstrInfo.h
+│   │   ├── AlphamInstrInfo.td
+│   │   ├── AlphamMCInstLower.cpp
+│   │   ├── AlphamMCInstLower.h
+│   │   ├── AlphamRegisterInfo.cpp
+│   │   ├── AlphamRegisterInfo.h
+│   │   ├── AlphamRegisterInfo.td
+│   │   ├── AlphamSubtarget.cpp
+│   │   ├── AlphamSubtarget.h
+│   │   ├── AlphamSubtarget.td
+│   │   ├── AlphamTargetMachine.cpp
+│   │   ├── AlphamTargetMachine.h
+│   │   └── AlphamTargetMachine.td
 │   ├── Passes/              # Custom optimization passes
-│   │   ├── AlphaAHBVectorize.cpp
-│   │   ├── AlphaAHBVectorize.h
-│   │   ├── AlphaAHBAIOptimize.cpp
-│   │   ├── AlphaAHBAIOptimize.h
-│   │   ├── AlphaAHBMIMDOptimize.cpp
-│   │   └── AlphaAHBMIMDOptimize.h
+│   │   ├── AlphamVectorize.cpp
+│   │   ├── AlphamVectorize.h
+│   │   ├── AlphamAIOptimize.cpp
+│   │   ├── AlphamAIOptimize.h
+│   │   ├── AlphamMIMDOptimize.cpp
+│   │   └── AlphamMIMDOptimize.h
 │   └── Runtime/             # Runtime library
 │       ├── libc/           # C standard library
 │       ├── libcxx/         # C++ standard library
 │       ├── libm/           # Math library
 │       └── libai/          # AI/ML library
 ├── include/                 # Header files
-│   ├── AlphaAHB/           # Target headers
+│   ├── Alpha/              # Alpha target headers
+│   ├── Alpham/             # Alpham target headers
 │   └── Passes/             # Pass headers
 ├── test/                    # Test suite
 │   ├── CodeGen/            # Code generation tests
@@ -105,10 +130,10 @@ cd llvm-project
 mkdir build
 cd build
 
-# Configure with AlphaAHB backend
+# Configure with Alpha and Alpham backends
 cmake -G "Unix Makefiles" \
       -DLLVM_ENABLE_PROJECTS="clang;lld" \
-      -DLLVM_TARGETS_TO_BUILD="AlphaAHB" \
+      -DLLVM_TARGETS_TO_BUILD="Alpha;Alpham" \
       -DCMAKE_BUILD_TYPE=Release \
       ../llvm
 
@@ -120,21 +145,38 @@ sudo make install
 ```
 
 ### Using the Compiler
-```bash
-# Compile C code
-clang -target alphaahb -o program program.c
 
-# Compile C++ code
-clang++ -target alphaahb -o program program.cpp
+#### Original Alpha Target (Legacy Compatibility)
+```bash
+# Compile C code for original Alpha
+clang -target alpha-linux-gnu -o program program.c
+
+# Compile C++ code for original Alpha
+clang++ -target alpha-linux-gnu -o program program.cpp
 
 # Compile with optimizations
-clang -target alphaahb -O3 -o program program.c
+clang -target alpha-linux-gnu -O3 -o program program.c
+```
+
+#### Alpham Target (MIMD-Enhanced)
+```bash
+# Compile C code for Alpham
+clang -target alpham-linux-gnu -o program program.c
+
+# Compile C++ code for Alpham
+clang++ -target alpham-linux-gnu -o program program.cpp
+
+# Compile with optimizations
+clang -target alpham-linux-gnu -O3 -o program program.c
 
 # Compile with vectorization
-clang -target alphaahb -O3 -mllvm -enable-vectorize -o program program.c
+clang -target alpham-linux-gnu -O3 -mllvm -enable-vectorize -o program program.c
 
 # Compile with AI/ML optimizations
-clang -target alphaahb -O3 -mllvm -enable-ai-optimize -o program program.c
+clang -target alpham-linux-gnu -O3 -mllvm -enable-ai-optimize -o program program.c
+
+# Compile with MIMD optimizations
+clang -target alpham-linux-gnu -O3 -mllvm -enable-mimd-optimize -o program program.c
 ```
 
 ## Supported Features
@@ -213,4 +255,4 @@ See the main project LICENSE file.
 
 ---
 
-*This compiler backend is part of the AlphaAHB V5 ISA specification maintained by GLCTC Corp.*
+*This compiler backend is part of the Alpham (Alpha + MIMD) ISA specification maintained by GLCTC Corp.*

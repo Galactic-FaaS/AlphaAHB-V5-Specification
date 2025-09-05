@@ -6,7 +6,7 @@
 **Version**: 5.0  
 **Date**: September 2025  
 **Status**: Draft  
-**Authors**: AlphaAHB Development Team  
+**Authors**: GLCTC Corp.  
 **Maintained by**: GLCTC Corp.  
 **Based on**: [Alpha Architecture Handbook V4](http://www.o3one.org/hwdocs/alpha/alphaahb.pdf) by Compaq Computer Corporation
 

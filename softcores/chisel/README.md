@@ -2,7 +2,7 @@
 
 This directory contains the complete Chisel implementation of the AlphaAHB V5 CPU softcore for FPGA synthesis and simulation.
 
-*Maintained by GLCTC Corp.*
+*Developed and Maintained by GLCTC Corp.*
 
 ## Overview
 

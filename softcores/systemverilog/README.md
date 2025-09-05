@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
 **Sophisticated SystemVerilog Implementation of the AlphaAHB V5 ISA**  
-*Maintained by GLCTC Corp.*
+*Developed and Maintained by GLCTC Corp.*
 
 [![Simulation](https://img.shields.io/badge/Simulation-Passing-brightgreen?style=flat-square)](build/sim/)
 [![Synthesis](https://img.shields.io/badge/Synthesis-Supported-blue?style=flat-square)](build/synth/)

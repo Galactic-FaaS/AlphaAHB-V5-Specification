@@ -10,7 +10,7 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
 **Advanced High-Performance Instruction Set Architecture for Next-Generation Computing Systems**  
-*Maintained by GLCTC Corp.*
+*Developed and Maintained by GLCTC Corp.*
 
 [![Documentation](https://img.shields.io/badge/Documentation-Complete-blue?style=flat-square)](docs/)
 [![Specifications](https://img.shields.io/badge/Specifications-Complete-blue?style=flat-square)](specs/)
@@ -523,7 +523,7 @@ We welcome contributions to the AlphaAHB V5 ISA specification! Here's how you ca
 
 ## 🏆 **Acknowledgments**
 
-- **GLCTC Corp.** - For maintaining and developing the AlphaAHB V5 ISA specification
+- **GLCTC Corp.** - Authors and maintainers of the AlphaAHB V5 ISA specification
 - **DEC Alpha Team** - For the original Alpha architecture and inspiration
 - **IEEE Standards Association** - For IEEE 754-2019 standard
 - **ARM Limited** - For AMBA AHB 5.0 specification
@@ -536,7 +536,7 @@ We welcome contributions to the AlphaAHB V5 ISA specification! Here's how you ca
 
 **AlphaAHB V5 ISA Specification**  
 *Advanced High-Performance Instruction Set Architecture for Next-Generation Computing Systems*  
-*Maintained by GLCTC Corp.*
+*Developed and Maintained by GLCTC Corp.*
 
 [![GitHub](https://img.shields.io/badge/GitHub-Galactic--FaaS-black?style=flat-square&logo=github)](https://github.com/Galactic-FaaS)
 [![Documentation](https://img.shields.io/badge/Documentation-Complete-blue?style=flat-square)](docs/)

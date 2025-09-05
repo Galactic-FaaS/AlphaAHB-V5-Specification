@@ -1,8 +1,8 @@
-# AlphaAHB V5 CPU Design Specification
+# Alpha ISA V5 CPU Design Specification
 
 ## Overview
 
-This document provides a complete CPU design specification based on the AlphaAHB V5 ISA, including microarchitecture, pipeline design, and implementation guidelines.
+This document provides a complete CPU design specification based on the Alpha ISA V5, including microarchitecture, pipeline design, and implementation guidelines.
 
 ## Table of Contents
 

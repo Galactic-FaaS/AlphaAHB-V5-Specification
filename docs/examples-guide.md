@@ -1,8 +1,8 @@
-# AlphaAHB V5 (Alpham) Examples Guide
+# Alpha ISA V5 (Alpham) Examples Guide
 
 ## 🎯 **Learning by Example**
 
-This guide provides comprehensive examples for the AlphaAHB V5 (Alpham) ISA, from basic programming concepts to advanced AI/ML applications.
+This guide provides comprehensive examples for the Alpha ISA V5 (Alpham) ISA, from basic programming concepts to advanced AI/ML applications.
 
 ## 📚 **Example Categories**
 

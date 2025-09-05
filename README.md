@@ -1,15 +1,15 @@
-# Alpham ISA Specification
+# Alpha ISA V5 Specification (Alpham)
 
 <div align="center">
 
 ![DEC Alpha Generation Logo](https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/DEC_Alpha_Generation_logo.svg/330px-DEC_Alpha_Generation_logo.svg.png)
 
-![Alpham Logo](https://img.shields.io/badge/Alpham-MIMD-blue?style=for-the-badge&logo=cpu)
+![Alpha ISA V5 Logo](https://img.shields.io/badge/Alpha%20ISA%20V5-MIMD-blue?style=for-the-badge&logo=cpu)
 ![ISA Version](https://img.shields.io/badge/ISA-5.0-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-**Alpha + MIMD: Advanced High-Performance Instruction Set Architecture for Next-Generation Computing Systems**  
+**Alpha ISA V5 (Alpham): Advanced High-Performance Instruction Set Architecture for Next-Generation Computing Systems**  
 *Developed and Maintained by GLCTC Corp.*
 
 [![Documentation](https://img.shields.io/badge/Documentation-Complete-blue?style=flat-square)](docs/)
@@ -48,18 +48,18 @@ cd examples && gcc -o hello hello_world.c && ./hello
 
 ## 🚀 **Technical Overview**
 
-The **Alpham (Alpha + MIMD) Instruction Set Architecture** is a comprehensive 64-bit ISA engineered for extreme performance computing applications. Built upon the foundational principles of the [DEC Alpha Architecture](https://en.wikipedia.org/wiki/DEC_Alpha), Alpham represents a quantum leap in processor design, incorporating cutting-edge features for AI/ML acceleration, advanced floating-point arithmetic, and massive MIMD parallel processing capabilities.
+The **Alpha ISA V5 (Alpham - Alpha + MIMD) Instruction Set Architecture** is a comprehensive 64-bit ISA engineered for extreme performance computing applications. Built upon the foundational principles of the [DEC Alpha Architecture](https://en.wikipedia.org/wiki/DEC_Alpha), Alpha ISA V5 represents a quantum leap in processor design, incorporating cutting-edge features for AI/ML acceleration, advanced floating-point arithmetic, and massive MIMD parallel processing capabilities.
 
 ### **🎯 Dual Target Support**
 
-Alpham provides **dual target support** for maximum compatibility:
+Alpha ISA V5 provides **dual target support** for maximum compatibility:
 
 - **`alpha-linux-gnu`**: Original Alpha target for legacy compatibility
-- **`alpham-linux-gnu`**: MIMD-enhanced Alpha target for modern capabilities
+- **`alpham-linux-gnu`**: MIMD-enhanced Alpha ISA V5 target for modern capabilities
 
 ### **Architectural Philosophy**
 
-Alpham follows the RISC (Reduced Instruction Set Computer) philosophy with advanced features:
+Alpha ISA V5 follows the RISC (Reduced Instruction Set Computer) philosophy with advanced features:
 - **Load-Store Architecture**: All memory operations through explicit load/store instructions
 - **Fixed-Length Instructions**: 32-bit instruction encoding for predictable fetch
 - **Large Register File**: 304 registers across multiple specialized register sets

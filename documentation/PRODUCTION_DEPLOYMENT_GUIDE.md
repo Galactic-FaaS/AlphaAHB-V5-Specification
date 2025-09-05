@@ -1,8 +1,8 @@
-# AlphaAHB V5 (Alpham) Production Deployment Guide
+# Alpha ISA V5 (Alpham) Production Deployment Guide
 
 ## 🚀 **Production Deployment Overview**
 
-This guide provides comprehensive instructions for deploying the AlphaAHB V5 (Alpham) softcores in production environments.
+This guide provides comprehensive instructions for deploying the Alpha ISA V5 (Alpham) softcores in production environments.
 
 ## 📋 **Prerequisites**
 

@@ -1,8 +1,8 @@
-# AlphaAHB V5 ISA Instruction Encodings
+# Alpha ISA V5 Instruction Encodings
 
 ## Overview
 
-This document defines the complete instruction encoding formats for the AlphaAHB V5 ISA, including opcode tables, instruction formats, register encodings, and immediate value formats.
+This document defines the complete instruction encoding formats for the Alpha ISA V5, including opcode tables, instruction formats, register encodings, and immediate value formats.
 
 ## Table of Contents
 

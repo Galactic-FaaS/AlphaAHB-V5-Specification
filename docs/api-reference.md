@@ -1,4 +1,4 @@
-# AlphaAHB V5 (Alpham) API Reference
+# Alpha ISA V5 (Alpham) API Reference
 
 ## 📚 **Instruction Set Reference**
 

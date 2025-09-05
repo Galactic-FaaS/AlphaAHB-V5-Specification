@@ -1,10 +1,10 @@
-# Alpham Tooling Suite
+# Alpha ISA V5 (Alpham) Tooling Suite
 
 *Developed and Maintained by GLCTC Corp.*
 
 ## Overview
 
-This comprehensive tooling suite provides complete development, testing, and analysis capabilities for the Alpham (Alpha + MIMD) Instruction Set Architecture. The tooling supports both original Alpha (legacy compatibility) and modern Alpham (MIMD-enhanced) targets, including advanced arithmetic, AI/ML operations, vector processing, MIMD support, security extensions, and more.
+This comprehensive tooling suite provides complete development, testing, and analysis capabilities for the Alpha ISA V5 (Alpham - Alpha + MIMD) Instruction Set Architecture. The tooling supports both original Alpha (legacy compatibility) and modern Alpha ISA V5 (MIMD-enhanced) targets, including advanced arithmetic, AI/ML operations, vector processing, MIMD support, security extensions, and more.
 
 ## Tool Categories
 

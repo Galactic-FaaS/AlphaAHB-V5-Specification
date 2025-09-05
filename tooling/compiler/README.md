@@ -1,10 +1,10 @@
-# Alpham Compiler Backend
+# Alpha ISA V5 (Alpham) Compiler Backend
 
 *Developed and Maintained by GLCTC Corp.*
 
 ## Overview
 
-This directory contains the LLVM backend for the Alpham (Alpha + MIMD) Instruction Set Architecture. The compiler backend provides complete support for C/C++ compilation targeting both the original Alpha ISA (for legacy compatibility) and the modern Alpham ISA (with MIMD capabilities), including advanced optimizations for AI/ML, vector processing, and MIMD operations.
+This directory contains the LLVM backend for the Alpha ISA V5 (Alpham - Alpha + MIMD) Instruction Set Architecture. The compiler backend provides complete support for C/C++ compilation targeting both the original Alpha ISA (for legacy compatibility) and the modern Alpha ISA V5 (with MIMD capabilities), including advanced optimizations for AI/ML, vector processing, and MIMD operations.
 
 ## Features
 

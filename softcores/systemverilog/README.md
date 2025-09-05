@@ -1,8 +1,8 @@
-# AlphaAHB V5 SystemVerilog Softcore
+# Alpha ISA V5 SystemVerilog Softcore
 
 ## 🎯 **Overview**
 
-This directory contains the SystemVerilog implementation of the AlphaAHB V5 (Alpham) CPU core with comprehensive test suite achieving **100% test success rate**.
+This directory contains the SystemVerilog implementation of the Alpha ISA V5 (Alpham) CPU core with comprehensive test suite achieving **100% test success rate**.
 
 ## 📁 **Directory Structure**
 

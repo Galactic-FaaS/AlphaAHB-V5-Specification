@@ -1,8 +1,8 @@
-# AlphaAHB V5 ISA Register Architecture
+# Alpha ISA V5 Register Architecture
 
 ## Overview
 
-This document defines the complete register architecture for the AlphaAHB V5 ISA, including register file layout, special purpose registers, register aliasing, and register access patterns.
+This document defines the complete register architecture for the Alpha ISA V5, including register file layout, special purpose registers, register aliasing, and register access patterns.
 
 ## Table of Contents
 

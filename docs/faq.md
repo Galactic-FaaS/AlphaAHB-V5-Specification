@@ -2,8 +2,8 @@
 
 ## 🤔 **General Questions**
 
-### **What is AlphaAHB V5 (Alpham)?**
-AlphaAHB V5 (Alpham) is a revolutionary 64-bit RISC instruction set architecture that extends the classic DEC Alpha architecture with modern features including MIMD processing, AI/ML acceleration, advanced floating-point arithmetic, and vector processing capabilities.
+### **What is Alpha ISA V5 (Alpham)?**
+Alpha ISA V5 (Alpham) is a revolutionary 64-bit RISC instruction set architecture that extends the classic DEC Alpha architecture with modern features including MIMD processing, AI/ML acceleration, advanced floating-point arithmetic, and vector processing capabilities.
 
 ### **How does Alpham differ from the original Alpha?**
 Alpham maintains full backward compatibility with the original Alpha ISA while adding:

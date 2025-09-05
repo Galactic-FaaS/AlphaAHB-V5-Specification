@@ -1,8 +1,8 @@
-# Getting Started with AlphaAHB V5 (Alpham)
+# Getting Started with Alpha ISA V5 (Alpham)
 
 ## 🚀 **Quick Start Guide**
 
-Welcome to the AlphaAHB V5 (Alpham) ISA! This guide will help you get up and running quickly with the most advanced RISC instruction set architecture.
+Welcome to the Alpha ISA V5 (Alpham) ISA! This guide will help you get up and running quickly with the most advanced RISC instruction set architecture.
 
 ## 📋 **Prerequisites**
 

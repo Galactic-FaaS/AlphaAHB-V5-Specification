@@ -1,8 +1,8 @@
-# Dual Target Support: Alpha and Alpham
+# Dual Target Support: Alpha and Alpha ISA V5 (Alpham)
 
 ## Overview
 
-The Alpham ISA provides **dual target support** to ensure maximum compatibility with existing Alpha software while enabling modern MIMD capabilities. This document explains how to use both targets effectively.
+The Alpha ISA V5 (Alpham) provides **dual target support** to ensure maximum compatibility with existing Alpha software while enabling modern MIMD capabilities. This document explains how to use both targets effectively.
 
 ## Target Architecture
 

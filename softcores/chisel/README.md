@@ -1,8 +1,8 @@
-# AlphaAHB V5 Chisel Softcore
+# Alpha ISA V5 Chisel Softcore
 
 ## 🎯 **Overview**
 
-This directory contains the Chisel implementation of the AlphaAHB V5 (Alpham) CPU core with comprehensive test suite achieving **100% test success rate**.
+This directory contains the Chisel implementation of the Alpha ISA V5 (Alpham) CPU core with comprehensive test suite achieving **100% test success rate**.
 
 ## 📁 **Directory Structure**
 

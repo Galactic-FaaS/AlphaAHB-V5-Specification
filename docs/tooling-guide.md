@@ -1,8 +1,8 @@
-# AlphaAHB V5 (Alpham) Tooling Guide
+# Alpha ISA V5 (Alpham) Tooling Guide
 
 ## 🛠️ **Complete Tooling Suite**
 
-The AlphaAHB V5 (Alpham) tooling suite provides comprehensive development, testing, and analysis capabilities for the most advanced RISC instruction set architecture.
+The Alpha ISA V5 (Alpham) tooling suite provides comprehensive development, testing, and analysis capabilities for the most advanced RISC instruction set architecture.
 
 ## 📋 **Tool Overview**
 

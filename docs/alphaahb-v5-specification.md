@@ -182,38 +182,121 @@ AlphaAHB V5 ISA is designed to work with ARM AMBA AHB 5.0 bus specification with
 
 ### 4.2 Instruction Set Overview
 
-The AlphaAHB V5 ISA provides a comprehensive instruction set including:
+The AlphaAHB V5 ISA provides a comprehensive instruction set with detailed encodings and timing specifications. See `specs/instruction-encodings.md` and `specs/instruction-timing.md` for complete details.
 
-#### 4.2.1 Integer Instructions
-- **Arithmetic**: ADD, SUB, MUL, DIV, MOD
-- **Logical**: AND, OR, XOR, NOT, SHL, SHR
-- **Comparison**: CMP, TEST, conditional branches
-- **Bit Manipulation**: CLZ, CTZ, POPCNT, ROTATE
+#### 4.2.1 Instruction Format
+- **64-bit Instructions**: All instructions are 64-bit wide
+- **12 Instruction Types**: R, I, S, B, U, J, V, M, F, A, P, C types
+- **4-bit Opcodes**: 16 primary instruction categories
+- **4-bit Function Codes**: 16 function variants per category
 
-#### 4.2.2 Floating-Point Instructions
+#### 4.2.2 Integer Instructions
+- **Arithmetic**: ADD, SUB, MUL, DIV, MOD (1-8 cycles)
+- **Logical**: AND, OR, XOR, NOT, SHL, SHR (1 cycle)
+- **Comparison**: CMP, TEST, conditional branches (1-3 cycles)
+- **Bit Manipulation**: CLZ, CTZ, POPCNT, ROTATE (1-2 cycles)
+
+#### 4.2.3 Floating-Point Instructions
 - **IEEE 754-2019**: All standard operations with multiple precisions
 - **Block Floating-Point**: BFPADD, BFPMUL, BFPDIV, BFPSQRT
-- **Arbitrary-Precision**: APADD, APMUL, APDIV, APMOD
+- **Arbitrary-Precision**: APADD, APMUL, APDIV, APMOD (1-512 cycles)
 - **Tapered Operations**: TAPERED_OP with dynamic precision
 
-#### 4.2.3 Vector Instructions
-- **SIMD Operations**: 512-bit vector arithmetic and logical operations
-- **Matrix Operations**: GEMM, GEMV, matrix decomposition
-- **Memory Operations**: Vector load/store, gather/scatter
-- **Reduction Operations**: Vector sum, product, min, max
+#### 4.2.4 Vector Instructions
+- **SIMD Operations**: 512-bit vector arithmetic and logical operations (1-8 cycles)
+- **Matrix Operations**: GEMM, GEMV, matrix decomposition (8-32 cycles)
+- **Memory Operations**: Vector load/store, gather/scatter (2-8 cycles)
+- **Reduction Operations**: Vector sum, product, min, max (2-6 cycles)
 
-#### 4.2.4 AI/ML Instructions
-- **Neural Network**: CONV, FC, ACTIVATION, POOL
-- **Matrix Operations**: Batch operations, transpose, reshape
-- **Activation Functions**: ReLU, Sigmoid, Tanh, Softmax
-- **Optimization**: Gradient operations, weight updates
+#### 4.2.5 AI/ML Instructions
+- **Neural Network**: CONV, FC, ACTIVATION, POOL (1-16 cycles)
+- **Matrix Operations**: Batch operations, transpose, reshape (2-32 cycles)
+- **Activation Functions**: ReLU, Sigmoid, Tanh, Softmax (1-8 cycles)
+- **Optimization**: Gradient operations, weight updates (4-16 cycles)
 
-#### 4.2.5 MIMD Instructions
-- **Synchronization**: BARRIER, LOCK, UNLOCK, ATOMIC
-- **Communication**: SEND, RECV, BROADCAST, REDUCE
-- **Task Management**: SPAWN, JOIN, YIELD, PRIORITY
+#### 4.2.6 MIMD Instructions
+- **Synchronization**: BARRIER, LOCK, UNLOCK, ATOMIC (1-10 cycles)
+- **Communication**: SEND, RECV, BROADCAST, REDUCE (2-8 cycles)
+- **Task Management**: SPAWN, JOIN, YIELD, PRIORITY (1-20 cycles)
 
-### 4.3 Bus Matrix
+### 4.3 Register Architecture
+
+The AlphaAHB V5 ISA implements a comprehensive register architecture with 176 total registers. See `specs/register-architecture.md` for complete details.
+
+#### 4.3.1 Register File Overview
+- **General Purpose Registers**: 64 registers (R0-R63)
+  - R0-R15: Integer registers (64-bit)
+  - R16-R31: Extended integer registers (64-bit)
+  - R32-R47: Address registers (64-bit)
+  - R48-R63: Temporary registers (64-bit)
+- **Floating-Point Registers**: 64 registers (F0-F63)
+  - F0-F15: Single-precision (32-bit)
+  - F16-F31: Double-precision (64-bit)
+  - F32-F47: Extended-precision (128-bit)
+  - F48-F63: Arbitrary-precision (variable)
+- **Vector Registers**: 32 registers (V0-V31)
+  - V0-V15: 512-bit vector registers
+  - V16-V23: 256-bit vector registers
+  - V24-V27: 128-bit vector registers
+  - V28-V31: 64-bit vector registers
+- **Special Purpose Registers**: 16 registers
+  - Control: PC, SP, FP, LR
+  - Status: FLAGS, CORE_ID, THREAD_ID, PRIORITY
+  - Configuration: CONFIG, FEATURES, CACHE_CTRL, POWER_CTRL
+
+#### 4.3.2 Register Access Characteristics
+- **Access Ports**: 8 read ports, 4 write ports
+- **Access Latency**: 1 cycle for all operations
+- **Bypass Network**: Full bypass for single-cycle operations
+- **Register Renaming**: 64 physical registers for out-of-order execution
+
+### 4.4 Assembly Language
+
+The AlphaAHB V5 ISA provides a comprehensive assembly language with intuitive syntax. See `specs/assembly-language.md` for complete details.
+
+#### 4.4.1 Assembly Language Features
+- **Syntax**: Case-insensitive with intuitive instruction formats
+- **Addressing Modes**: Register, immediate, memory, and PC-relative addressing
+- **Instruction Types**: Integer, floating-point, vector, AI/ML, and MIMD instructions
+- **Pseudo-Instructions**: Common operations like MOV, NOP, RET
+- **Macro System**: Extensible macro definitions for code reuse
+- **Directives**: Complete set of data and code organization directives
+
+#### 4.4.2 Instruction Syntax Examples
+- **Integer**: `ADD R1, R2, R3` (add R2 and R3, store in R1)
+- **Memory**: `LOAD R1, [R2 + #100]` (load from R2 + 100)
+- **Branch**: `BEQ R1, R2, label` (branch if R1 == R2)
+- **Floating-Point**: `FADD F1, F2, F3` (floating-point add)
+- **Vector**: `VADD V1, V2, V3` (vector add)
+- **AI/ML**: `CONV V1, V2, V3, V4` (convolution operation)
+- **MIMD**: `BARRIER` (synchronization barrier)
+
+### 4.5 System Programming Interface
+
+The AlphaAHB V5 ISA provides a comprehensive system programming interface for modern operating systems. See `specs/system-programming.md` for complete details.
+
+#### 4.5.1 Privilege Levels
+- **4-Level Hierarchy**: User, Supervisor, Hypervisor, Machine
+- **Secure Transitions**: System calls, hypercalls, machine calls
+- **Access Control**: Privilege-based resource access
+
+#### 4.5.2 Exception Handling
+- **32 Exception Types**: Complete exception handling
+- **Exception Vectors**: 32-entry exception vector table
+- **Context Saving**: Automatic context preservation
+
+#### 4.5.3 Interrupt System
+- **Programmable Interrupt Controller**: 8 interrupt types
+- **Priority-Based**: Interrupt priority management
+- **Masking Support**: Interrupt enable/disable control
+
+#### 4.5.4 Virtual Memory Management
+- **64-bit Virtual Addressing**: 2^64 byte address space
+- **48-bit Physical Addressing**: 2^48 byte physical space
+- **Multi-level Page Tables**: 4-level page table hierarchy
+- **TLB Support**: 3-level translation lookaside buffer
+
+### 4.6 Bus Matrix
 
 The AlphaAHB V5 bus matrix supports:
 - Up to 16 masters
@@ -670,6 +753,70 @@ The V5 specification includes:
 - Hardware-in-the-loop testing
 - Performance profilers
 - Security analyzers
+
+---
+
+## 13. Testing and Validation
+
+### 13.1 Test Framework
+
+The AlphaAHB V5 specification includes a comprehensive test framework with complete test suites. See `tests/` directory for all test implementations.
+
+#### 13.1.1 Test Suite Components
+- **Instruction Tests**: Complete instruction validation (`instruction-tests.c`)
+- **IEEE 754 Compliance**: Full IEEE 754-2019 compliance testing (`ieee754-compliance.c`)
+- **Performance Benchmarks**: Comprehensive performance analysis (`performance-benchmarks.c`)
+- **Test Runner**: Automated test execution (`run-tests.sh`, `Makefile`)
+
+#### 13.1.2 Test Coverage
+- **Instruction Coverage**: 100% of all instruction types
+- **Register Coverage**: All register types and combinations
+- **Memory Coverage**: All addressing modes and access patterns
+- **Exception Coverage**: All exception types and handlers
+- **Performance Coverage**: All performance-critical paths
+- **Compliance Coverage**: Full IEEE 754-2019 standard compliance
+
+### 13.2 Test Execution
+
+#### 13.2.1 Running Tests
+```bash
+# Run all tests
+make test
+
+# Run specific test suites
+make test-instructions
+make test-ieee754
+make test-performance
+
+# Run with shell script
+./run-tests.sh
+```
+
+#### 13.2.2 Test Results
+- **Pass/Fail Status**: Clear indication of test results
+- **Performance Metrics**: Detailed timing and throughput measurements
+- **Compliance Reports**: IEEE 754-2019 compliance verification
+- **Log Files**: Detailed test execution logs in `results/` directory
+
+### 13.3 Validation Criteria
+
+#### 13.3.1 Instruction Validation
+- All instructions execute correctly
+- Proper register state updates
+- Correct memory access patterns
+- Exception handling works as specified
+
+#### 13.3.2 Performance Validation
+- Meets timing specifications
+- Achieves target throughput
+- Power consumption within limits
+- Scalability across core counts
+
+#### 13.3.3 Compliance Validation
+- Full IEEE 754-2019 compliance
+- ARM AMBA AHB 5.0 compatibility
+- Security standard compliance
+- Industry standard adherence
 
 ---
 

@@ -2,6 +2,8 @@
 
 This directory contains the complete Chisel implementation of the AlphaAHB V5 CPU softcore for FPGA synthesis and simulation.
 
+*Maintained by GLCTC Corp.*
+
 ## Overview
 
 The AlphaAHB V5 CPU softcore is implemented in Chisel, a hardware construction language that provides better abstraction, type safety, and code reuse compared to raw SystemVerilog. This implementation includes:

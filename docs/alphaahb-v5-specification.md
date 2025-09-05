@@ -6,7 +6,7 @@
 **Version**: 5.0  
 **Date**: September 2025  
 **Status**: Draft  
-**Authors**: Torus Kernel Development Team  
+**Authors**: AlphaAHB Development Team  
 **Based on**: [Alpha Architecture Handbook V4](http://www.o3one.org/hwdocs/alpha/alphaahb.pdf) by Compaq Computer Corporation
 
 ---
@@ -19,12 +19,14 @@
 4. [Bus Architecture](#4-bus-architecture)
 5. [Memory Management](#5-memory-management)
 6. [Vector Processing](#6-vector-processing)
-7. [AI Integration](#7-ai-integration)
-8. [Security Features](#8-security-features)
-9. [Performance Specifications](#9-performance-specifications)
-10. [Implementation Guidelines](#10-implementation-guidelines)
-11. [Compatibility](#11-compatibility)
-12. [Testing and Validation](#12-testing-and-validation)
+7. [Advanced Floating-Point Arithmetic](#7-advanced-floating-point-arithmetic)
+8. [MIMD Support](#8-mimd-support)
+9. [AI Integration](#9-ai-integration)
+10. [Security Features](#10-security-features)
+11. [Performance Specifications](#11-performance-specifications)
+12. [Implementation Guidelines](#12-implementation-guidelines)
+13. [Compatibility](#13-compatibility)
+14. [Testing and Validation](#14-testing-and-validation)
 
 ---
 
@@ -61,6 +63,8 @@ The AlphaAHB V5 architecture follows these core principles:
 - **Modularity**: Component-based design for flexibility
 - **Security**: Hardware-level security and threat detection
 - **AI-Ready**: Built-in support for machine learning workloads
+- **Advanced Arithmetic**: IEEE 754-2019, block FP, arbitrary-precision, tapered FP
+- **MIMD Capable**: Multiple Instruction, Multiple Data parallel processing
 
 ### 2.2 System Architecture
 
@@ -291,17 +295,172 @@ Hardware-accelerated matrix operations:
 
 ---
 
-## 7. AI Integration
+## 7. Advanced Floating-Point Arithmetic
 
-### 7.1 Neural Processing Units (NPU)
+### 7.1 IEEE 754-2019 Support
 
-#### 7.1.1 Architecture
+AlphaAHB V5 provides comprehensive IEEE 754-2019 floating-point arithmetic support with multiple precision formats and advanced rounding modes.
+
+#### 7.1.1 Supported Formats
+
+| Format | Bits | Exponent | Mantissa | Range | Precision |
+|--------|------|----------|----------|-------|-----------|
+| Binary16 | 16 | 5 | 10 | ±6.55×10⁴ | 3.31 decimal |
+| Binary32 | 32 | 8 | 23 | ±3.4×10³⁸ | 7.22 decimal |
+| Binary64 | 64 | 11 | 52 | ±1.8×10³⁰⁸ | 15.95 decimal |
+| Binary128 | 128 | 15 | 112 | ±1.2×10⁴⁹³² | 34.02 decimal |
+| Binary256 | 256 | 19 | 236 | ±1.6×10⁷⁸⁹¹³ | 71.34 decimal |
+| Binary512 | 512 | 27 | 484 | ±1.0×10¹⁵⁷⁸²⁶⁰ | 145.68 decimal |
+
+#### 7.1.2 Rounding Modes
+
+- **Round to Nearest, Ties to Even**: Default IEEE 754 behavior
+- **Round to Nearest, Ties Away from Zero**: Alternative rounding
+- **Round Toward Zero**: Truncation mode
+- **Round Toward Positive Infinity**: Ceiling mode
+- **Round Toward Negative Infinity**: Floor mode
+
+#### 7.1.3 Exception Handling
+
+Complete IEEE 754 exception support including:
+- Invalid Operation (0×∞, ∞-∞, sqrt(-1))
+- Division by Zero (x/0, x≠0)
+- Overflow (Result too large)
+- Underflow (Result too small)
+- Inexact (Result not exact)
+
+### 7.2 Block Floating-Point Arithmetic
+
+Block floating-point (BFP) provides memory-efficient representation for AI/ML workloads by sharing a single exponent across a block of numbers.
+
+#### 7.2.1 BFP Formats
+
+| Block Size | Mantissa Bits | Memory Efficiency | Use Case |
+|------------|---------------|-------------------|----------|
+| 8 | 7 | 87.5% | Small vectors |
+| 16 | 7 | 93.3% | Medium vectors |
+| 32 | 6 | 96.0% | Large vectors |
+| 64 | 5 | 98.5% | Very large vectors |
+| 128 | 4 | 99.2% | Massive vectors |
+
+#### 7.2.2 BFP Operations
+
+- Block addition with automatic exponent alignment
+- Block multiplication with scalar values
+- Block normalization and denormalization
+- Hardware-accelerated BFP matrix operations
+
+### 7.3 Arbitrary-Precision Arithmetic
+
+Support for unlimited precision arithmetic essential for cryptographic and scientific computing applications.
+
+#### 7.3.1 Precision Support
+
+| Precision | Bits | Decimal Digits | Use Case |
+|-----------|------|----------------|----------|
+| 64 | 64 | 19 | Standard double |
+| 128 | 128 | 38 | Extended precision |
+| 256 | 256 | 77 | High precision |
+| 512 | 512 | 154 | Very high precision |
+| 1024 | 1024 | 308 | Cryptographic |
+| 2048 | 2048 | 616 | RSA-2048 |
+| 4096 | 4096 | 1233 | RSA-4096 |
+
+#### 7.3.2 Operations
+
+- Addition with carry propagation
+- Multiplication using Karatsuba algorithm
+- Division with remainder
+- Modular arithmetic
+- Cryptographic operations
+
+### 7.4 Tapered Floating-Point
+
+Tapered floating-point provides improved numerical stability for iterative algorithms by gradually reducing precision.
+
+#### 7.4.1 Tapering Strategies
+
+- **Linear Tapering**: Gradual precision reduction
+- **Exponential Tapering**: Exponential precision decay
+- **Adaptive Tapering**: Precision based on convergence
+
+#### 7.4.2 Applications
+
+- Iterative matrix algorithms
+- Numerical optimization
+- Machine learning training
+- Scientific simulations
+
+---
+
+## 8. MIMD Support
+
+### 8.1 MIMD Architecture
+
+Multiple Instruction, Multiple Data (MIMD) allows different cores to execute different instructions on different data simultaneously.
+
+#### 8.1.1 Core Specialization
+
+- **Vector Cores**: Specialized for SIMD operations
+- **Matrix Cores**: Optimized for matrix operations
+- **Neural Cores**: Dedicated AI/ML processing
+- **Quantum Cores**: Quantum simulation acceleration
+- **Arithmetic Cores**: High-precision arithmetic
+- **BFP Cores**: Block floating-point processing
+
+#### 8.1.2 Inter-Core Communication
+
+- High-speed interconnect fabric
+- Message-passing interface
+- Shared memory with NUMA awareness
+- Hardware synchronization primitives
+
+### 8.2 MIMD Programming Model
+
+#### 8.2.1 Task Distribution
+
+- Dynamic task scheduling
+- Load balancing algorithms
+- Priority-based scheduling
+- Deadline-aware scheduling
+
+#### 8.2.2 Synchronization
+
+- Barriers for global synchronization
+- Locks for critical sections
+- Atomic operations
+- Memory ordering guarantees
+
+### 8.3 MIMD Performance
+
+#### 8.3.1 Scalability
+
+- Linear scaling up to 1024 cores
+- Sub-linear communication overhead
+- Efficient memory hierarchy
+- Dynamic power management
+
+#### 8.3.2 Latency Characteristics
+
+| Operation | Latency | Bandwidth | Use Case |
+|-----------|---------|-----------|----------|
+| Core-to-Core | 10 ns | 1 TB/s | Fine-grained parallelism |
+| Memory Access | 100 ns | 500 GB/s | Data sharing |
+| Synchronization | 50 ns | N/A | Coordination |
+
+---
+
+## 9. AI Integration
+
+### 9.1 Neural Processing Units (NPU)
+
+#### 9.1.1 Architecture
 - 1024 processing elements (PEs)
 - 8-bit, 16-bit, and 32-bit precision support
 - Dynamic precision switching
 - Sparse matrix support
 
-#### 7.1.2 Supported Operations
+#### 9.1.2 Supported Operations
 - Convolution layers
 - Fully connected layers
 - Activation functions (ReLU, Sigmoid, Tanh)
@@ -309,27 +468,27 @@ Hardware-accelerated matrix operations:
 - Batch normalization
 - Dropout
 
-#### 7.1.3 Model Support
+#### 9.1.3 Model Support
 - TensorFlow Lite models
 - PyTorch Mobile models
 - ONNX models
 - Custom model formats
 
-### 7.2 Quantum Simulation Units (QSU)
+### 9.2 Quantum Simulation Units (QSU)
 
-#### 7.2.1 Quantum State Representation
+#### 9.2.1 Quantum State Representation
 - Up to 40 qubits simulation
 - Complex amplitude storage
 - Quantum state compression
 - Error correction codes
 
-#### 7.2.2 Quantum Operations
+#### 9.2.2 Quantum Operations
 - Single-qubit gates (X, Y, Z, H, S, T)
 - Two-qubit gates (CNOT, CZ, SWAP)
 - Multi-qubit gates
 - Quantum measurement
 
-#### 7.2.3 Quantum Algorithms
+#### 9.2.3 Quantum Algorithms
 - Quantum Fourier Transform (QFT)
 - Grover's algorithm
 - Shor's algorithm
@@ -337,11 +496,11 @@ Hardware-accelerated matrix operations:
 
 ---
 
-## 8. Security Features
+## 10. Security Features
 
-### 8.1 Hardware Security
+### 10.1 Hardware Security
 
-#### 8.1.1 Encryption Units
+#### 10.1.1 Encryption Units
 - AES-256 encryption/decryption
 - RSA-4096 key operations
 - Elliptic curve cryptography (P-521)
@@ -375,9 +534,9 @@ Hardware-accelerated matrix operations:
 
 ---
 
-## 9. Performance Specifications
+## 11. Performance Specifications
 
-### 9.1 Timing Characteristics
+### 11.1 Timing Characteristics
 
 | Parameter | Min | Typ | Max | Unit |
 |-----------|-----|-----|-----|------|
@@ -412,9 +571,9 @@ Hardware-accelerated matrix operations:
 
 ---
 
-## 10. Implementation Guidelines
+## 12. Implementation Guidelines
 
-### 10.1 Design Requirements
+### 12.1 Design Requirements
 
 #### 10.1.1 Clocking
 - Single global clock domain
@@ -456,9 +615,9 @@ Hardware-accelerated matrix operations:
 
 ---
 
-## 11. Compatibility
+## 13. Compatibility
 
-### 11.1 Backward Compatibility
+### 13.1 Backward Compatibility
 
 AlphaAHB V5 maintains backward compatibility with:
 - AlphaAHB V4 instruction set
@@ -476,9 +635,9 @@ The V5 specification includes:
 
 ---
 
-## 12. Testing and Validation
+## 14. Testing and Validation
 
-### 12.1 Test Suites
+### 14.1 Test Suites
 
 #### 12.1.1 Functional Tests
 - Instruction set verification
@@ -511,7 +670,7 @@ The V5 specification includes:
 
 The AlphaAHB V5 Specification represents a significant advancement in high-performance computing architecture, providing the foundation for next-generation systems that require exceptional performance, security, and AI capabilities.
 
-This specification serves as the definitive guide for implementing AlphaAHB V5-compliant systems and ensures compatibility with the Torus Kernel and OS/3 Astralis operating system.
+This specification serves as the definitive guide for implementing AlphaAHB V5-compliant systems with comprehensive support for advanced floating-point arithmetic, MIMD processing, and cutting-edge AI/ML acceleration.
 
 ---
 

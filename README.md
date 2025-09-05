@@ -4,13 +4,14 @@
 
 The AlphaAHB V5 Specification represents the fifth generation of the Alpha Advanced High-performance Bus (AHB) architecture, building upon the foundation established by the original Alpha Architecture Handbook (Version 4) from Compaq Computer Corporation.
 
-This specification defines a modern, high-performance bus architecture designed for next-generation computing systems, with particular focus on integration with the Torus Kernel and OS/3 Astralis operating system.
+This specification defines a modern, high-performance bus architecture designed for next-generation computing systems, featuring advanced floating-point arithmetic, MIMD capabilities, and cutting-edge AI/ML acceleration.
 
 ## Key Features
 
 - **Enhanced Performance**: 5x improvement over V4 specification
 - **Modern Bus Architecture**: Based on ARM AMBA AHB 5.0 standards
-- **Multi-Architecture Support**: Seamless integration with 8 major processor architectures
+- **Advanced Floating-Point**: IEEE 754-2019, block FP, arbitrary-precision, tapered FP
+- **MIMD Support**: Multiple Instruction, Multiple Data parallel processing
 - **AI Integration**: Built-in support for machine learning and neural network operations
 - **Advanced Security**: Hardware-level security features and threat detection
 - **Scalable Design**: Support for 1-1024 cores with dynamic scaling
@@ -60,7 +61,7 @@ This specification is released under the MIT License. See `LICENSE` for details.
 
 - [Original Alpha Architecture Handbook V4](http://www.o3one.org/hwdocs/alpha/alphaahb.pdf)
 - [ARM AMBA AHB 5.0 Specification](https://developer.arm.com/documentation/ihi0011/latest/)
-- [Torus Kernel Project](https://github.com/Galactic-FaaS/Torus_Kernel)
+- [IEEE 754-2019 Standard](https://ieeexplore.ieee.org/document/8766229)
 
 ---
 

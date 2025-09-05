@@ -9,11 +9,18 @@ This document defines the complete assembly language syntax, addressing modes, p
 1. [Assembly Language Syntax](#1-assembly-language-syntax)
 2. [Addressing Modes](#2-addressing-modes)
 3. [Instruction Syntax](#3-instruction-syntax)
-4. [Pseudo-Instructions](#4-pseudo-instructions)
-5. [Macro Definitions](#5-macro-definitions)
-6. [Directives](#6-directives)
-7. [Expression Syntax](#7-expression-syntax)
-8. [Assembly Examples](#8-assembly-examples)
+4. [Security Instructions](#4-security-instructions)
+5. [AI/ML Instructions](#5-aiml-instructions)
+6. [Vector Instructions](#6-vector-instructions)
+7. [MIMD Instructions](#7-mimd-instructions)
+8. [Scientific Computing Instructions](#8-scientific-computing-instructions)
+9. [Real-Time and Safety Instructions](#9-real-time-and-safety-instructions)
+10. [Debug and Profiling Instructions](#10-debug-and-profiling-instructions)
+11. [Pseudo-Instructions](#11-pseudo-instructions)
+12. [Macro Definitions](#12-macro-definitions)
+13. [Directives](#13-directives)
+14. [Expression Syntax](#14-expression-syntax)
+15. [Assembly Examples](#15-assembly-examples)
 
 ---
 
@@ -329,7 +336,249 @@ This document defines the complete assembly language syntax, addressing modes, p
 
 ---
 
-## 4. Pseudo-Instructions
+## 4. Security Instructions
+
+### 4.1 Memory Protection Key Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| MPK_SET | `MPK_SET Rd, Rs1, #imm` | Set memory protection key |
+| MPK_GET | `MPK_GET Rd, Rs1` | Get memory protection key |
+| MPK_ENABLE | `MPK_ENABLE Rs1, #imm` | Enable memory protection |
+| MPK_DISABLE | `MPK_DISABLE Rs1, #imm` | Disable memory protection |
+| MPK_CHECK | `MPK_CHECK Rd, Rs1, Rs2` | Check memory protection |
+
+### 4.2 Control Flow Integrity Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| CFI_CHECK | `CFI_CHECK Rs1, Rs2` | Check indirect branch target |
+| CFI_ADD | `CFI_ADD Rs1, #imm` | Add valid target to CFI table |
+| CFI_REMOVE | `CFI_REMOVE Rs1, #imm` | Remove target from CFI table |
+| CFI_VERIFY | `CFI_VERIFY Rs1` | Verify CFI table integrity |
+
+### 4.3 Pointer Authentication Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| PA_SIGN | `PA_SIGN Rd, Rs1, Rs2, #imm` | Sign pointer with authentication code |
+| PA_VERIFY | `PA_VERIFY Rd, Rs1, Rs2, #imm` | Verify pointer authentication code |
+| PA_STRIP | `PA_STRIP Rd, Rs1` | Strip authentication code from pointer |
+| PA_AUTH | `PA_AUTH Rd, Rs1, Rs2, #imm` | Authenticate and strip pointer |
+
+### 4.4 Secure Enclave Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| SE_CREATE | `SE_CREATE Rd, Rs1, Rs2` | Create secure enclave |
+| SE_DESTROY | `SE_DESTROY Rs1` | Destroy secure enclave |
+| SE_ENTER | `SE_ENTER Rs1, #imm` | Enter secure enclave |
+| SE_EXIT | `SE_EXIT Rs1` | Exit secure enclave |
+| SE_ATTEST | `SE_ATTEST Rd, Rs1` | Generate enclave attestation |
+
+### 4.5 Cryptographic Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| AES_ENC | `AES_ENC Vd, Vs1, Vs2` | AES encryption |
+| AES_DEC | `AES_DEC Vd, Vs1, Vs2` | AES decryption |
+| AES_KEY | `AES_KEY Vd, Vs1, #imm` | AES key expansion |
+| SHA3_256 | `SHA3_256 Vd, Vs1, #imm` | SHA-3 256-bit hash |
+| RSA_MODEXP | `RSA_MODEXP Rd, Rs1, Rs2, Rs3` | RSA modular exponentiation |
+| ECC_POINT_MUL | `ECC_POINT_MUL Vd, Vs1, Vs2` | ECC point multiplication |
+
+---
+
+## 5. AI/ML Instructions
+
+### 5.1 Neural Network Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| CONV | `CONV Ad, As1, As2, #imm` | Convolution operation |
+| FC | `FC Ad, As1, As2` | Fully connected layer |
+| RELU | `RELU Ad, As1` | ReLU activation |
+| SIGMOID | `SIGMOID Ad, As1` | Sigmoid activation |
+| TANH | `TANH Ad, As1` | Tanh activation |
+| SOFTMAX | `SOFTMAX Ad, As1` | Softmax activation |
+| POOL | `POOL Ad, As1, #imm` | Pooling operation |
+| BATCHNORM | `BATCHNORM Ad, As1, As2` | Batch normalization |
+
+### 5.2 Advanced AI Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| ATTENTION | `ATTENTION Ad, As1, As2, As3` | Multi-head attention |
+| TRANSFORMER | `TRANSFORMER Ad, As1, As2` | Transformer block |
+| LSTM | `LSTM Ad, As1, As2, As3` | LSTM cell |
+| GRU | `GRU Ad, As1, As2` | GRU cell |
+| GAN_TRAIN | `GAN_TRAIN Ad, As1, As2` | GAN training |
+| DIFFUSION | `DIFFUSION Ad, As1, As2` | Diffusion model |
+| QUANTIZE | `QUANTIZE Ad, As1, #imm` | Quantization |
+
+---
+
+## 6. Vector Instructions
+
+### 6.1 Basic Vector Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| VADD | `VADD Vd, Vs1, Vs2` | Vector addition |
+| VSUB | `VSUB Vd, Vs1, Vs2` | Vector subtraction |
+| VMUL | `VMUL Vd, Vs1, Vs2` | Vector multiplication |
+| VDIV | `VDIV Vd, Vs1, Vs2` | Vector division |
+| VFMA | `VFMA Vd, Vs1, Vs2, Vs3` | Vector fused multiply-add |
+| VSQRT | `VSQRT Vd, Vs1` | Vector square root |
+| VDOT | `VDOT Vd, Vs1, Vs2` | Vector dot product |
+| VCROSS | `VCROSS Vd, Vs1, Vs2` | Vector cross product |
+
+### 6.2 Advanced Vector Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| VGATHER | `VGATHER Vd, Vs1, Vs2` | Vector gather |
+| VSCATTER | `VSCATTER Vd, Vs1, Vs2` | Vector scatter |
+| VSHUFFLE | `VSHUFFLE Vd, Vs1, Vs2` | Vector shuffle |
+| VPERMUTE | `VPERMUTE Vd, Vs1, Vs2` | Vector permute |
+| VBLEND | `VBLEND Vd, Vs1, Vs2, Vs3` | Vector blend |
+| VTRANSPOSE | `VTRANSPOSE Vd, Vs1` | Vector transpose |
+| VREDUCE | `VREDUCE Vd, Vs1, #imm` | Vector reduction |
+| VMASK | `VMASK Vd, Vs1, Vs2` | Vector mask operations |
+
+---
+
+## 7. MIMD Instructions
+
+### 7.1 Hardware Transactional Memory Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| HTM_BEGIN | `HTM_BEGIN #imm` | Begin hardware transaction |
+| HTM_END | `HTM_END` | Commit hardware transaction |
+| HTM_ABORT | `HTM_ABORT #imm` | Abort hardware transaction |
+| HTM_TEST | `HTM_TEST Rd` | Test transaction status |
+| HTM_RETRY | `HTM_RETRY #imm` | Retry failed transaction |
+
+### 7.2 NUMA Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| NUMA_NODES | `NUMA_NODES Rd` | Get number of NUMA nodes |
+| NUMA_DISTANCE | `NUMA_DISTANCE Rd, Rs1, Rs2` | Get distance between nodes |
+| NUMA_AFFINITY | `NUMA_AFFINITY Rs1, #imm` | Set thread affinity to node |
+| NUMA_MIGRATE | `NUMA_MIGRATE Rs1, Rs2, #imm` | Migrate data between nodes |
+| NUMA_ALLOC | `NUMA_ALLOC Rd, Rs1, #imm` | Allocate memory on specific node |
+
+### 7.3 Message Passing Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| MPI_SEND | `MPI_SEND Rs1, Rs2, Rs3, #imm` | Send message to target core |
+| MPI_RECV | `MPI_RECV Rd, Rs1, Rs2, #imm` | Receive message from source core |
+| MPI_BROADCAST | `MPI_BROADCAST Rs1, Rs2, #imm` | Broadcast message to all cores |
+| MPI_REDUCE | `MPI_REDUCE Rd, Rs1, Rs2, #imm` | Reduce operation across cores |
+| MPI_SCATTER | `MPI_SCATTER Rs1, Rs2, Rs3, #imm` | Scatter data to multiple cores |
+| MPI_GATHER | `MPI_GATHER Rd, Rs1, Rs2, #imm` | Gather data from multiple cores |
+
+---
+
+## 8. Scientific Computing Instructions
+
+### 8.1 Decimal Floating-Point Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| DFP_ADD | `DFP_ADD DFPd, DFP1, DFP2` | Decimal floating-point addition |
+| DFP_SUB | `DFP_SUB DFPd, DFP1, DFP2` | Decimal floating-point subtraction |
+| DFP_MUL | `DFP_MUL DFPd, DFP1, DFP2` | Decimal floating-point multiplication |
+| DFP_DIV | `DFP_DIV DFPd, DFP1, DFP2` | Decimal floating-point division |
+| DFP_SQRT | `DFP_SQRT DFPd, DFP1` | Decimal floating-point square root |
+| DFP_ROUND | `DFP_ROUND DFPd, DFP1, #imm` | Decimal floating-point rounding |
+
+### 8.2 Interval Arithmetic Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| INT_ADD | `INT_ADD INTd, INT1, INT2` | Interval addition |
+| INT_SUB | `INT_SUB INTd, INT1, INT2` | Interval subtraction |
+| INT_MUL | `INT_MUL INTd, INT1, INT2` | Interval multiplication |
+| INT_DIV | `INT_DIV INTd, INT1, INT2` | Interval division |
+| INT_SQRT | `INT_SQRT INTd, INT1` | Interval square root |
+| INT_WIDTH | `INT_WIDTH Rd, INT1` | Compute interval width |
+
+### 8.3 Complex Number Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| COMPLEX_ADD | `COMPLEX_ADD COMPLEXd, COMPLEX1, COMPLEX2` | Complex addition |
+| COMPLEX_SUB | `COMPLEX_SUB COMPLEXd, COMPLEX1, COMPLEX2` | Complex subtraction |
+| COMPLEX_MUL | `COMPLEX_MUL COMPLEXd, COMPLEX1, COMPLEX2` | Complex multiplication |
+| COMPLEX_DIV | `COMPLEX_DIV COMPLEXd, COMPLEX1, COMPLEX2` | Complex division |
+| COMPLEX_CONJ | `COMPLEX_CONJ COMPLEXd, COMPLEX1` | Complex conjugate |
+| COMPLEX_ABS | `COMPLEX_ABS Fd, COMPLEX1` | Complex absolute value |
+
+---
+
+## 9. Real-Time and Safety Instructions
+
+### 9.1 Real-Time Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| RT_SET_PRIORITY | `RT_SET_PRIORITY #imm` | Set real-time priority |
+| RT_GET_PRIORITY | `RT_GET_PRIORITY Rd` | Get current priority |
+| RT_SET_DEADLINE | `RT_SET_DEADLINE #imm` | Set task deadline |
+| RT_CHECK_DEADLINE | `RT_CHECK_DEADLINE Rd` | Check deadline violation |
+| RT_YIELD | `RT_YIELD` | Yield CPU to higher priority task |
+
+### 9.2 Safety Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| SAFETY_INIT | `SAFETY_INIT #imm` | Initialize safety system |
+| SAFETY_CHECK | `SAFETY_CHECK Rd` | Perform safety check |
+| SAFETY_FAULT | `SAFETY_FAULT #imm` | Report safety fault |
+| SAFETY_RESET | `SAFETY_RESET` | Reset safety system |
+| SAFETY_SHUTDOWN | `SAFETY_SHUTDOWN #imm` | Safe shutdown procedure |
+
+---
+
+## 10. Debug and Profiling Instructions
+
+### 10.1 Performance Counter Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| PERF_START | `PERF_START #imm` | Start performance counting |
+| PERF_STOP | `PERF_STOP #imm` | Stop performance counting |
+| PERF_READ | `PERF_READ Rd, #imm` | Read performance counter |
+| PERF_RESET | `PERF_RESET #imm` | Reset performance counter |
+| PERF_SELECT | `PERF_SELECT #imm, #imm2` | Select counter events |
+
+### 10.2 Trace Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| TRACE_START | `TRACE_START #imm` | Start trace collection |
+| TRACE_STOP | `TRACE_STOP` | Stop trace collection |
+| TRACE_READ | `TRACE_READ Rd, Rs1` | Read trace data |
+| TRACE_CLEAR | `TRACE_CLEAR` | Clear trace buffer |
+| TRACE_CONFIG | `TRACE_CONFIG Rs1, #imm` | Configure trace parameters |
+
+### 10.3 Breakpoint Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| BP_SET | `BP_SET Rs1, #imm` | Set breakpoint |
+| BP_CLEAR | `BP_CLEAR #imm` | Clear breakpoint |
+| BP_ENABLE | `BP_ENABLE #imm` | Enable breakpoint |
+| BP_DISABLE | `BP_DISABLE #imm` | Disable breakpoint |
+| BP_CONDITION | `BP_CONDITION #imm, Rs1` | Set breakpoint condition |
+
+---
+
+## 11. Pseudo-Instructions
 
 ### 4.1 Data Movement Pseudo-Instructions
 

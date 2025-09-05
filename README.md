@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # AlphaAHB V5 ISA Specification
 
 ## Overview
@@ -66,3 +67,7 @@ This specification is released under the MIT License. See `LICENSE` for details.
 ---
 
 **AlphaAHB V5 ISA Specification** - The Future of High-Performance Computing Architecture
+=======
+# -AlphaAHB-V5-Specification
+Alpha v5
+>>>>>>> db1eb2504d663423f74dc565b8d9a75e870bdc1d

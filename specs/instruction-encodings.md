@@ -617,6 +617,41 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 | `SPARSE_ATTN` | A-Type | 0x9 | 0xE | Sparse attention |
 | `QUANTIZE` | A-Type | 0x9 | 0xF | Quantization |
 
+### 7.3 Extended Precision AI Operations (FP256)
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `FP256_ADD` | F-Type | 0x9A | 0x0 | FP256 addition |
+| `FP256_SUB` | F-Type | 0x9A | 0x1 | FP256 subtraction |
+| `FP256_MUL` | F-Type | 0x9A | 0x2 | FP256 multiplication |
+| `FP256_DIV` | F-Type | 0x9A | 0x3 | FP256 division |
+| `FP256_SQRT` | F-Type | 0x9A | 0x4 | FP256 square root |
+| `FP256_FMA` | F-Type | 0x9A | 0x5 | FP256 fused multiply-add |
+| `FP256_CMP` | F-Type | 0x9A | 0x6 | FP256 comparison |
+| `FP256_CVT` | F-Type | 0x9A | 0x7 | FP256 conversion |
+| `FP256_ROUND` | F-Type | 0x9A | 0x8 | FP256 rounding |
+| `FP256_ABS` | F-Type | 0x9A | 0x9 | FP256 absolute value |
+| `FP256_NEG` | F-Type | 0x9A | 0xA | FP256 negation |
+| `FP256_MIN` | F-Type | 0x9A | 0xB | FP256 minimum |
+| `FP256_MAX` | F-Type | 0x9A | 0xC | FP256 maximum |
+
+### 7.4 Homomorphic Encryption Operations
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `FHE_ENC` | A-Type | 0x9B | 0x0 | Homomorphic encryption |
+| `FHE_DEC` | A-Type | 0x9B | 0x1 | Homomorphic decryption |
+| `FHE_ADD` | A-Type | 0x9B | 0x2 | Homomorphic addition |
+| `FHE_MUL` | A-Type | 0x9B | 0x3 | Homomorphic multiplication |
+| `FHE_NEG` | A-Type | 0x9B | 0x4 | Homomorphic negation |
+| `FHE_ROT` | A-Type | 0x9B | 0x5 | Homomorphic rotation |
+| `FHE_CONJ` | A-Type | 0x9B | 0x6 | Homomorphic conjugation |
+| `FHE_CMUL` | A-Type | 0x9B | 0x7 | Homomorphic constant multiplication |
+| `FHE_BS` | A-Type | 0x9B | 0x8 | Homomorphic bootstrapping |
+| `FHE_KS` | A-Type | 0x9B | 0x9 | Homomorphic key switching |
+| `FHE_NTT` | A-Type | 0x9B | 0xA | Number Theoretic Transform |
+| `FHE_INTT` | A-Type | 0x9B | 0xB | Inverse Number Theoretic Transform |
+
 ---
 
 ## 8. Vector Processing Instructions

@@ -416,6 +416,41 @@ This document defines the complete assembly language syntax, addressing modes, p
 | DIFFUSION | `DIFFUSION Ad, As1, As2` | Diffusion model |
 | QUANTIZE | `QUANTIZE Ad, As1, #imm` | Quantization |
 
+### 5.3 Extended Precision AI Instructions (FP256)
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| `FP256_ADD` | `FP256_ADD FP256d, FP256s1, FP256s2` | FP256 addition |
+| `FP256_SUB` | `FP256_SUB FP256d, FP256s1, FP256s2` | FP256 subtraction |
+| `FP256_MUL` | `FP256_MUL FP256d, FP256s1, FP256s2` | FP256 multiplication |
+| `FP256_DIV` | `FP256_DIV FP256d, FP256s1, FP256s2` | FP256 division |
+| `FP256_SQRT` | `FP256_SQRT FP256d, FP256s1` | FP256 square root |
+| `FP256_FMA` | `FP256_FMA FP256d, FP256s1, FP256s2, FP256s3` | FP256 fused multiply-add |
+| `FP256_CMP` | `FP256_CMP FP256s1, FP256s2` | FP256 comparison |
+| `FP256_CVT` | `FP256_CVT Fd, FP256s1` | FP256 conversion |
+| `FP256_ROUND` | `FP256_ROUND FP256d, FP256s1, #imm` | FP256 rounding |
+| `FP256_ABS` | `FP256_ABS FP256d, FP256s1` | FP256 absolute value |
+| `FP256_NEG` | `FP256_NEG FP256d, FP256s1` | FP256 negation |
+| `FP256_MIN` | `FP256_MIN FP256d, FP256s1, FP256s2` | FP256 minimum |
+| `FP256_MAX` | `FP256_MAX FP256d, FP256s1, FP256s2` | FP256 maximum |
+
+### 5.4 Homomorphic Encryption Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| `FHE_ENC` | `FHE_ENC FHEd, Rs1, Rs2` | Homomorphic encryption |
+| `FHE_DEC` | `FHE_DEC Rd, FHEs1, Rs2` | Homomorphic decryption |
+| `FHE_ADD` | `FHE_ADD FHEd, FHEs1, FHEs2` | Homomorphic addition |
+| `FHE_MUL` | `FHE_MUL FHEd, FHEs1, FHEs2` | Homomorphic multiplication |
+| `FHE_NEG` | `FHE_NEG FHEd, FHEs1` | Homomorphic negation |
+| `FHE_ROT` | `FHE_ROT FHEd, FHEs1, #imm` | Homomorphic rotation |
+| `FHE_CONJ` | `FHE_CONJ FHEd, FHEs1` | Homomorphic conjugation |
+| `FHE_CMUL` | `FHE_CMUL FHEd, FHEs1, Rs2` | Homomorphic constant multiplication |
+| `FHE_BS` | `FHE_BS FHEd, FHEs1` | Homomorphic bootstrapping |
+| `FHE_KS` | `FHE_KS FHEd, FHEs1, Rs2` | Homomorphic key switching |
+| `FHE_NTT` | `FHE_NTT FHEd, FHEs1` | Number Theoretic Transform |
+| `FHE_INTT` | `FHE_INTT FHEd, FHEs1` | Inverse Number Theoretic Transform |
+
 ---
 
 ## 6. Vector Instructions

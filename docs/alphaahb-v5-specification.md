@@ -1614,11 +1614,13 @@ SAFETY_FAULT R4, #0x2000       # Report fault with code 0x2000
 
 #### 9.1.1 Advanced Architecture
 - **2048 processing elements (PEs)** with dynamic reconfiguration
-- **Multi-precision support**: INT1, INT4, INT8, INT16, FP16, FP32, BF16
+- **Multi-precision support**: INT1, INT4, INT8, INT16, FP16, FP32, BF16, FP64, FP128, FP256
+- **Extended precision support**: FP256 for ultra-high precision AI/ML workloads
 - **Dynamic precision switching** with zero-overhead transitions
 - **Sparse matrix acceleration** with 90% sparsity support
 - **Variable vector length** from 64-bit to 512-bit operations
 - **Hardware-optimized dataflow** for transformer architectures
+- **Homomorphic encryption acceleration** for privacy-preserving computation
 
 #### 9.1.2 Enhanced Neural Network Operations
 
@@ -1738,6 +1740,147 @@ SAFETY_FAULT R4, #0x2000       # Report fault with code 0x2000
 - **Activation Compression**: 4x memory reduction
 - **Gradient Compression**: 8x communication reduction
 - **Sparse Storage**: 90% memory savings for sparse models
+
+#### 9.1.8 Extended Precision Support (FP256)
+
+**Ultra-High Precision Architecture:**
+- **FP256 Format**: 256-bit floating-point with 1 sign bit, 19 exponent bits, 236 mantissa bits
+- **Precision Range**: ~71 decimal digits of precision
+- **Exponent Range**: ±262,143 (approximately ±10^78,000)
+- **Special Values**: ±0, ±∞, NaN with extended payload
+- **Rounding Modes**: IEEE 754-2019 compliant (RNE, RTZ, RTP, RTN, RMM)
+
+**FP256 Register Organization:**
+| Register | Bits | Description | Elements |
+|----------|------|-------------|----------|
+| `FP256_0` | 255:0 | FP256 register 0 | 1×256-bit |
+| `FP256_1` | 255:0 | FP256 register 1 | 1×256-bit |
+| `FP256_2` | 255:0 | FP256 register 2 | 1×256-bit |
+| `FP256_3` | 255:0 | FP256 register 3 | 1×256-bit |
+| `FP256_4` | 255:0 | FP256 register 4 | 1×256-bit |
+| `FP256_5` | 255:0 | FP256 register 5 | 1×256-bit |
+| `FP256_6` | 255:0 | FP256 register 6 | 1×256-bit |
+| `FP256_7` | 255:0 | FP256 register 7 | 1×256-bit |
+
+**FP256 Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `FP256_ADD` | `0x9A0` | FP256 addition |
+| `FP256_SUB` | `0x9A1` | FP256 subtraction |
+| `FP256_MUL` | `0x9A2` | FP256 multiplication |
+| `FP256_DIV` | `0x9A3` | FP256 division |
+| `FP256_SQRT` | `0x9A4` | FP256 square root |
+| `FP256_FMA` | `0x9A5` | FP256 fused multiply-add |
+| `FP256_CMP` | `0x9A6` | FP256 comparison |
+| `FP256_CVT` | `0x9A7` | FP256 conversion |
+| `FP256_ROUND` | `0x9A8` | FP256 rounding |
+| `FP256_ABS` | `0x9A9` | FP256 absolute value |
+| `FP256_NEG` | `0x9AA` | FP256 negation |
+| `FP256_MIN` | `0x9AB` | FP256 minimum |
+| `FP256_MAX` | `0x9AC` | FP256 maximum |
+
+**FP256 Usage Example:**
+```assembly
+# Ultra-high precision scientific computation
+FP256_ADD FP256_0, FP256_1, FP256_2    # FP256_0 = FP256_1 + FP256_2
+FP256_MUL FP256_3, FP256_0, FP256_4    # FP256_3 = FP256_0 * FP256_4
+FP256_SQRT FP256_5, FP256_3            # FP256_5 = sqrt(FP256_3)
+
+# Convert to lower precision for output
+FP256_CVT F0, FP256_5                  # Convert FP256_5 to FP32 F0
+```
+
+#### 9.1.9 Homomorphic Encryption Acceleration
+
+**Homomorphic Encryption Overview:**
+- **Fully Homomorphic Encryption (FHE)**: Computation on encrypted data
+- **Somewhat Homomorphic Encryption (SHE)**: Limited operations on encrypted data
+- **Partially Homomorphic Encryption (PHE)**: Specific operations (add/multiply)
+- **Lattice-based cryptography**: Post-quantum secure schemes
+- **Ring Learning with Errors (RLWE)**: Efficient FHE implementation
+
+**Supported FHE Schemes:**
+- **BGV Scheme**: Brakerski-Gentry-Vaikuntanathan
+- **BFV Scheme**: Brakerski-Fan-Vercauteren
+- **CKKS Scheme**: Cheon-Kim-Kim-Song (approximate arithmetic)
+- **TFHE Scheme**: Torus FHE (boolean circuits)
+- **HEAAN Scheme**: Homomorphic Encryption for Arithmetic of Approximate Numbers
+
+**FHE Hardware Acceleration:**
+- **NTT Accelerator**: Number Theoretic Transform for polynomial multiplication
+- **Modular Arithmetic Unit**: Large integer modular operations
+- **Polynomial Multiplier**: Parallel polynomial multiplication
+- **Key Switching Unit**: Efficient key switching operations
+- **Bootstrapping Unit**: Noise reduction and depth refresh
+
+**FHE Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `FHE_ENC` | `0x9B0` | Homomorphic encryption |
+| `FHE_DEC` | `0x9B1` | Homomorphic decryption |
+| `FHE_ADD` | `0x9B2` | Homomorphic addition |
+| `FHE_MUL` | `0x9B3` | Homomorphic multiplication |
+| `FHE_NEG` | `0x9B4` | Homomorphic negation |
+| `FHE_ROT` | `0x9B5` | Homomorphic rotation |
+| `FHE_CONJ` | `0x9B6` | Homomorphic conjugation |
+| `FHE_CMUL` | `0x9B7` | Homomorphic constant multiplication |
+| `FHE_BS` | `0x9B8` | Homomorphic bootstrapping |
+| `FHE_KS` | `0x9B9` | Homomorphic key switching |
+| `FHE_NTT` | `0x9BA` | Number Theoretic Transform |
+| `FHE_INTT` | `0x9BB` | Inverse Number Theoretic Transform |
+
+**FHE Register Organization:**
+| Register | Bits | Description | Elements |
+|----------|------|-------------|----------|
+| `FHE_0` | 1023:0 | FHE ciphertext 0 | 1×1024-bit |
+| `FHE_1` | 1023:0 | FHE ciphertext 1 | 1×1024-bit |
+| `FHE_2` | 1023:0 | FHE ciphertext 2 | 1×1024-bit |
+| `FHE_3` | 1023:0 | FHE ciphertext 3 | 1×1024-bit |
+| `FHE_4` | 1023:0 | FHE ciphertext 4 | 1×1024-bit |
+| `FHE_5` | 1023:0 | FHE ciphertext 5 | 1×1024-bit |
+| `FHE_6` | 1023:0 | FHE ciphertext 6 | 1×1024-bit |
+| `FHE_7` | 1023:0 | FHE ciphertext 7 | 1×1024-bit |
+
+**FHE Performance Characteristics:**
+| Operation | Latency | Throughput | Power |
+|-----------|---------|------------|-------|
+| Encryption | 100 cycles | 1,000 ops/s | 5W |
+| Decryption | 50 cycles | 2,000 ops/s | 3W |
+| Addition | 10 cycles | 10,000 ops/s | 2W |
+| Multiplication | 1000 cycles | 100 ops/s | 15W |
+| Bootstrapping | 100,000 cycles | 1 ops/s | 50W |
+| NTT | 100 cycles | 1,000 ops/s | 8W |
+
+**FHE Usage Example:**
+```assembly
+# Encrypt plaintext data
+FHE_ENC FHE_0, R1, R2              # Encrypt R1 with key R2, store in FHE_0
+FHE_ENC FHE_1, R3, R2              # Encrypt R3 with key R2, store in FHE_1
+
+# Perform homomorphic computation
+FHE_ADD FHE_2, FHE_0, FHE_1        # FHE_2 = FHE_0 + FHE_1 (encrypted)
+FHE_MUL FHE_3, FHE_2, FHE_0        # FHE_3 = FHE_2 * FHE_0 (encrypted)
+
+# Decrypt result
+FHE_DEC R4, FHE_3, R2              # Decrypt FHE_3 with key R2, store in R4
+```
+
+**Privacy-Preserving AI/ML with FHE:**
+- **Encrypted Inference**: Run neural networks on encrypted data
+- **Encrypted Training**: Train models on encrypted datasets
+- **Secure Aggregation**: Combine encrypted model updates
+- **Differential Privacy**: Add noise to encrypted computations
+- **Secure Multi-Party Computation**: Collaborative ML without data sharing
+
+**FHE Security Parameters:**
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| Lattice Dimension | 8192 | Ring dimension for security |
+| Modulus Size | 128 bits | Modulus bit length |
+| Noise Budget | 60 bits | Available noise for computation |
+| Security Level | 128 bits | Equivalent AES security |
+| Key Size | 2 MB | Public/private key size |
+| Ciphertext Size | 1 MB | Encrypted data size |
 
 
 ---

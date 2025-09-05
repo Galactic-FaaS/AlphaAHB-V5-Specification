@@ -57,6 +57,10 @@ The AlphaAHB V5 ISA implements a **unified register file** with multiple registe
 │  ├── A24-A27: Gradient registers (128-bit)                    │
 │  └── A28-A31: Quantization registers (64-bit)                 │
 ├─────────────────────────────────────────────────────────────────┤
+│  Extended Precision Registers (EPR) - 8 registers             │
+│  ├── FP256_0-FP256_7: FP256 registers (256-bit)               │
+│  └── FHE_0-FHE_7: Homomorphic encryption registers (1024-bit) │
+├─────────────────────────────────────────────────────────────────┤
 │  Security Registers (SEC) - 16 registers                      │
 │  ├── MPK_CTRL, MPK_MASK, MPK_KEYS: Memory protection         │
 │  ├── CFI_TABLE, CFI_MASK, CFI_HASH: Control flow integrity   │
@@ -95,7 +99,7 @@ The AlphaAHB V5 ISA implements a **unified register file** with multiple registe
 
 ### 1.2 Register File Characteristics
 
-- **Total Registers**: 280 registers
+- **Total Registers**: 288 registers
 - **Register Width**: 64-bit base width
 - **Access Ports**: 8 read ports, 4 write ports
 - **Bypass Network**: Full bypass for single-cycle operations
@@ -391,7 +395,37 @@ The AlphaAHB V5 ISA implements a **unified register file** with multiple registe
 
 ---
 
-## 6. Security Registers
+## 6. Extended Precision Registers
+
+### 6.1 FP256 Registers (FP256_0-FP256_7)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| FP256_0 | 000000 | FP256_0 | FP256 register 0 | 256-bit |
+| FP256_1 | 000001 | FP256_1 | FP256 register 1 | 256-bit |
+| FP256_2 | 000010 | FP256_2 | FP256 register 2 | 256-bit |
+| FP256_3 | 000011 | FP256_3 | FP256 register 3 | 256-bit |
+| FP256_4 | 000100 | FP256_4 | FP256 register 4 | 256-bit |
+| FP256_5 | 000101 | FP256_5 | FP256 register 5 | 256-bit |
+| FP256_6 | 000110 | FP256_6 | FP256 register 6 | 256-bit |
+| FP256_7 | 000111 | FP256_7 | FP256 register 7 | 256-bit |
+
+### 6.2 Homomorphic Encryption Registers (FHE_0-FHE_7)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| FHE_0 | 001000 | FHE_0 | FHE ciphertext 0 | 1024-bit |
+| FHE_1 | 001001 | FHE_1 | FHE ciphertext 1 | 1024-bit |
+| FHE_2 | 001010 | FHE_2 | FHE ciphertext 2 | 1024-bit |
+| FHE_3 | 001011 | FHE_3 | FHE ciphertext 3 | 1024-bit |
+| FHE_4 | 001100 | FHE_4 | FHE ciphertext 4 | 1024-bit |
+| FHE_5 | 001101 | FHE_5 | FHE ciphertext 5 | 1024-bit |
+| FHE_6 | 001110 | FHE_6 | FHE ciphertext 6 | 1024-bit |
+| FHE_7 | 001111 | FHE_7 | FHE ciphertext 7 | 1024-bit |
+
+---
+
+## 7. Security Registers
 
 ### 6.1 Memory Protection Key Registers
 

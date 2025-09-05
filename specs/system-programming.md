@@ -331,8 +331,32 @@ The AlphaAHB V5 ISA implements a **64-bit virtual address space** with **48-bit 
 | Activation Data | A16-A23 registers | User |
 | Gradient Data | A24-A27 registers | User |
 | Quantization Data | A28-A31 registers | User |
+| Extended Precision | FP256_0-FP256_7 registers | User |
+| Homomorphic Encryption | FHE_0-FHE_7 registers | User |
 | Model Storage | Persistent memory | Supervisor |
 | Training Data | Cache/memory | Supervisor |
+
+### 6.5 Extended Precision AI/ML Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| FP256 Addition | `FP256_ADD FP256d, FP256s1, FP256s2` | FP256 addition | User |
+| FP256 Multiplication | `FP256_MUL FP256d, FP256s1, FP256s2` | FP256 multiplication | User |
+| FP256 Square Root | `FP256_SQRT FP256d, FP256s1` | FP256 square root | User |
+| FP256 Conversion | `FP256_CVT Fd, FP256s1` | FP256 conversion | User |
+| FP256 Rounding | `FP256_ROUND FP256d, FP256s1, #imm` | FP256 rounding | User |
+
+### 6.6 Homomorphic Encryption Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| FHE Encryption | `FHE_ENC FHEd, Rs1, Rs2` | Homomorphic encryption | User |
+| FHE Decryption | `FHE_DEC Rd, FHEs1, Rs2` | Homomorphic decryption | User |
+| FHE Addition | `FHE_ADD FHEd, FHEs1, FHEs2` | Homomorphic addition | User |
+| FHE Multiplication | `FHE_MUL FHEd, FHEs1, FHEs2` | Homomorphic multiplication | User |
+| FHE Bootstrapping | `FHE_BS FHEd, FHEs1` | Homomorphic bootstrapping | User |
+| FHE Key Switching | `FHE_KS FHEd, FHEs1, Rs2` | Homomorphic key switching | User |
+| FHE NTT | `FHE_NTT FHEd, FHEs1` | Number Theoretic Transform | User |
 
 ---
 

@@ -307,48 +307,291 @@ The AlphaAHB V5 bus matrix supports:
 
 ---
 
-## 5. Memory Management
+## 5. Advanced Memory Management
 
-### 5.1 Memory Hierarchy
+### 5.1 Enhanced Memory Hierarchy
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Memory Hierarchy                            │
+│                    Advanced Memory Hierarchy                   │
 ├─────────────────────────────────────────────────────────────────┤
 │  L1 Cache (per core)                                           │
-│  ├── L1D: 128 KB (Data)                                        │
-│  ├── L1I: 128 KB (Instruction)                                 │
-│  └── L1V: 64 KB (Vector)                                       │
+│  ├── L1D: 128 KB (Data) + 32 KB (Compressed)                  │
+│  ├── L1I: 128 KB (Instruction) + 32 KB (Decoded)              │
+│  └── L1V: 64 KB (Vector) + 16 KB (Sparse)                     │
 ├─────────────────────────────────────────────────────────────────┤
 │  L2 Cache (per cluster)                                        │
-│  ├── L2D: 8 MB (Data)                                          │
-│  └── L2I: 8 MB (Instruction)                                   │
+│  ├── L2D: 8 MB (Data) + 2 MB (Compressed)                     │
+│  ├── L2I: 8 MB (Instruction) + 2 MB (Decoded)                 │
+│  └── L2P: 4 MB (Persistent Memory)                             │
 ├─────────────────────────────────────────────────────────────────┤
 │  L3 Cache (shared)                                             │
-│  ├── L3D: 256 MB (Data)                                        │
-│  └── L3I: 256 MB (Instruction)                                 │
+│  ├── L3D: 256 MB (Data) + 64 MB (Compressed)                  │
+│  ├── L3I: 256 MB (Instruction) + 64 MB (Decoded)              │
+│  └── L3P: 128 MB (Persistent Memory)                           │
 ├─────────────────────────────────────────────────────────────────┤
 │  Main Memory                                                   │
-│  ├── DDR5-6400: Up to 1 TB                                     │
-│  └── HBM3: Up to 128 GB                                        │
+│  ├── DDR5-6400: Up to 1 TB (Volatile)                         │
+│  ├── HBM3: Up to 128 GB (High Bandwidth)                      │
+│  └── NVDIMM: Up to 512 GB (Persistent)                        │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 5.2 Cache Coherency
+### 5.2 Persistent Memory Support
 
-AlphaAHB V5 implements a modified MESI protocol:
+#### 5.2.1 Non-Volatile Memory (NVM)
+
+**NVM Technologies:**
+- **3D XPoint**: Intel Optane DC Persistent Memory
+- **ReRAM**: Resistive Random Access Memory
+- **PCM**: Phase Change Memory
+- **MRAM**: Magnetoresistive Random Access Memory
+
+**NVM Characteristics:**
+| Technology | Latency | Bandwidth | Endurance | Capacity |
+|------------|---------|-----------|-----------|----------|
+| DDR5 | 100 ns | 100 GB/s | N/A | 1 TB |
+| HBM3 | 200 ns | 1 TB/s | N/A | 128 GB |
+| 3D XPoint | 300 ns | 15 GB/s | 10^6 cycles | 512 GB |
+| ReRAM | 1 μs | 5 GB/s | 10^8 cycles | 256 GB |
+
+#### 5.2.2 Persistent Memory Instructions
+
+**NVM Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `NVM_FLUSH` | `0x300` | Flush cache to NVM |
+| `NVM_FENCE` | `0x301` | NVM ordering fence |
+| `NVM_BARRIER` | `0x302` | NVM completion barrier |
+| `NVM_PERSIST` | `0x303` | Make data persistent |
+| `NVM_RECOVER` | `0x304` | Recover from NVM failure |
+
+**NVM Usage Example:**
+```assembly
+# Store data to persistent memory
+STORE R1, [R2]               # Store data to NVM address
+NVM_FLUSH R2                 # Flush to ensure persistence
+NVM_FENCE                    # Ensure ordering
+NVM_PERSIST R2, #0x1000      # Mark 4KB as persistent
+```
+
+#### 5.2.3 Persistent Memory Programming Model
+
+**ACID Properties:**
+- **Atomicity**: All-or-nothing operations
+- **Consistency**: Data integrity maintained
+- **Isolation**: Concurrent access control
+- **Durability**: Data survives power loss
+
+**Persistent Data Structures:**
+- **Persistent Heaps**: NVM-based memory allocation
+- **Persistent Queues**: Lock-free persistent queues
+- **Persistent Hash Tables**: NVM-optimized hash tables
+- **Persistent Trees**: B+ trees for NVM storage
+
+### 5.3 Memory Compression
+
+#### 5.3.1 Hardware Compression
+
+**Compression Algorithms:**
+- **LZ4**: Fast compression with moderate ratio
+- **Zstandard**: High compression ratio with good speed
+- **LZMA**: Maximum compression ratio
+- **Custom**: Application-specific compression
+
+**Compression Levels:**
+| Level | Algorithm | Ratio | Speed | Use Case |
+|-------|-----------|-------|-------|----------|
+| 1 | LZ4 | 2:1 | 10 GB/s | Real-time |
+| 2 | Zstd-1 | 3:1 | 5 GB/s | Balanced |
+| 3 | Zstd-3 | 4:1 | 2 GB/s | Storage |
+| 4 | LZMA | 6:1 | 0.5 GB/s | Archive |
+
+#### 5.3.2 Compression Instructions
+
+**Compression Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `COMPRESS` | `0x310` | Compress data block |
+| `DECOMPRESS` | `0x311` | Decompress data block |
+| `COMPRESS_LEVEL` | `0x312` | Set compression level |
+| `COMPRESS_STATS` | `0x313` | Get compression statistics |
+| `COMPRESS_HINT` | `0x314` | Provide compression hints |
+
+**Compression Usage Example:**
+```assembly
+# Compress data block
+COMPRESS_LEVEL R1, #2        # Set compression level 2
+COMPRESS R2, R3, R4          # Compress R3 bytes from R4, store in R2
+
+# Decompress data block
+DECOMPRESS R5, R2, R6        # Decompress R2 bytes to R6, store in R5
+```
+
+### 5.4 Advanced Cache Coherence
+
+#### 5.4.1 Enhanced Coherence Protocols
+
+**MOESI+ Protocol:**
 - **Modified (M)**: Cache line is modified and dirty
+- **Owned (O)**: Cache line is owned and shared
 - **Exclusive (E)**: Cache line is clean and exclusively owned
 - **Shared (S)**: Cache line is clean and shared
 - **Invalid (I)**: Cache line is invalid
+- **Forward (F)**: Cache line is forwarded to requester
 
-### 5.3 Virtual Memory
+**Directory-Based Coherence:**
+- **Full Directory**: Complete sharing information
+- **Limited Directory**: Limited sharing information
+- **Sparse Directory**: Sparse sharing information
+- **Token-Based**: Token passing coherence
 
-- 64-bit virtual address space
-- 48-bit physical address space
-- 4KB, 2MB, and 1GB page sizes
-- Hardware page table walk
-- TLB with 1024 entries per core
+#### 5.4.2 Cache Coherence Instructions
+
+**Coherence Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `CACHE_FLUSH` | `0x320` | Flush cache line |
+| `CACHE_INVALIDATE` | `0x321` | Invalidate cache line |
+| `CACHE_PREFETCH` | `0x322` | Prefetch cache line |
+| `CACHE_HINT` | `0x323` | Provide access hints |
+| `CACHE_SYNC` | `0x324` | Synchronize cache state |
+
+**Coherence Usage Example:**
+```assembly
+# Prefetch data for future access
+CACHE_PREFETCH R1, #READ     # Prefetch for read access
+CACHE_HINT R1, #TEMPORAL     # Hint: temporal locality
+
+# Flush modified data
+CACHE_FLUSH R2               # Flush cache line R2
+CACHE_SYNC                   # Synchronize all caches
+```
+
+### 5.5 Memory Deduplication
+
+#### 5.5.1 Hardware Deduplication
+
+**Deduplication Techniques:**
+- **Page-Level**: Deduplicate entire pages
+- **Block-Level**: Deduplicate cache blocks
+- **Content-Based**: Deduplicate based on content
+- **Hash-Based**: Use cryptographic hashes
+
+**Deduplication Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `DEDUP_SCAN` | `0x330` | Scan for duplicate pages |
+| `DEDUP_MERGE` | `0x331` | Merge duplicate pages |
+| `DEDUP_SPLIT` | `0x332` | Split shared pages |
+| `DEDUP_STATS` | `0x333` | Get deduplication statistics |
+| `DEDUP_HASH` | `0x334` | Compute page hash |
+
+#### 5.5.2 Memory Optimization
+
+**Optimization Features:**
+- **Transparent Huge Pages**: Automatic large page promotion
+- **Memory Ballooning**: Dynamic memory allocation
+- **Memory Overcommit**: Allocate more than physical memory
+- **Memory Compression**: Compress unused memory
+
+### 5.6 NUMA Memory Management
+
+#### 5.6.1 NUMA Topology
+
+**NUMA Node Configuration:**
+- **Local Memory**: Memory attached to current node
+- **Remote Memory**: Memory attached to other nodes
+- **Interconnect**: High-speed node-to-node links
+- **Memory Controllers**: Per-node memory controllers
+
+**NUMA Distance Matrix:**
+| Node | 0 | 1 | 2 | 3 |
+|------|---|---|---|---|
+| 0 | 1 | 2 | 3 | 4 |
+| 1 | 2 | 1 | 2 | 3 |
+| 2 | 3 | 2 | 1 | 2 |
+| 3 | 4 | 3 | 2 | 1 |
+
+#### 5.6.2 NUMA Memory Instructions
+
+**NUMA Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `NUMA_ALLOC` | `0x340` | Allocate memory on specific node |
+| `NUMA_FREE` | `0x341` | Free NUMA-allocated memory |
+| `NUMA_MIGRATE` | `0x342` | Migrate memory between nodes |
+| `NUMA_BALANCE` | `0x343` | Balance memory across nodes |
+| `NUMA_PREFETCH` | `0x344` | Prefetch to local node |
+
+**NUMA Usage Example:**
+```assembly
+# Allocate memory on specific node
+NUMA_ALLOC R1, R2, #0x1000, R3  # Allocate 4KB on node R3
+
+# Migrate memory to local node
+NUMA_MIGRATE R1, R4             # Migrate memory R1 to local node
+
+# Balance memory across nodes
+NUMA_BALANCE R5, R6             # Balance memory between nodes R5 and R6
+```
+
+### 5.7 Memory Encryption
+
+#### 5.7.1 Hardware Encryption
+
+**Encryption Algorithms:**
+- **AES-256**: Advanced Encryption Standard
+- **ChaCha20**: Stream cipher for high performance
+- **XTS-AES**: XEX-based tweaked-codebook mode
+- **Custom**: Application-specific encryption
+
+**Encryption Modes:**
+- **Transparent**: Automatic encryption/decryption
+- **Selective**: Per-page encryption control
+- **Hybrid**: Mix of encrypted and unencrypted
+- **Adaptive**: Dynamic encryption based on usage
+
+#### 5.7.2 Memory Encryption Instructions
+
+**Encryption Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `MEM_ENCRYPT` | `0x350` | Encrypt memory region |
+| `MEM_DECRYPT` | `0x351` | Decrypt memory region |
+| `MEM_KEY_SET` | `0x352` | Set encryption key |
+| `MEM_KEY_ROTATE` | `0x353` | Rotate encryption key |
+| `MEM_VERIFY` | `0x354` | Verify memory integrity |
+
+### 5.8 Memory Performance Characteristics
+
+#### 5.8.1 Latency Characteristics
+
+| Memory Level | Latency | Bandwidth | Capacity |
+|--------------|---------|-----------|----------|
+| L1 Cache | 1-3 cycles | 2.56 TB/s | 256 KB |
+| L2 Cache | 5-8 cycles | 1.28 TB/s | 16 MB |
+| L3 Cache | 15-25 cycles | 640 GB/s | 512 MB |
+| DDR5 | 100-200 ns | 100 GB/s | 1 TB |
+| HBM3 | 200-400 ns | 1 TB/s | 128 GB |
+| NVDIMM | 300-600 ns | 15 GB/s | 512 GB |
+
+#### 5.8.2 Compression Performance
+
+| Compression Level | Ratio | Speed | Memory Savings |
+|-------------------|-------|-------|----------------|
+| LZ4 | 2:1 | 10 GB/s | 50% |
+| Zstd-1 | 3:1 | 5 GB/s | 67% |
+| Zstd-3 | 4:1 | 2 GB/s | 75% |
+| LZMA | 6:1 | 0.5 GB/s | 83% |
+
+#### 5.8.3 NUMA Performance
+
+| Access Pattern | Local | Remote | Performance Impact |
+|----------------|-------|--------|-------------------|
+| Sequential | 100 GB/s | 50 GB/s | 2x slower |
+| Random | 50 GB/s | 25 GB/s | 2x slower |
+| Vector | 1 TB/s | 500 GB/s | 2x slower |
 
 ---
 
@@ -645,63 +888,727 @@ Tapered floating-point provides improved numerical stability for iterative algor
 
 ---
 
-## 8. MIMD Support
+## 7.5 Scientific Computing Extensions
 
-### 8.1 MIMD Architecture
+### 7.5.1 Decimal Floating-Point Arithmetic
 
-Multiple Instruction, Multiple Data (MIMD) allows different cores to execute different instructions on different data simultaneously.
+**Decimal Floating-Point Formats:**
+| Format | Bits | Exponent | Mantissa | Range | Precision |
+|--------|------|----------|----------|-------|-----------|
+| Decimal32 | 32 | 8 | 23 | ±9.999×10⁹⁶ | 7 decimal digits |
+| Decimal64 | 64 | 11 | 52 | ±9.999×10³⁸⁴ | 16 decimal digits |
+| Decimal128 | 128 | 15 | 112 | ±9.999×10⁶¹⁴⁴ | 34 decimal digits |
 
-#### 8.1.1 Core Specialization
+**Decimal Floating-Point Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `DFP_ADD` | `0x400` | Decimal floating-point addition |
+| `DFP_SUB` | `0x401` | Decimal floating-point subtraction |
+| `DFP_MUL` | `0x402` | Decimal floating-point multiplication |
+| `DFP_DIV` | `0x403` | Decimal floating-point division |
+| `DFP_SQRT` | `0x404` | Decimal floating-point square root |
+| `DFP_ROUND` | `0x405` | Decimal floating-point rounding |
 
-- **Vector Cores**: Specialized for SIMD operations
-- **Matrix Cores**: Optimized for matrix operations
-- **Neural Cores**: Dedicated AI/ML processing
-- **Arithmetic Cores**: High-precision arithmetic
-- **BFP Cores**: Block floating-point processing
+**Decimal Floating-Point Usage Example:**
+```assembly
+# Decimal floating-point arithmetic
+DFP_ADD F1, F2, F3          # F1 = F2 + F3 (decimal)
+DFP_MUL F4, F5, F6          # F4 = F5 * F6 (decimal)
+DFP_ROUND F7, F8, #2        # Round F8 to 2 decimal places
+```
 
-#### 8.1.2 Inter-Core Communication
+### 7.5.2 Interval Arithmetic
 
-- High-speed interconnect fabric
-- Message-passing interface
-- Shared memory with NUMA awareness
-- Hardware synchronization primitives
+**Interval Representation:**
+- **Lower Bound**: Minimum value of interval
+- **Upper Bound**: Maximum value of interval
+- **Width**: Upper bound - Lower bound
+- **Midpoint**: (Upper bound + Lower bound) / 2
 
-### 8.2 MIMD Programming Model
+**Interval Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `INT_ADD` | `0x410` | Interval addition |
+| `INT_SUB` | `0x411` | Interval subtraction |
+| `INT_MUL` | `0x412` | Interval multiplication |
+| `INT_DIV` | `0x413` | Interval division |
+| `INT_SQRT` | `0x414` | Interval square root |
+| `INT_WIDTH` | `0x415` | Compute interval width |
 
-#### 8.2.1 Task Distribution
+**Interval Usage Example:**
+```assembly
+# Interval arithmetic
+INT_ADD F1, F2, F3          # F1 = F2 + F3 (interval)
+INT_MUL F4, F5, F6          # F4 = F5 * F6 (interval)
+INT_WIDTH F7, F8            # F7 = width of interval F8
+```
 
-- Dynamic task scheduling
-- Load balancing algorithms
-- Priority-based scheduling
-- Deadline-aware scheduling
+### 7.5.3 Complex Number Support
 
-#### 8.2.2 Synchronization
+**Complex Number Formats:**
+| Format | Real Part | Imaginary Part | Total Bits |
+|--------|-----------|----------------|------------|
+| Complex32 | 16-bit | 16-bit | 32-bit |
+| Complex64 | 32-bit | 32-bit | 64-bit |
+| Complex128 | 64-bit | 64-bit | 128-bit |
 
-- Barriers for global synchronization
-- Locks for critical sections
-- Atomic operations
-- Memory ordering guarantees
+**Complex Number Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `COMPLEX_ADD` | `0x420` | Complex addition |
+| `COMPLEX_SUB` | `0x421` | Complex subtraction |
+| `COMPLEX_MUL` | `0x422` | Complex multiplication |
+| `COMPLEX_DIV` | `0x423` | Complex division |
+| `COMPLEX_CONJ` | `0x424` | Complex conjugate |
+| `COMPLEX_ABS` | `0x425` | Complex absolute value |
 
-### 8.3 MIMD Performance
+**Complex Number Usage Example:**
+```assembly
+# Complex number arithmetic
+COMPLEX_ADD F1, F2, F3      # F1 = F2 + F3 (complex)
+COMPLEX_MUL F4, F5, F6      # F4 = F5 * F6 (complex)
+COMPLEX_ABS F7, F8          # F7 = |F8| (complex magnitude)
+```
 
-#### 8.3.1 Scalability
+### 7.5.4 Matrix Operations
 
-- Linear scaling up to 1024 cores
-- Sub-linear communication overhead
-- Efficient memory hierarchy
-- Dynamic power management
+**Matrix Data Types:**
+- **Dense Matrices**: Full matrix representation
+- **Sparse Matrices**: Compressed sparse row (CSR) format
+- **Band Matrices**: Banded matrix representation
+- **Symmetric Matrices**: Symmetric matrix optimization
 
-#### 8.3.2 Latency Characteristics
+**Matrix Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `MAT_MUL` | `0x430` | Matrix multiplication |
+| `MAT_ADD` | `0x431` | Matrix addition |
+| `MAT_TRANSPOSE` | `0x432` | Matrix transpose |
+| `MAT_INVERSE` | `0x433` | Matrix inversion |
+| `MAT_DETERMINANT` | `0x434` | Matrix determinant |
+| `MAT_EIGEN` | `0x435` | Eigenvalue computation |
 
-| Operation | Latency | Bandwidth | Use Case |
-|-----------|---------|-----------|----------|
-| Core-to-Core | 10 ns | 1 TB/s | Fine-grained parallelism |
-| Memory Access | 100 ns | 500 GB/s | Data sharing |
-| Synchronization | 50 ns | N/A | Coordination |
+**Matrix Usage Example:**
+```assembly
+# Matrix operations
+MAT_MUL F1, F2, F3          # F1 = F2 * F3 (matrix multiply)
+MAT_TRANSPOSE F4, F5        # F4 = F5^T (transpose)
+MAT_DETERMINANT F6, F7      # F6 = det(F7) (determinant)
+```
+
+### 7.5.5 Statistical Functions
+
+**Statistical Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `STAT_MEAN` | `0x440` | Compute mean |
+| `STAT_VAR` | `0x441` | Compute variance |
+| `STAT_STD` | `0x442` | Compute standard deviation |
+| `STAT_CORR` | `0x443` | Compute correlation |
+| `STAT_HIST` | `0x444` | Compute histogram |
+| `STAT_QUANTILE` | `0x445` | Compute quantiles |
+
+**Statistical Usage Example:**
+```assembly
+# Statistical operations
+STAT_MEAN F1, F2, R3        # F1 = mean of F2 with R3 elements
+STAT_VAR F4, F5, R6         # F4 = variance of F5 with R6 elements
+STAT_CORR F7, F8, F9        # F7 = correlation between F8 and F9
+```
+
+### 7.5.6 Special Functions
+
+**Mathematical Special Functions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `SPEC_GAMMA` | `0x450` | Gamma function |
+| `SPEC_BETA` | `0x451` | Beta function |
+| `SPEC_ERF` | `0x452` | Error function |
+| `SPEC_BESSEL` | `0x453` | Bessel functions |
+| `SPEC_LEGENDRE` | `0x454` | Legendre polynomials |
+| `SPEC_CHEBYSHEV` | `0x455` | Chebyshev polynomials |
+
+**Special Functions Usage Example:**
+```assembly
+# Special functions
+SPEC_GAMMA F1, F2           # F1 = Γ(F2) (gamma function)
+SPEC_ERF F3, F4             # F3 = erf(F4) (error function)
+SPEC_BESSEL F5, F6, R7      # F5 = J_R7(F6) (Bessel function)
+```
+
+### 7.5.7 Numerical Integration
+
+**Integration Methods:**
+- **Trapezoidal Rule**: Linear interpolation
+- **Simpson's Rule**: Quadratic interpolation
+- **Gaussian Quadrature**: Optimal point selection
+- **Adaptive Quadrature**: Automatic error control
+
+**Integration Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `INTEG_TRAP` | `0x460` | Trapezoidal integration |
+| `INTEG_SIMP` | `0x461` | Simpson's integration |
+| `INTEG_GAUSS` | `0x462` | Gaussian quadrature |
+| `INTEG_ADAPT` | `0x463` | Adaptive integration |
+
+**Integration Usage Example:**
+```assembly
+# Numerical integration
+INTEG_TRAP F1, F2, F3, R4   # F1 = ∫F2(x)dx from F3 to R4
+INTEG_GAUSS F5, F6, F7, R8  # F5 = ∫F6(x)dx using Gaussian quadrature
+```
+
+### 7.5.8 Performance Characteristics
+
+**Scientific Computing Performance:**
+| Operation | Precision | Throughput | Latency |
+|-----------|-----------|------------|---------|
+| Decimal FP Add | 64-bit | 1 GFLOPS | 2 cycles |
+| Interval Add | 64-bit | 500 MFLOPS | 4 cycles |
+| Complex Mul | 64-bit | 500 MFLOPS | 4 cycles |
+| Matrix Mul (8x8) | 64-bit | 100 MFLOPS | 16 cycles |
+| Statistical Mean | 64-bit | 2 GFLOPS | 1 cycle |
+| Special Functions | 64-bit | 100 MFLOPS | 20 cycles |
 
 ---
 
-## 9. AI Integration
+## 8. MIMD Support
+
+### 8.1 Advanced MIMD Architecture
+
+Multiple Instruction, Multiple Data (MIMD) provides sophisticated parallel computing capabilities with hardware-accelerated synchronization, transactional memory, and NUMA-aware operations.
+
+#### 8.1.1 Core Specialization and Heterogeneity
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Heterogeneous MIMD Architecture             │
+├─────────────────────────────────────────────────────────────────┤
+│  🧮 General Purpose Cores (GPC)                               │
+│  ├── 32 cores: Integer and floating-point operations          │
+│  ├── Out-of-order execution with 12-stage pipeline            │
+│  └── 4-way superscalar with branch prediction                 │
+├─────────────────────────────────────────────────────────────────┤
+│  🌊 Vector Processing Cores (VPC)                             │
+│  ├── 16 cores: 512-bit SIMD operations                        │
+│  ├── Variable vector length (64-512 bits)                     │
+│  └── Predicated execution and gather/scatter                   │
+├─────────────────────────────────────────────────────────────────┤
+│  🧠 Neural Processing Cores (NPC)                             │
+│  ├── 8 cores: AI/ML acceleration                              │
+│  ├── 2048 PEs per core with multi-precision                   │
+│  └── Sparse matrix and transformer optimization               │
+├─────────────────────────────────────────────────────────────────┤
+│  🔢 Arithmetic Processing Cores (APC)                         │
+│  ├── 4 cores: High-precision arithmetic                       │
+│  ├── Arbitrary-precision (up to 4096 bits)                    │
+│  └── Decimal floating-point and interval arithmetic           │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 8.1.2 Hardware Transactional Memory (HTM)
+
+**Transactional Memory Support:**
+- **Hardware Transactional Memory**: Hardware-accelerated transactions
+- **Software Transactional Memory**: Fallback for complex transactions
+- **Hybrid TM**: Automatic hardware/software selection
+- **Nested Transactions**: Transaction within transaction support
+
+**HTM Instructions:**
+
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `HTM_BEGIN` | `0x200` | Begin hardware transaction |
+| `HTM_END` | `0x201` | Commit hardware transaction |
+| `HTM_ABORT` | `0x202` | Abort hardware transaction |
+| `HTM_TEST` | `0x203` | Test transaction status |
+| `HTM_RETRY` | `0x204` | Retry failed transaction |
+
+**HTM Usage Example:**
+```assembly
+# Begin hardware transaction
+HTM_BEGIN R1, #0x1000        # Begin transaction with timeout
+
+# Critical section
+LOAD R2, [R3]                # Load shared data
+ADD R2, R2, #1               # Modify data
+STORE R2, [R3]               # Store modified data
+
+# Commit transaction
+HTM_END R1                   # Commit if no conflicts
+# If commit fails, automatically retry or fallback to locks
+```
+
+#### 8.1.3 NUMA-Aware Instructions
+
+**NUMA Topology Detection:**
+- **NUMA_NODES**: Get number of NUMA nodes
+- **NUMA_DISTANCE**: Get distance between nodes
+- **NUMA_AFFINITY**: Set thread affinity to node
+- **NUMA_MIGRATE**: Migrate data between nodes
+
+**NUMA Memory Operations:**
+- **NUMA_ALLOC**: Allocate memory on specific node
+- **NUMA_FREE**: Free NUMA-allocated memory
+- **NUMA_PREFETCH**: Prefetch data to local node
+- **NUMA_BALANCE**: Balance memory across nodes
+
+**NUMA Usage Example:**
+```assembly
+# Get NUMA topology
+NUMA_NODES R1                # Get number of NUMA nodes
+NUMA_DISTANCE R2, R3, R4     # Get distance between nodes R3 and R4
+
+# Allocate memory on specific node
+NUMA_ALLOC R5, R6, #0x1000, R2  # Allocate 4KB on node R2
+
+# Set thread affinity
+NUMA_AFFINITY R7, R2         # Set current thread to node R2
+```
+
+### 8.2 Advanced Inter-Core Communication
+
+#### 8.2.1 Hardware Message Passing
+
+**Message Passing Interface:**
+- **MPI_SEND**: Send message to target core
+- **MPI_RECV**: Receive message from source core
+- **MPI_BROADCAST**: Broadcast message to all cores
+- **MPI_REDUCE**: Reduce operation across cores
+- **MPI_SCATTER**: Scatter data to multiple cores
+- **MPI_GATHER**: Gather data from multiple cores
+
+**Message Passing Registers:**
+| Register | Bits | Description |
+|----------|------|-------------|
+| `MPI_TAG` | 63:0 | Message tag for routing |
+| `MPI_RANK` | 63:0 | Current core rank |
+| `MPI_SIZE` | 63:0 | Total number of cores |
+| `MPI_STATUS` | 63:0 | Message status and error codes |
+
+#### 8.2.2 Lock-Free Data Structures
+
+**Atomic Operations:**
+- **ATOMIC_ADD**: Atomic addition
+- **ATOMIC_SUB**: Atomic subtraction
+- **ATOMIC_XCHG**: Atomic exchange
+- **ATOMIC_CAS**: Compare-and-swap
+- **ATOMIC_FAA**: Fetch-and-add
+- **ATOMIC_FAS**: Fetch-and-subtract
+
+**Lock-Free Primitives:**
+- **LOCK_FREE_QUEUE**: Lock-free queue operations
+- **LOCK_FREE_STACK**: Lock-free stack operations
+- **LOCK_FREE_HASH**: Lock-free hash table
+- **LOCK_FREE_LIST**: Lock-free linked list
+
+#### 8.2.3 Work Stealing
+
+**Work Stealing Instructions:**
+- **WS_PUSH**: Push work item to local queue
+- **WS_POP**: Pop work item from local queue
+- **WS_STEAL**: Steal work from other core's queue
+- **WS_BALANCE**: Balance work across cores
+
+**Work Stealing Example:**
+```assembly
+# Push work to local queue
+WS_PUSH R1, R2              # Push work item R2 to queue R1
+
+# Try to pop from local queue
+WS_POP R3, R1               # Pop work from local queue R1
+CMP R3, #0                  # Check if work available
+BNE process_work            # Process work if available
+
+# Steal work from other cores
+WS_STEAL R3, R1, R4         # Steal work from core R4's queue R1
+CMP R3, #0                  # Check if work stolen
+BNE process_work            # Process stolen work
+```
+
+### 8.3 Advanced Synchronization
+
+#### 8.3.1 Barrier Synchronization
+
+**Barrier Instructions:**
+- **BARRIER_INIT**: Initialize barrier
+- **BARRIER_WAIT**: Wait at barrier
+- **BARRIER_DESTROY**: Destroy barrier
+- **BARRIER_RESET**: Reset barrier state
+
+**Barrier Types:**
+- **Static Barriers**: Fixed number of participants
+- **Dynamic Barriers**: Variable number of participants
+- **Hierarchical Barriers**: Multi-level synchronization
+- **Adaptive Barriers**: Self-tuning performance
+
+#### 8.3.2 Advanced Locking
+
+**Lock Types:**
+- **Spin Locks**: Busy-waiting locks
+- **Mutex Locks**: Blocking locks with sleep
+- **Reader-Writer Locks**: Multiple readers, single writer
+- **Recursive Locks**: Re-entrant locks
+- **Adaptive Locks**: Spin-then-block strategy
+
+**Lock Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `LOCK_ACQUIRE` | `0x210` | Acquire lock |
+| `LOCK_RELEASE` | `0x211` | Release lock |
+| `LOCK_TRY` | `0x212` | Try to acquire lock |
+| `LOCK_UPGRADE` | `0x213` | Upgrade read lock to write |
+| `LOCK_DOWNGRADE` | `0x214` | Downgrade write lock to read |
+
+### 8.4 Memory Consistency and Ordering
+
+#### 8.4.1 Memory Ordering Models
+
+**Consistency Models:**
+- **Sequential Consistency**: Strongest ordering guarantee
+- **Total Store Ordering**: TSO with store buffering
+- **Release Consistency**: Acquire-release semantics
+- **Weak Ordering**: Minimal ordering constraints
+
+**Memory Fence Instructions:**
+- **MEMORY_FENCE**: Full memory fence
+- **LOAD_FENCE**: Load-load and load-store ordering
+- **STORE_FENCE**: Store-store and store-load ordering
+- **ACQUIRE_FENCE**: Acquire semantics
+- **RELEASE_FENCE**: Release semantics
+
+#### 8.4.2 Cache Coherence
+
+**Coherence Protocols:**
+- **MESI Protocol**: Modified, Exclusive, Shared, Invalid
+- **MOESI Protocol**: MESI with Owned state
+- **Directory-Based**: Centralized coherence directory
+- **Token-Based**: Token passing coherence
+
+**Coherence Instructions:**
+- **CACHE_FLUSH**: Flush cache line
+- **CACHE_INVALIDATE**: Invalidate cache line
+- **CACHE_PREFETCH**: Prefetch cache line
+- **CACHE_HINT**: Provide access hints
+
+### 8.5 Performance Monitoring and Profiling
+
+#### 8.5.1 Hardware Performance Counters
+
+**Counter Types:**
+- **Cycle Counters**: CPU cycles and instructions
+- **Cache Counters**: Cache hits, misses, and evictions
+- **Memory Counters**: Memory bandwidth and latency
+- **Synchronization Counters**: Lock contention and barriers
+- **Communication Counters**: Message passing statistics
+
+**Performance Counter Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `PERF_START` | `0x220` | Start performance counting |
+| `PERF_STOP` | `0x221` | Stop performance counting |
+| `PERF_READ` | `0x222` | Read performance counter |
+| `PERF_RESET` | `0x223` | Reset performance counter |
+| `PERF_SELECT` | `0x224` | Select counter events |
+
+#### 8.5.2 Power Management
+
+**Power States:**
+- **Active**: Full performance mode
+- **Idle**: Reduced power, wake on interrupt
+- **Sleep**: Low power, wake on specific events
+- **Hibernate**: Minimal power, wake on reset
+
+**Power Management Instructions:**
+- **POWER_SET_STATE**: Set core power state
+- **POWER_GET_STATE**: Get current power state
+- **POWER_LIMIT**: Set power consumption limit
+- **POWER_MONITOR**: Monitor power consumption
+
+### 8.6 MIMD Performance Characteristics
+
+#### 8.6.1 Scalability Metrics
+
+| Cores | Peak Performance | Memory Bandwidth | Communication Latency |
+|-------|------------------|------------------|----------------------|
+| 1 | 3.0 GFLOPS | 100 GB/s | N/A |
+| 4 | 12.0 GFLOPS | 400 GB/s | 10 ns |
+| 16 | 48.0 GFLOPS | 1.6 TB/s | 15 ns |
+| 64 | 192.0 GFLOPS | 6.4 TB/s | 25 ns |
+| 256 | 768.0 GFLOPS | 25.6 TB/s | 50 ns |
+| 1024 | 3.0 TFLOPS | 102.4 TB/s | 100 ns |
+
+#### 8.6.2 Communication Patterns
+
+**Point-to-Point Communication:**
+- **Latency**: 10-100 ns depending on distance
+- **Bandwidth**: 1-10 GB/s per link
+- **Throughput**: 1M-100M messages/second
+
+**Collective Communication:**
+- **Broadcast**: O(log P) complexity
+- **Reduce**: O(log P) complexity
+- **All-to-All**: O(P) complexity
+- **Barrier**: O(log P) complexity
+
+#### 8.6.3 Load Balancing Efficiency
+
+**Work Stealing Performance:**
+- **Steal Success Rate**: 80-95% for balanced workloads
+- **Steal Latency**: 50-200 ns per steal attempt
+- **Queue Operations**: 1-5 ns per push/pop
+- **Load Imbalance**: <5% for most applications
+
+---
+
+## 9. Real-Time and Safety Features
+
+### 9.1 Real-Time Computing Support
+
+#### 9.1.1 Deterministic Execution
+
+**Real-Time Characteristics:**
+- **Bounded Latency**: Guaranteed maximum response time
+- **Predictable Timing**: Deterministic instruction execution
+- **Priority Scheduling**: Real-time task prioritization
+- **Interrupt Latency**: Minimal interrupt response time
+
+**Real-Time Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `RT_SET_PRIORITY` | `0x500` | Set real-time priority |
+| `RT_GET_PRIORITY` | `0x501` | Get current priority |
+| `RT_SET_DEADLINE` | `0x502` | Set task deadline |
+| `RT_CHECK_DEADLINE` | `0x503` | Check deadline violation |
+| `RT_YIELD` | `0x504` | Yield CPU to higher priority task |
+
+**Real-Time Usage Example:**
+```assembly
+# Set real-time priority
+RT_SET_PRIORITY R1, #99         # Set priority 99 (highest)
+
+# Set task deadline
+RT_SET_DEADLINE R2, #1000       # Set deadline to 1000 cycles
+
+# Check deadline
+RT_CHECK_DEADLINE R3            # Check if deadline violated
+CMP R3, #0                      # Check result
+BNE deadline_violation          # Handle violation
+```
+
+#### 9.1.2 Real-Time Scheduling
+
+**Scheduling Algorithms:**
+- **Rate Monotonic**: Priority based on task period
+- **Earliest Deadline First**: Priority based on deadline
+- **Least Slack Time**: Priority based on remaining time
+- **Priority Ceiling**: Prevents priority inversion
+
+**Scheduling Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `SCHED_RM` | `0x510` | Rate monotonic scheduling |
+| `SCHED_EDF` | `0x511` | Earliest deadline first |
+| `SCHED_LST` | `0x512` | Least slack time |
+| `SCHED_PC` | `0x513` | Priority ceiling protocol |
+
+### 9.2 Fault Tolerance
+
+#### 9.2.1 Error Detection and Correction
+
+**Error Detection Mechanisms:**
+- **Parity Checking**: Single-bit error detection
+- **ECC Memory**: Multi-bit error correction
+- **CRC Checking**: Cyclic redundancy check
+- **Checksum Verification**: Data integrity checking
+
+**Error Correction Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `ECC_ENCODE` | `0x520` | Encode ECC data |
+| `ECC_DECODE` | `0x521` | Decode ECC data |
+| `CRC_COMPUTE` | `0x522` | Compute CRC checksum |
+| `CRC_VERIFY` | `0x523` | Verify CRC checksum |
+| `PARITY_CHECK` | `0x524` | Check parity bit |
+
+**Error Correction Usage Example:**
+```assembly
+# Encode data with ECC
+ECC_ENCODE R1, R2, R3          # Encode R2 bytes from R3, store in R1
+
+# Decode data with error correction
+ECC_DECODE R4, R1, R5          # Decode R1 with ECC, store in R4
+
+# Check for errors
+CMP R5, #0                     # Check error count
+BNE error_detected             # Handle errors if found
+```
+
+#### 9.2.2 Redundancy and Replication
+
+**Redundancy Types:**
+- **Triple Modular Redundancy**: Three-way voting
+- **Dual Modular Redundancy**: Two-way comparison
+- **N-Modular Redundancy**: N-way voting
+- **Checkpointing**: State saving and recovery
+
+**Redundancy Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `TMR_VOTE` | `0x530` | Triple modular redundancy voting |
+| `DMR_COMPARE` | `0x531` | Dual modular redundancy comparison |
+| `CHECKPOINT` | `0x532` | Save system state |
+| `RESTORE` | `0x533` | Restore system state |
+| `ROLLBACK` | `0x534` | Rollback to checkpoint |
+
+### 9.3 Safety-Critical Extensions
+
+#### 9.3.1 Functional Safety
+
+**Safety Standards Compliance:**
+- **ISO 26262**: Automotive functional safety
+- **IEC 61508**: General functional safety
+- **DO-178C**: Aerospace software safety
+- **IEC 62304**: Medical device software
+
+**Safety Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `SAFETY_INIT` | `0x540` | Initialize safety system |
+| `SAFETY_CHECK` | `0x541` | Perform safety check |
+| `SAFETY_FAULT` | `0x542` | Report safety fault |
+| `SAFETY_RESET` | `0x543` | Reset safety system |
+| `SAFETY_SHUTDOWN` | `0x544` | Safe shutdown procedure |
+
+**Safety Usage Example:**
+```assembly
+# Initialize safety system
+SAFETY_INIT R1, #0x1000        # Initialize with safety level 0x1000
+
+# Perform safety check
+SAFETY_CHECK R2, R3            # Check safety condition R3
+CMP R2, #0                     # Check result
+BNE safety_violation           # Handle violation
+
+# Report safety fault
+SAFETY_FAULT R4, #0x2000       # Report fault with code 0x2000
+```
+
+#### 9.3.2 Watchdog Timers
+
+**Watchdog Timer Types:**
+- **Hardware Watchdog**: Independent hardware timer
+- **Software Watchdog**: Software-controlled timer
+- **Cascade Watchdog**: Multiple watchdog levels
+- **Window Watchdog**: Time window enforcement
+
+**Watchdog Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `WDT_START` | `0x550` | Start watchdog timer |
+| `WDT_FEED` | `0x551` | Feed watchdog timer |
+| `WDT_STOP` | `0x552` | Stop watchdog timer |
+| `WDT_RESET` | `0x553` | Reset watchdog timer |
+| `WDT_STATUS` | `0x554` | Get watchdog status |
+
+### 9.4 Error Injection and Testing
+
+#### 9.4.1 Fault Injection
+
+**Fault Injection Types:**
+- **Bit Flip**: Single-bit errors
+- **Stuck-at Faults**: Stuck-at-0 or stuck-at-1
+- **Timing Faults**: Clock and timing errors
+- **Memory Faults**: Memory corruption simulation
+
+**Fault Injection Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `FAULT_INJECT` | `0x560` | Inject fault |
+| `FAULT_TYPE` | `0x561` | Set fault type |
+| `FAULT_RATE` | `0x562` | Set fault injection rate |
+| `FAULT_MONITOR` | `0x563` | Monitor fault effects |
+| `FAULT_RECOVER` | `0x564` | Recover from fault |
+
+#### 9.4.2 Built-In Self-Test (BIST)
+
+**BIST Types:**
+- **Memory BIST**: Memory testing
+- **Logic BIST**: Logic circuit testing
+- **Boundary Scan**: Interconnect testing
+- **Analog BIST**: Analog circuit testing
+
+**BIST Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `BIST_START` | `0x570` | Start BIST |
+| `BIST_STOP` | `0x571` | Stop BIST |
+| `BIST_STATUS` | `0x572` | Get BIST status |
+| `BIST_RESULT` | `0x573` | Get BIST result |
+| `BIST_REPAIR` | `0x574` | Repair detected faults |
+
+### 9.5 Deterministic Execution
+
+#### 9.5.1 Cache Locking
+
+**Cache Locking Features:**
+- **Instruction Cache Locking**: Lock critical instructions
+- **Data Cache Locking**: Lock critical data
+- **Way Locking**: Lock specific cache ways
+- **Set Locking**: Lock specific cache sets
+
+**Cache Locking Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `CACHE_LOCK` | `0x580` | Lock cache line |
+| `CACHE_UNLOCK` | `0x581` | Unlock cache line |
+| `CACHE_LOCK_ALL` | `0x582` | Lock entire cache |
+| `CACHE_UNLOCK_ALL` | `0x583` | Unlock entire cache |
+| `CACHE_LOCK_STATUS` | `0x584` | Get lock status |
+
+#### 9.5.2 Branch Prediction Control
+
+**Branch Prediction Modes:**
+- **Static Prediction**: Fixed prediction direction
+- **Dynamic Prediction**: Runtime prediction adjustment
+- **Prediction Disable**: Disable branch prediction
+- **Prediction Lock**: Lock prediction state
+
+**Branch Prediction Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `BP_SET_MODE` | `0x590` | Set prediction mode |
+| `BP_DISABLE` | `0x591` | Disable prediction |
+| `BP_ENABLE` | `0x592` | Enable prediction |
+| `BP_LOCK` | `0x593` | Lock prediction |
+| `BP_UNLOCK` | `0x594` | Unlock prediction |
+
+### 9.6 Safety Performance Characteristics
+
+#### 9.6.1 Real-Time Performance
+
+| Metric | Value | Unit |
+|--------|-------|------|
+| Interrupt Latency | 50 | ns |
+| Context Switch | 100 | ns |
+| Task Dispatch | 200 | ns |
+| Deadline Miss Rate | <0.001% | % |
+| Jitter | <10 | ns |
+
+#### 9.6.2 Fault Tolerance Performance
+
+| Metric | Value | Unit |
+|--------|-------|------|
+| Error Detection Time | 1 | cycle |
+| Error Correction Time | 3 | cycles |
+| Fault Injection Rate | 1-1000 | faults/sec |
+| Recovery Time | 10 | cycles |
+| Availability | 99.999% | % |
+
+---
+
+## 10. AI Integration
 
 ### 9.1 Neural Processing Units (NPU)
 
@@ -1162,7 +2069,356 @@ handle_mpk_violation:
 
 ---
 
-## 11. Performance Specifications
+## 11. Debug and Profiling Capabilities
+
+### 11.1 Hardware Performance Counters
+
+#### 11.1.1 Performance Counter Architecture
+
+**Counter Types:**
+- **Fixed Counters**: Always available, core events
+- **Programmable Counters**: Configurable, specific events
+- **Cache Counters**: Cache performance metrics
+- **Memory Counters**: Memory subsystem metrics
+- **Branch Counters**: Branch prediction metrics
+
+**Performance Counter Registers:**
+| Register | Bits | Description |
+|----------|------|-------------|
+| `PERF_CTRL` | 63:0 | Performance counter control |
+| `PERF_COUNT0` | 63:0 | Performance counter 0 |
+| `PERF_COUNT1` | 63:0 | Performance counter 1 |
+| `PERF_COUNT2` | 63:0 | Performance counter 2 |
+| `PERF_COUNT3` | 63:0 | Performance counter 3 |
+| `PERF_EVENT` | 63:0 | Event selection register |
+
+#### 11.1.2 Performance Counter Instructions
+
+**Counter Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `PERF_START` | `0x600` | Start performance counting |
+| `PERF_STOP` | `0x601` | Stop performance counting |
+| `PERF_READ` | `0x602` | Read performance counter |
+| `PERF_RESET` | `0x603` | Reset performance counter |
+| `PERF_SELECT` | `0x604` | Select counter events |
+| `PERF_ENABLE` | `0x605` | Enable performance counting |
+| `PERF_DISABLE` | `0x606` | Disable performance counting |
+
+**Performance Counter Usage Example:**
+```assembly
+# Select performance events
+PERF_SELECT R1, #0x100          # Select CPU cycles event
+PERF_SELECT R2, #0x200          # Select cache misses event
+
+# Start performance counting
+PERF_START R1, R2               # Start counting with events R1, R2
+
+# Execute code to profile
+ADD R3, R4, R5                  # Code to profile
+MUL R6, R7, R8                  # More code to profile
+
+# Stop and read counters
+PERF_STOP R9, R10               # Stop counting, read to R9, R10
+```
+
+### 11.2 Trace Buffers
+
+#### 11.2.1 Trace Buffer Architecture
+
+**Trace Buffer Types:**
+- **Instruction Trace**: Complete instruction execution trace
+- **Data Trace**: Memory access trace
+- **Branch Trace**: Branch execution trace
+- **Exception Trace**: Exception and interrupt trace
+- **Performance Trace**: Performance event trace
+
+**Trace Buffer Configuration:**
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| Buffer Size | 64 KB | Trace buffer capacity |
+| Trace Depth | 16K entries | Maximum trace entries |
+| Compression | 4:1 | Trace data compression |
+| Bandwidth | 1 GB/s | Trace data bandwidth |
+
+#### 11.2.2 Trace Buffer Instructions
+
+**Trace Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `TRACE_START` | `0x610` | Start trace collection |
+| `TRACE_STOP` | `0x611` | Stop trace collection |
+| `TRACE_READ` | `0x612` | Read trace data |
+| `TRACE_CLEAR` | `0x613` | Clear trace buffer |
+| `TRACE_CONFIG` | `0x614` | Configure trace parameters |
+| `TRACE_TRIGGER` | `0x615` | Set trace trigger |
+
+**Trace Usage Example:**
+```assembly
+# Configure trace buffer
+TRACE_CONFIG R1, #0x1000        # Set trace buffer size to 4KB
+TRACE_CONFIG R2, #0x2000        # Set trace trigger address
+
+# Start trace collection
+TRACE_START R3, #0x1            # Start instruction trace
+
+# Execute code to trace
+CALL function_to_trace          # Function to trace
+RET                            # Return from function
+
+# Stop and read trace
+TRACE_STOP R4, R5               # Stop trace, read to R4, R5
+```
+
+### 11.3 Breakpoint Support
+
+#### 11.3.1 Breakpoint Types
+
+**Breakpoint Categories:**
+- **Instruction Breakpoints**: Break on instruction execution
+- **Data Breakpoints**: Break on data access
+- **Address Breakpoints**: Break on specific addresses
+- **Conditional Breakpoints**: Break on conditions
+- **Watchpoints**: Monitor memory locations
+
+**Breakpoint Features:**
+- **Hardware Breakpoints**: Fast, limited count
+- **Software Breakpoints**: Unlimited, slower
+- **Conditional Breakpoints**: Break on specific conditions
+- **Temporary Breakpoints**: Auto-remove after hit
+- **Persistent Breakpoints**: Remain until explicitly removed
+
+#### 11.3.2 Breakpoint Instructions
+
+**Breakpoint Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `BP_SET` | `0x620` | Set breakpoint |
+| `BP_CLEAR` | `0x621` | Clear breakpoint |
+| `BP_ENABLE` | `0x622` | Enable breakpoint |
+| `BP_DISABLE` | `0x623` | Disable breakpoint |
+| `BP_CONDITION` | `0x624` | Set breakpoint condition |
+| `BP_STATUS` | `0x625` | Get breakpoint status |
+
+**Breakpoint Usage Example:**
+```assembly
+# Set instruction breakpoint
+BP_SET R1, #0x1000, #0x1        # Set breakpoint at address 0x1000
+
+# Set conditional breakpoint
+BP_CONDITION R2, R3, #0x100     # Break when R3 equals 0x100
+
+# Enable breakpoints
+BP_ENABLE R1, R2                # Enable breakpoints R1, R2
+
+# Execute code
+CALL function_with_breakpoint   # Code with breakpoint
+
+# Check breakpoint status
+BP_STATUS R4, R5                # Check if breakpoints hit
+```
+
+### 11.4 Profiling Hooks
+
+#### 11.4.1 Profiling Hook Types
+
+**Hook Categories:**
+- **Function Entry/Exit**: Profile function calls
+- **Loop Entry/Exit**: Profile loop execution
+- **Memory Allocation**: Profile memory operations
+- **System Calls**: Profile system call usage
+- **Custom Hooks**: User-defined profiling points
+
+**Hook Features:**
+- **Automatic Instrumentation**: Compiler-generated hooks
+- **Manual Instrumentation**: User-inserted hooks
+- **Conditional Hooks**: Hooks with conditions
+- **Sampling Hooks**: Statistical sampling
+- **Trace Hooks**: Complete execution trace
+
+#### 11.4.2 Profiling Hook Instructions
+
+**Hook Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `HOOK_SET` | `0x630` | Set profiling hook |
+| `HOOK_REMOVE` | `0x631` | Remove profiling hook |
+| `HOOK_ENABLE` | `0x632` | Enable profiling hook |
+| `HOOK_DISABLE` | `0x633` | Disable profiling hook |
+| `HOOK_CALLBACK` | `0x634` | Set hook callback |
+| `HOOK_SAMPLE` | `0x635` | Sample hook data |
+
+**Profiling Hook Usage Example:**
+```assembly
+# Set function entry hook
+HOOK_SET R1, #0x2000, #0x1      # Set hook at function entry 0x2000
+
+# Set callback function
+HOOK_CALLBACK R2, #0x3000       # Set callback function at 0x3000
+
+# Enable profiling
+HOOK_ENABLE R1, R2              # Enable hooks R1, R2
+
+# Execute profiled code
+CALL profiled_function          # Function with profiling hooks
+```
+
+### 11.5 Memory Access Tracing
+
+#### 11.5.1 Memory Trace Types
+
+**Trace Categories:**
+- **Load/Store Trace**: Memory access operations
+- **Cache Trace**: Cache hit/miss information
+- **TLB Trace**: Translation lookaside buffer access
+- **DMA Trace**: Direct memory access operations
+- **Coherence Trace**: Cache coherence operations
+
+**Trace Features:**
+- **Address Tracing**: Complete address information
+- **Data Tracing**: Data value tracing
+- **Timing Tracing**: Access timing information
+- **Access Pattern**: Memory access patterns
+- **Bandwidth Analysis**: Memory bandwidth usage
+
+#### 11.5.2 Memory Trace Instructions
+
+**Memory Trace Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `MEM_TRACE_START` | `0x640` | Start memory tracing |
+| `MEM_TRACE_STOP` | `0x641` | Stop memory tracing |
+| `MEM_TRACE_READ` | `0x642` | Read memory trace data |
+| `MEM_TRACE_FILTER` | `0x643` | Set trace filter |
+| `MEM_TRACE_ANALYZE` | `0x644` | Analyze trace data |
+| `MEM_TRACE_STATS` | `0x645` | Get trace statistics |
+
+**Memory Trace Usage Example:**
+```assembly
+# Configure memory trace filter
+MEM_TRACE_FILTER R1, #0x1000, #0x2000  # Trace addresses 0x1000-0x2000
+
+# Start memory tracing
+MEM_TRACE_START R2, #0x1               # Start load/store trace
+
+# Execute code with memory access
+LOAD R3, [R4 + #0x100]                 # Memory access to trace
+STORE R5, [R6 + #0x200]                # More memory access
+
+# Stop and analyze trace
+MEM_TRACE_STOP R7, R8                  # Stop trace, read to R7, R8
+MEM_TRACE_ANALYZE R9, R7               # Analyze trace data
+```
+
+### 11.6 Power Profiling
+
+#### 11.6.1 Power Measurement
+
+**Power Domains:**
+- **Core Power**: CPU core power consumption
+- **Cache Power**: Cache subsystem power
+- **Memory Power**: Memory subsystem power
+- **I/O Power**: Input/output power
+- **Total Power**: System total power
+
+**Power Metrics:**
+- **Instantaneous Power**: Real-time power measurement
+- **Average Power**: Time-averaged power
+- **Peak Power**: Maximum power consumption
+- **Energy**: Total energy consumption
+- **Power Efficiency**: Performance per watt
+
+#### 11.6.2 Power Profiling Instructions
+
+**Power Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `POWER_MEASURE` | `0x650` | Measure power consumption |
+| `POWER_AVERAGE` | `0x651` | Calculate average power |
+| `POWER_PEAK` | `0x652` | Get peak power |
+| `POWER_ENERGY` | `0x653` | Calculate energy consumption |
+| `POWER_EFFICIENCY` | `0x654` | Calculate power efficiency |
+| `POWER_PROFILE` | `0x655` | Start power profiling |
+
+**Power Profiling Usage Example:**
+```assembly
+# Start power profiling
+POWER_PROFILE R1, #0x1000        # Profile for 1000 cycles
+
+# Execute code to profile
+CALL compute_intensive_function  # Power-intensive function
+
+# Stop and analyze power
+POWER_MEASURE R2, R3             # Measure current power
+POWER_AVERAGE R4, R5             # Calculate average power
+POWER_ENERGY R6, R7              # Calculate total energy
+```
+
+### 11.7 Debug Interface
+
+#### 11.7.1 Debug Interface Types
+
+**Interface Standards:**
+- **JTAG**: Joint Test Action Group interface
+- **SWD**: Serial Wire Debug interface
+- **ETM**: Embedded Trace Macrocell
+- **ITM**: Instrumentation Trace Macrocell
+- **TPIU**: Trace Port Interface Unit
+
+**Debug Features:**
+- **Run Control**: Start/stop/step execution
+- **Register Access**: Read/write registers
+- **Memory Access**: Read/write memory
+- **Breakpoint Control**: Set/clear breakpoints
+- **Trace Collection**: Collect execution trace
+
+#### 11.7.2 Debug Interface Instructions
+
+**Debug Operations:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `DEBUG_START` | `0x660` | Start debug session |
+| `DEBUG_STOP` | `0x661` | Stop debug session |
+| `DEBUG_STEP` | `0x662` | Single step execution |
+| `DEBUG_CONTINUE` | `0x663` | Continue execution |
+| `DEBUG_RESET` | `0x664` | Reset debug state |
+| `DEBUG_STATUS` | `0x665` | Get debug status |
+
+### 11.8 Profiling Performance Characteristics
+
+#### 11.8.1 Performance Counter Performance
+
+| Metric | Value | Unit |
+|--------|-------|------|
+| Counter Read Latency | 1 | cycle |
+| Counter Reset Latency | 1 | cycle |
+| Event Selection | 2 | cycles |
+| Counter Overflow | 1 | cycle |
+| Maximum Counters | 8 | counters |
+
+#### 11.8.2 Trace Buffer Performance
+
+| Metric | Value | Unit |
+|--------|-------|------|
+| Trace Buffer Size | 64 | KB |
+| Trace Bandwidth | 1 | GB/s |
+| Trace Latency | 1 | cycle |
+| Compression Ratio | 4:1 | ratio |
+| Maximum Trace Depth | 16K | entries |
+
+#### 11.8.3 Breakpoint Performance
+
+| Metric | Value | Unit |
+|--------|-------|------|
+| Hardware Breakpoints | 8 | breakpoints |
+| Software Breakpoints | Unlimited | breakpoints |
+| Breakpoint Latency | 1 | cycle |
+| Conditional Evaluation | 2 | cycles |
+| Breakpoint Overhead | 0% | % |
+
+---
+
+## 12. Performance Specifications
 
 ### 11.1 Timing Characteristics
 

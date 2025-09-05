@@ -57,7 +57,9 @@ The AlphaAHB V5 ISA implements a **unified register file** with multiple registe
 │  ├── A24-A27: Gradient registers (128-bit)                    │
 │  └── A28-A31: Quantization registers (64-bit)                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  Extended Precision Registers (EPR) - 8 registers             │
+│  Extended Precision Registers (EPR) - 24 registers            │
+│  ├── FP64_0-FP64_7: FP64 registers (64-bit)                   │
+│  ├── FP128_0-FP128_7: FP128 registers (128-bit)               │
 │  ├── FP256_0-FP256_7: FP256 registers (256-bit)               │
 │  └── FHE_0-FHE_7: Homomorphic encryption registers (1024-bit) │
 ├─────────────────────────────────────────────────────────────────┤
@@ -99,7 +101,7 @@ The AlphaAHB V5 ISA implements a **unified register file** with multiple registe
 
 ### 1.2 Register File Characteristics
 
-- **Total Registers**: 288 registers
+- **Total Registers**: 304 registers
 - **Register Width**: 64-bit base width
 - **Access Ports**: 8 read ports, 4 write ports
 - **Bypass Network**: Full bypass for single-cycle operations
@@ -397,7 +399,33 @@ The AlphaAHB V5 ISA implements a **unified register file** with multiple registe
 
 ## 6. Extended Precision Registers
 
-### 6.1 FP256 Registers (FP256_0-FP256_7)
+### 6.1 FP64 Registers (FP64_0-FP64_7)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| FP64_0 | 000000 | FP64_0 | FP64 register 0 | 64-bit |
+| FP64_1 | 000001 | FP64_1 | FP64 register 1 | 64-bit |
+| FP64_2 | 000010 | FP64_2 | FP64 register 2 | 64-bit |
+| FP64_3 | 000011 | FP64_3 | FP64 register 3 | 64-bit |
+| FP64_4 | 000100 | FP64_4 | FP64 register 4 | 64-bit |
+| FP64_5 | 000101 | FP64_5 | FP64 register 5 | 64-bit |
+| FP64_6 | 000110 | FP64_6 | FP64 register 6 | 64-bit |
+| FP64_7 | 000111 | FP64_7 | FP64 register 7 | 64-bit |
+
+### 6.2 FP128 Registers (FP128_0-FP128_7)
+
+| Register | Binary | Name | Description | Width |
+|----------|--------|------|-------------|-------|
+| FP128_0 | 001000 | FP128_0 | FP128 register 0 | 128-bit |
+| FP128_1 | 001001 | FP128_1 | FP128 register 1 | 128-bit |
+| FP128_2 | 001010 | FP128_2 | FP128 register 2 | 128-bit |
+| FP128_3 | 001011 | FP128_3 | FP128 register 3 | 128-bit |
+| FP128_4 | 001100 | FP128_4 | FP128 register 4 | 128-bit |
+| FP128_5 | 001101 | FP128_5 | FP128 register 5 | 128-bit |
+| FP128_6 | 001110 | FP128_6 | FP128 register 6 | 128-bit |
+| FP128_7 | 001111 | FP128_7 | FP128 register 7 | 128-bit |
+
+### 6.3 FP256 Registers (FP256_0-FP256_7)
 
 | Register | Binary | Name | Description | Width |
 |----------|--------|------|-------------|-------|

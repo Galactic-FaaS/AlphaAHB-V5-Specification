@@ -416,7 +416,45 @@ This document defines the complete assembly language syntax, addressing modes, p
 | DIFFUSION | `DIFFUSION Ad, As1, As2` | Diffusion model |
 | QUANTIZE | `QUANTIZE Ad, As1, #imm` | Quantization |
 
-### 5.3 Extended Precision AI Instructions (FP256)
+### 5.3 Extended Precision AI Instructions (FP64, FP128, FP256)
+
+#### 5.3.1 FP64 Extended Precision Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| `FP64_ADD` | `FP64_ADD FP64d, FP64s1, FP64s2` | FP64 addition |
+| `FP64_SUB` | `FP64_SUB FP64d, FP64s1, FP64s2` | FP64 subtraction |
+| `FP64_MUL` | `FP64_MUL FP64d, FP64s1, FP64s2` | FP64 multiplication |
+| `FP64_DIV` | `FP64_DIV FP64d, FP64s1, FP64s2` | FP64 division |
+| `FP64_SQRT` | `FP64_SQRT FP64d, FP64s1` | FP64 square root |
+| `FP64_FMA` | `FP64_FMA FP64d, FP64s1, FP64s2, FP64s3` | FP64 fused multiply-add |
+| `FP64_CMP` | `FP64_CMP FP64s1, FP64s2` | FP64 comparison |
+| `FP64_CVT` | `FP64_CVT Fd, FP64s1` | FP64 conversion |
+| `FP64_ROUND` | `FP64_ROUND FP64d, FP64s1, #imm` | FP64 rounding |
+| `FP64_ABS` | `FP64_ABS FP64d, FP64s1` | FP64 absolute value |
+| `FP64_NEG` | `FP64_NEG FP64d, FP64s1` | FP64 negation |
+| `FP64_MIN` | `FP64_MIN FP64d, FP64s1, FP64s2` | FP64 minimum |
+| `FP64_MAX` | `FP64_MAX FP64d, FP64s1, FP64s2` | FP64 maximum |
+
+#### 5.3.2 FP128 Extended Precision Instructions
+
+| Instruction | Syntax | Description |
+|-------------|--------|-------------|
+| `FP128_ADD` | `FP128_ADD FP128d, FP128s1, FP128s2` | FP128 addition |
+| `FP128_SUB` | `FP128_SUB FP128d, FP128s1, FP128s2` | FP128 subtraction |
+| `FP128_MUL` | `FP128_MUL FP128d, FP128s1, FP128s2` | FP128 multiplication |
+| `FP128_DIV` | `FP128_DIV FP128d, FP128s1, FP128s2` | FP128 division |
+| `FP128_SQRT` | `FP128_SQRT FP128d, FP128s1` | FP128 square root |
+| `FP128_FMA` | `FP128_FMA FP128d, FP128s1, FP128s2, FP128s3` | FP128 fused multiply-add |
+| `FP128_CMP` | `FP128_CMP FP128s1, FP128s2` | FP128 comparison |
+| `FP128_CVT` | `FP128_CVT Fd, FP128s1` | FP128 conversion |
+| `FP128_ROUND` | `FP128_ROUND FP128d, FP128s1, #imm` | FP128 rounding |
+| `FP128_ABS` | `FP128_ABS FP128d, FP128s1` | FP128 absolute value |
+| `FP128_NEG` | `FP128_NEG FP128d, FP128s1` | FP128 negation |
+| `FP128_MIN` | `FP128_MIN FP128d, FP128s1, FP128s2` | FP128 minimum |
+| `FP128_MAX` | `FP128_MAX FP128d, FP128s1, FP128s2` | FP128 maximum |
+
+#### 5.3.3 FP256 Ultra-High Precision Instructions
 
 | Instruction | Syntax | Description |
 |-------------|--------|-------------|

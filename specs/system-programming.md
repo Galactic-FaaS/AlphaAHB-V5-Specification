@@ -331,12 +331,34 @@ The AlphaAHB V5 ISA implements a **64-bit virtual address space** with **48-bit 
 | Activation Data | A16-A23 registers | User |
 | Gradient Data | A24-A27 registers | User |
 | Quantization Data | A28-A31 registers | User |
-| Extended Precision | FP256_0-FP256_7 registers | User |
+| Extended Precision | FP64_0-FP64_7, FP128_0-FP128_7, FP256_0-FP256_7 registers | User |
 | Homomorphic Encryption | FHE_0-FHE_7 registers | User |
 | Model Storage | Persistent memory | Supervisor |
 | Training Data | Cache/memory | Supervisor |
 
 ### 6.5 Extended Precision AI/ML Programming
+
+#### 6.5.1 FP64 Extended Precision Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| FP64 Addition | `FP64_ADD FP64d, FP64s1, FP64s2` | FP64 addition | User |
+| FP64 Multiplication | `FP64_MUL FP64d, FP64s1, FP64s2` | FP64 multiplication | User |
+| FP64 Square Root | `FP64_SQRT FP64d, FP64s1` | FP64 square root | User |
+| FP64 Conversion | `FP64_CVT Fd, FP64s1` | FP64 conversion | User |
+| FP64 Rounding | `FP64_ROUND FP64d, FP64s1, #imm` | FP64 rounding | User |
+
+#### 6.5.2 FP128 Extended Precision Programming
+
+| Operation | Instruction | Description | Privilege Required |
+|-----------|-------------|-------------|-------------------|
+| FP128 Addition | `FP128_ADD FP128d, FP128s1, FP128s2` | FP128 addition | User |
+| FP128 Multiplication | `FP128_MUL FP128d, FP128s1, FP128s2` | FP128 multiplication | User |
+| FP128 Square Root | `FP128_SQRT FP128d, FP128s1` | FP128 square root | User |
+| FP128 Conversion | `FP128_CVT Fd, FP128s1` | FP128 conversion | User |
+| FP128 Rounding | `FP128_ROUND FP128d, FP128s1, #imm` | FP128 rounding | User |
+
+#### 6.5.3 FP256 Ultra-High Precision Programming
 
 | Operation | Instruction | Description | Privilege Required |
 |-----------|-------------|-------------|-------------------|

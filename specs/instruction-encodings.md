@@ -617,7 +617,45 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 | `SPARSE_ATTN` | A-Type | 0x9 | 0xE | Sparse attention |
 | `QUANTIZE` | A-Type | 0x9 | 0xF | Quantization |
 
-### 7.3 Extended Precision AI Operations (FP256)
+### 7.3 Extended Precision AI Operations (FP64, FP128, FP256)
+
+#### 7.3.1 FP64 Extended Precision Operations
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `FP64_ADD` | F-Type | 0x9C | 0x0 | FP64 addition |
+| `FP64_SUB` | F-Type | 0x9C | 0x1 | FP64 subtraction |
+| `FP64_MUL` | F-Type | 0x9C | 0x2 | FP64 multiplication |
+| `FP64_DIV` | F-Type | 0x9C | 0x3 | FP64 division |
+| `FP64_SQRT` | F-Type | 0x9C | 0x4 | FP64 square root |
+| `FP64_FMA` | F-Type | 0x9C | 0x5 | FP64 fused multiply-add |
+| `FP64_CMP` | F-Type | 0x9C | 0x6 | FP64 comparison |
+| `FP64_CVT` | F-Type | 0x9C | 0x7 | FP64 conversion |
+| `FP64_ROUND` | F-Type | 0x9C | 0x8 | FP64 rounding |
+| `FP64_ABS` | F-Type | 0x9C | 0x9 | FP64 absolute value |
+| `FP64_NEG` | F-Type | 0x9C | 0xA | FP64 negation |
+| `FP64_MIN` | F-Type | 0x9C | 0xB | FP64 minimum |
+| `FP64_MAX` | F-Type | 0x9C | 0xC | FP64 maximum |
+
+#### 7.3.2 FP128 Extended Precision Operations
+
+| Instruction | Format | Opcode | Func | Description |
+|-------------|--------|--------|------|-------------|
+| `FP128_ADD` | F-Type | 0x9D | 0x0 | FP128 addition |
+| `FP128_SUB` | F-Type | 0x9D | 0x1 | FP128 subtraction |
+| `FP128_MUL` | F-Type | 0x9D | 0x2 | FP128 multiplication |
+| `FP128_DIV` | F-Type | 0x9D | 0x3 | FP128 division |
+| `FP128_SQRT` | F-Type | 0x9D | 0x4 | FP128 square root |
+| `FP128_FMA` | F-Type | 0x9D | 0x5 | FP128 fused multiply-add |
+| `FP128_CMP` | F-Type | 0x9D | 0x6 | FP128 comparison |
+| `FP128_CVT` | F-Type | 0x9D | 0x7 | FP128 conversion |
+| `FP128_ROUND` | F-Type | 0x9D | 0x8 | FP128 rounding |
+| `FP128_ABS` | F-Type | 0x9D | 0x9 | FP128 absolute value |
+| `FP128_NEG` | F-Type | 0x9D | 0xA | FP128 negation |
+| `FP128_MIN` | F-Type | 0x9D | 0xB | FP128 minimum |
+| `FP128_MAX` | F-Type | 0x9D | 0xC | FP128 maximum |
+
+#### 7.3.3 FP256 Ultra-High Precision Operations
 
 | Instruction | Format | Opcode | Func | Description |
 |-------------|--------|--------|------|-------------|

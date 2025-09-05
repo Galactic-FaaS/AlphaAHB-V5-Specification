@@ -1615,7 +1615,7 @@ SAFETY_FAULT R4, #0x2000       # Report fault with code 0x2000
 #### 9.1.1 Advanced Architecture
 - **2048 processing elements (PEs)** with dynamic reconfiguration
 - **Multi-precision support**: INT1, INT4, INT8, INT16, FP16, FP32, BF16, FP64, FP128, FP256
-- **Extended precision support**: FP256 for ultra-high precision AI/ML workloads
+- **Extended precision support**: FP64, FP128, FP256 for high-precision AI/ML workloads
 - **Dynamic precision switching** with zero-overhead transitions
 - **Sparse matrix acceleration** with 90% sparsity support
 - **Variable vector length** from 64-bit to 512-bit operations
@@ -1741,7 +1741,99 @@ SAFETY_FAULT R4, #0x2000       # Report fault with code 0x2000
 - **Gradient Compression**: 8x communication reduction
 - **Sparse Storage**: 90% memory savings for sparse models
 
-#### 9.1.8 Extended Precision Support (FP256)
+#### 9.1.8 Extended Precision Support (FP64, FP128, FP256)
+
+**FP64 Extended Precision Architecture:**
+- **FP64 Format**: 64-bit floating-point with 1 sign bit, 11 exponent bits, 52 mantissa bits
+- **Precision Range**: ~15 decimal digits of precision
+- **Exponent Range**: ±1023 (approximately ±10^308)
+- **Special Values**: ±0, ±∞, NaN with extended payload
+- **Rounding Modes**: IEEE 754-2019 compliant (RNE, RTZ, RTP, RTN, RMM)
+
+**FP64 Register Organization:**
+| Register | Bits | Description | Elements |
+|----------|------|-------------|----------|
+| `FP64_0` | 63:0 | FP64 register 0 | 1×64-bit |
+| `FP64_1` | 63:0 | FP64 register 1 | 1×64-bit |
+| `FP64_2` | 63:0 | FP64 register 2 | 1×64-bit |
+| `FP64_3` | 63:0 | FP64 register 3 | 1×64-bit |
+| `FP64_4` | 63:0 | FP64 register 4 | 1×64-bit |
+| `FP64_5` | 63:0 | FP64 register 5 | 1×64-bit |
+| `FP64_6` | 63:0 | FP64 register 6 | 1×64-bit |
+| `FP64_7` | 63:0 | FP64 register 7 | 1×64-bit |
+
+**FP64 Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `FP64_ADD` | `0x9C0` | FP64 addition |
+| `FP64_SUB` | `0x9C1` | FP64 subtraction |
+| `FP64_MUL` | `0x9C2` | FP64 multiplication |
+| `FP64_DIV` | `0x9C3` | FP64 division |
+| `FP64_SQRT` | `0x9C4` | FP64 square root |
+| `FP64_FMA` | `0x9C5` | FP64 fused multiply-add |
+| `FP64_CMP` | `0x9C6` | FP64 comparison |
+| `FP64_CVT` | `0x9C7` | FP64 conversion |
+| `FP64_ROUND` | `0x9C8` | FP64 rounding |
+| `FP64_ABS` | `0x9C9` | FP64 absolute value |
+| `FP64_NEG` | `0x9CA` | FP64 negation |
+| `FP64_MIN` | `0x9CB` | FP64 minimum |
+| `FP64_MAX` | `0x9CC` | FP64 maximum |
+
+**FP128 Extended Precision Architecture:**
+- **FP128 Format**: 128-bit floating-point with 1 sign bit, 15 exponent bits, 112 mantissa bits
+- **Precision Range**: ~34 decimal digits of precision
+- **Exponent Range**: ±16,383 (approximately ±10^4,932)
+- **Special Values**: ±0, ±∞, NaN with extended payload
+- **Rounding Modes**: IEEE 754-2019 compliant (RNE, RTZ, RTP, RTN, RMM)
+
+**FP128 Register Organization:**
+| Register | Bits | Description | Elements |
+|----------|------|-------------|----------|
+| `FP128_0` | 127:0 | FP128 register 0 | 1×128-bit |
+| `FP128_1` | 127:0 | FP128 register 1 | 1×128-bit |
+| `FP128_2` | 127:0 | FP128 register 2 | 1×128-bit |
+| `FP128_3` | 127:0 | FP128 register 3 | 1×128-bit |
+| `FP128_4` | 127:0 | FP128 register 4 | 1×128-bit |
+| `FP128_5` | 127:0 | FP128 register 5 | 1×128-bit |
+| `FP128_6` | 127:0 | FP128 register 6 | 1×128-bit |
+| `FP128_7` | 127:0 | FP128 register 7 | 1×128-bit |
+
+**FP128 Instructions:**
+| Instruction | Encoding | Description |
+|-------------|----------|-------------|
+| `FP128_ADD` | `0x9D0` | FP128 addition |
+| `FP128_SUB` | `0x9D1` | FP128 subtraction |
+| `FP128_MUL` | `0x9D2` | FP128 multiplication |
+| `FP128_DIV` | `0x9D3` | FP128 division |
+| `FP128_SQRT` | `0x9D4` | FP128 square root |
+| `FP128_FMA` | `0x9D5` | FP128 fused multiply-add |
+| `FP128_CMP` | `0x9D6` | FP128 comparison |
+| `FP128_CVT` | `0x9D7` | FP128 conversion |
+| `FP128_ROUND` | `0x9D8` | FP128 rounding |
+| `FP128_ABS` | `0x9D9` | FP128 absolute value |
+| `FP128_NEG` | `0x9DA` | FP128 negation |
+| `FP128_MIN` | `0x9DB` | FP128 minimum |
+| `FP128_MAX` | `0x9DC` | FP128 maximum |
+
+**Extended Precision Usage Examples:**
+```assembly
+# FP64 high-precision computation
+FP64_ADD FP64_0, FP64_1, FP64_2    # FP64_0 = FP64_1 + FP64_2
+FP64_MUL FP64_3, FP64_0, FP64_4    # FP64_3 = FP64_0 * FP64_4
+FP64_SQRT FP64_5, FP64_3           # FP64_5 = sqrt(FP64_3)
+
+# FP128 very high-precision computation
+FP128_ADD FP128_0, FP128_1, FP128_2  # FP128_0 = FP128_1 + FP128_2
+FP128_MUL FP128_3, FP128_0, FP128_4  # FP128_3 = FP128_0 * FP128_4
+FP128_SQRT FP128_5, FP128_3          # FP128_5 = sqrt(FP128_3)
+
+# Convert between precision levels
+FP64_CVT F0, FP64_5                 # Convert FP64_5 to FP32 F0
+FP128_CVT FP64_6, FP128_5           # Convert FP128_5 to FP64_6
+FP256_CVT FP128_7, FP256_5          # Convert FP256_5 to FP128_7
+```
+
+#### 9.1.9 Ultra-High Precision Support (FP256)
 
 **Ultra-High Precision Architecture:**
 - **FP256 Format**: 256-bit floating-point with 1 sign bit, 19 exponent bits, 236 mantissa bits

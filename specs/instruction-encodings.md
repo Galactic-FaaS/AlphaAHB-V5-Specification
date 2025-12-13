@@ -31,16 +31,16 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ### 1.2 Instruction Format Types
 
-| Format | Width | Description | Use Case |
-|--------|-------|-------------|----------|
-| R-Type | 64-bit | Register-register operations | Arithmetic, logical |
-| I-Type | 64-bit | Immediate operations | Loads, arithmetic with immediates |
-| S-Type | 64-bit | Store operations | Memory stores |
-| B-Type | 64-bit | Branch operations | Conditional branches |
-| U-Type | 64-bit | Upper immediate | Load upper immediate |
-| J-Type | 64-bit | Jump operations | Unconditional jumps |
-| V-Type | 64-bit | Vector operations | SIMD instructions |
-| M-Type | 64-bit | MIMD operations | Parallel processing |
+| Format | Width  | Description                  | Use Case                          |
+| ------ | ------ | ---------------------------- | --------------------------------- |
+| R-Type | 64-bit | Register-register operations | Arithmetic, logical               |
+| I-Type | 64-bit | Immediate operations         | Loads, arithmetic with immediates |
+| S-Type | 64-bit | Store operations             | Memory stores                     |
+| B-Type | 64-bit | Branch operations            | Conditional branches              |
+| U-Type | 64-bit | Upper immediate              | Load upper immediate              |
+| J-Type | 64-bit | Jump operations              | Unconditional jumps               |
+| V-Type | 64-bit | Vector operations            | SIMD instructions                 |
+| M-Type | 64-bit | MIMD operations              | Parallel processing               |
 
 ### 1.3 Instruction Layout
 
@@ -60,194 +60,194 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ### 2.1 Primary Opcodes (Bits 63-60)
 
-| Opcode | Binary | Name | Description |
-|--------|--------|------|-------------|
-| 0x0 | 0000 | R-Type | Register-register operations |
-| 0x1 | 0001 | I-Type | Immediate operations |
-| 0x2 | 0010 | S-Type | Store operations |
-| 0x3 | 0011 | B-Type | Branch operations |
-| 0x4 | 0100 | U-Type | Upper immediate |
-| 0x5 | 0101 | J-Type | Jump operations |
-| 0x6 | 0110 | V-Type | Vector operations |
-| 0x7 | 0111 | M-Type | MIMD operations |
-| 0x8 | 1000 | F-Type | Floating-point operations |
-| 0x9 | 1001 | A-Type | AI/ML operations |
-| 0xA | 1010 | P-Type | Privileged operations |
-| 0xB | 1011 | C-Type | Control operations |
-| 0xC | 1100 | Reserved | Reserved for future use |
-| 0xD | 1101 | Reserved | Reserved for future use |
-| 0xE | 1110 | Reserved | Reserved for future use |
-| 0xF | 1111 | Reserved | Reserved for future use |
+| Opcode | Binary | Name     | Description                  |
+| ------ | ------ | -------- | ---------------------------- |
+| 0x0    | 0000   | R-Type   | Register-register operations |
+| 0x1    | 0001   | I-Type   | Immediate operations         |
+| 0x2    | 0010   | S-Type   | Store operations             |
+| 0x3    | 0011   | B-Type   | Branch operations            |
+| 0x4    | 0100   | U-Type   | Upper immediate              |
+| 0x5    | 0101   | J-Type   | Jump operations              |
+| 0x6    | 0110   | V-Type   | Vector operations            |
+| 0x7    | 0111   | M-Type   | MIMD operations              |
+| 0x8    | 1000   | F-Type   | Floating-point operations    |
+| 0x9    | 1001   | A-Type   | AI/ML operations             |
+| 0xA    | 1010   | P-Type   | Privileged operations        |
+| 0xB    | 1011   | C-Type   | Control operations           |
+| 0xC    | 1100   | Reserved | Reserved for future use      |
+| 0xD    | 1101   | Reserved | Reserved for future use      |
+| 0xE    | 1110   | Reserved | Reserved for future use      |
+| 0xF    | 1111   | Reserved | Reserved for future use      |
 
 ### 2.2 Function Codes (Bits 59-56)
 
 #### 2.2.1 R-Type Functions
 
-| Func | Binary | Name | Description |
-|------|--------|------|-------------|
-| 0x0 | 0000 | ADD | Add registers |
-| 0x1 | 0001 | SUB | Subtract registers |
-| 0x2 | 0010 | MUL | Multiply registers |
-| 0x3 | 0011 | DIV | Divide registers |
-| 0x4 | 0100 | MOD | Modulo registers |
-| 0x5 | 0101 | AND | Bitwise AND |
-| 0x6 | 0110 | OR | Bitwise OR |
-| 0x7 | 0111 | XOR | Bitwise XOR |
-| 0x8 | 1000 | SHL | Shift left |
-| 0x9 | 1001 | SHR | Shift right |
-| 0xA | 1010 | ROT | Rotate |
-| 0xB | 1011 | CMP | Compare registers |
-| 0xC | 1100 | CLZ | Count leading zeros |
-| 0xD | 1101 | CTZ | Count trailing zeros |
-| 0xE | 1110 | POPCNT | Population count |
-| 0xF | 1111 | Reserved | Reserved |
+| Func | Binary | Name     | Description          |
+| ---- | ------ | -------- | -------------------- |
+| 0x0  | 0000   | ADD      | Add registers        |
+| 0x1  | 0001   | SUB      | Subtract registers   |
+| 0x2  | 0010   | MUL      | Multiply registers   |
+| 0x3  | 0011   | DIV      | Divide registers     |
+| 0x4  | 0100   | MOD      | Modulo registers     |
+| 0x5  | 0101   | AND      | Bitwise AND          |
+| 0x6  | 0110   | OR       | Bitwise OR           |
+| 0x7  | 0111   | XOR      | Bitwise XOR          |
+| 0x8  | 1000   | SHL      | Shift left           |
+| 0x9  | 1001   | SHR      | Shift right          |
+| 0xA  | 1010   | ROT      | Rotate               |
+| 0xB  | 1011   | CMP      | Compare registers    |
+| 0xC  | 1100   | CLZ      | Count leading zeros  |
+| 0xD  | 1101   | CTZ      | Count trailing zeros |
+| 0xE  | 1110   | POPCNT   | Population count     |
+| 0xF  | 1111   | Reserved | Reserved             |
 
 #### 2.2.2 I-Type Functions
 
-| Func | Binary | Name | Description |
-|------|--------|------|-------------|
-| 0x0 | 0000 | ADDI | Add immediate |
-| 0x1 | 0001 | SUBI | Subtract immediate |
-| 0x2 | 0010 | MULI | Multiply immediate |
-| 0x3 | 0011 | DIVI | Divide immediate |
-| 0x4 | 0100 | ANDI | AND immediate |
-| 0x5 | 0101 | ORI | OR immediate |
-| 0x6 | 0110 | XORI | XOR immediate |
-| 0x7 | 0111 | SHLI | Shift left immediate |
-| 0x8 | 1000 | SHRI | Shift right immediate |
-| 0x9 | 1001 | LOAD | Load from memory |
-| 0xA | 1010 | LOADU | Load unaligned |
-| 0xB | 1011 | LOADL | Load locked |
-| 0xC | 1100 | CMPI | Compare immediate |
-| 0xD | 1101 | TESTI | Test immediate |
-| 0xE | 1110 | Reserved | Reserved |
-| 0xF | 1111 | Reserved | Reserved |
+| Func | Binary | Name     | Description           |
+| ---- | ------ | -------- | --------------------- |
+| 0x0  | 0000   | ADDI     | Add immediate         |
+| 0x1  | 0001   | SUBI     | Subtract immediate    |
+| 0x2  | 0010   | MULI     | Multiply immediate    |
+| 0x3  | 0011   | DIVI     | Divide immediate      |
+| 0x4  | 0100   | ANDI     | AND immediate         |
+| 0x5  | 0101   | ORI      | OR immediate          |
+| 0x6  | 0110   | XORI     | XOR immediate         |
+| 0x7  | 0111   | SHLI     | Shift left immediate  |
+| 0x8  | 1000   | SHRI     | Shift right immediate |
+| 0x9  | 1001   | LOAD     | Load from memory      |
+| 0xA  | 1010   | LOADU    | Load unaligned        |
+| 0xB  | 1011   | LOADL    | Load locked           |
+| 0xC  | 1100   | CMPI     | Compare immediate     |
+| 0xD  | 1101   | TESTI    | Test immediate        |
+| 0xE  | 1110   | Reserved | Reserved              |
+| 0xF  | 1111   | Reserved | Reserved              |
 
 #### 2.2.3 S-Type Functions
 
-| Func | Binary | Name | Description |
-|------|--------|------|-------------|
-| 0x0 | 0000 | STORE | Store to memory |
-| 0x1 | 0001 | STOREU | Store unaligned |
-| 0x2 | 0010 | STOREC | Store conditional |
-| 0x3 | 0011 | STOREL | Store locked |
-| 0x4 | 0100 | PREFETCH | Prefetch data |
-| 0x5 | 0101 | FLUSH | Flush cache |
-| 0x6 | 0110 | INVALIDATE | Invalidate cache |
-| 0x7 | 0111 | SYNC | Memory synchronization |
-| 0x8 | 1000 | FENCE | Memory fence |
-| 0x9 | 1001 | FENCEI | Instruction fence |
-| 0xA | 1010 | Reserved | Reserved |
-| 0xB | 1011 | Reserved | Reserved |
-| 0xC | 1100 | Reserved | Reserved |
-| 0xD | 1101 | Reserved | Reserved |
-| 0xE | 1110 | Reserved | Reserved |
-| 0xF | 1111 | Reserved | Reserved |
+| Func | Binary | Name       | Description            |
+| ---- | ------ | ---------- | ---------------------- |
+| 0x0  | 0000   | STORE      | Store to memory        |
+| 0x1  | 0001   | STOREU     | Store unaligned        |
+| 0x2  | 0010   | STOREC     | Store conditional      |
+| 0x3  | 0011   | STOREL     | Store locked           |
+| 0x4  | 0100   | PREFETCH   | Prefetch data          |
+| 0x5  | 0101   | FLUSH      | Flush cache            |
+| 0x6  | 0110   | INVALIDATE | Invalidate cache       |
+| 0x7  | 0111   | SYNC       | Memory synchronization |
+| 0x8  | 1000   | FENCE      | Memory fence           |
+| 0x9  | 1001   | FENCEI     | Instruction fence      |
+| 0xA  | 1010   | Reserved   | Reserved               |
+| 0xB  | 1011   | Reserved   | Reserved               |
+| 0xC  | 1100   | Reserved   | Reserved               |
+| 0xD  | 1101   | Reserved   | Reserved               |
+| 0xE  | 1110   | Reserved   | Reserved               |
+| 0xF  | 1111   | Reserved   | Reserved               |
 
 #### 2.2.4 B-Type Functions
 
-| Func | Binary | Name | Description |
-|------|--------|------|-------------|
-| 0x0 | 0000 | BEQ | Branch if equal |
-| 0x1 | 0001 | BNE | Branch if not equal |
-| 0x2 | 0010 | BLT | Branch if less than |
-| 0x3 | 0011 | BLE | Branch if less than or equal |
-| 0x4 | 0100 | BGT | Branch if greater than |
-| 0x5 | 0101 | BGE | Branch if greater than or equal |
-| 0x6 | 0110 | BLTU | Branch if less than unsigned |
-| 0x7 | 0111 | BLEU | Branch if less than or equal unsigned |
-| 0x8 | 1000 | BGTU | Branch if greater than unsigned |
-| 0x9 | 1001 | BGEU | Branch if greater than or equal unsigned |
-| 0xA | 1010 | BZ | Branch if zero |
-| 0xB | 1011 | BNZ | Branch if not zero |
-| 0xC | 1100 | BLTZ | Branch if less than zero |
-| 0xD | 1101 | BLEZ | Branch if less than or equal zero |
-| 0xE | 1110 | BGTZ | Branch if greater than zero |
-| 0xF | 1111 | BGEZ | Branch if greater than or equal zero |
+| Func | Binary | Name | Description                              |
+| ---- | ------ | ---- | ---------------------------------------- |
+| 0x0  | 0000   | BEQ  | Branch if equal                          |
+| 0x1  | 0001   | BNE  | Branch if not equal                      |
+| 0x2  | 0010   | BLT  | Branch if less than                      |
+| 0x3  | 0011   | BLE  | Branch if less than or equal             |
+| 0x4  | 0100   | BGT  | Branch if greater than                   |
+| 0x5  | 0101   | BGE  | Branch if greater than or equal          |
+| 0x6  | 0110   | BLTU | Branch if less than unsigned             |
+| 0x7  | 0111   | BLEU | Branch if less than or equal unsigned    |
+| 0x8  | 1000   | BGTU | Branch if greater than unsigned          |
+| 0x9  | 1001   | BGEU | Branch if greater than or equal unsigned |
+| 0xA  | 1010   | BZ   | Branch if zero                           |
+| 0xB  | 1011   | BNZ  | Branch if not zero                       |
+| 0xC  | 1100   | BLTZ | Branch if less than zero                 |
+| 0xD  | 1101   | BLEZ | Branch if less than or equal zero        |
+| 0xE  | 1110   | BGTZ | Branch if greater than zero              |
+| 0xF  | 1111   | BGEZ | Branch if greater than or equal zero     |
 
 #### 2.2.5 V-Type Functions (Vector Operations)
 
-| Func | Binary | Name | Description |
-|------|--------|------|-------------|
-| 0x0 | 0000 | VADD | Vector add |
-| 0x1 | 0001 | VSUB | Vector subtract |
-| 0x2 | 0010 | VMUL | Vector multiply |
-| 0x3 | 0011 | VDIV | Vector divide |
-| 0x4 | 0100 | VFMA | Vector fused multiply-add |
-| 0x5 | 0101 | VAND | Vector AND |
-| 0x6 | 0110 | VOR | Vector OR |
-| 0x7 | 0111 | VXOR | Vector XOR |
-| 0x8 | 1000 | VSHL | Vector shift left |
-| 0x9 | 1001 | VSHR | Vector shift right |
-| 0xA | 1010 | VCMP | Vector compare |
-| 0xB | 1011 | VREDUCE | Vector reduction |
-| 0xC | 1100 | VGATHER | Vector gather |
-| 0xD | 1101 | VSCATTER | Vector scatter |
-| 0xE | 1110 | VPERMUTE | Vector permute |
-| 0xF | 1111 | VBLEND | Vector blend |
+| Func | Binary | Name     | Description               |
+| ---- | ------ | -------- | ------------------------- |
+| 0x0  | 0000   | VADD     | Vector add                |
+| 0x1  | 0001   | VSUB     | Vector subtract           |
+| 0x2  | 0010   | VMUL     | Vector multiply           |
+| 0x3  | 0011   | VDIV     | Vector divide             |
+| 0x4  | 0100   | VFMA     | Vector fused multiply-add |
+| 0x5  | 0101   | VAND     | Vector AND                |
+| 0x6  | 0110   | VOR      | Vector OR                 |
+| 0x7  | 0111   | VXOR     | Vector XOR                |
+| 0x8  | 1000   | VSHL     | Vector shift left         |
+| 0x9  | 1001   | VSHR     | Vector shift right        |
+| 0xA  | 1010   | VCMP     | Vector compare            |
+| 0xB  | 1011   | VREDUCE  | Vector reduction          |
+| 0xC  | 1100   | VGATHER  | Vector gather             |
+| 0xD  | 1101   | VSCATTER | Vector scatter            |
+| 0xE  | 1110   | VPERMUTE | Vector permute            |
+| 0xF  | 1111   | VBLEND   | Vector blend              |
 
 #### 2.2.6 F-Type Functions (Floating-Point)
 
-| Func | Binary | Name | Description |
-|------|--------|------|-------------|
-| 0x0 | 0000 | FADD | Floating-point add |
-| 0x1 | 0001 | FSUB | Floating-point subtract |
-| 0x2 | 0010 | FMUL | Floating-point multiply |
-| 0x3 | 0011 | FDIV | Floating-point divide |
-| 0x4 | 0100 | FSQRT | Floating-point square root |
-| 0x5 | 0101 | FMA | Fused multiply-add |
-| 0x6 | 0110 | FCMP | Floating-point compare |
-| 0x7 | 0111 | FCVT | Floating-point convert |
-| 0x8 | 1000 | BFPADD | Block floating-point add |
-| 0x9 | 1001 | BFPMUL | Block floating-point multiply |
-| 0xA | 1010 | APADD | Arbitrary-precision add |
-| 0xB | 1011 | APMUL | Arbitrary-precision multiply |
-| 0xC | 1100 | TAPERED | Tapered floating-point operation |
-| 0xD | 1101 | Reserved | Reserved |
-| 0xE | 1110 | Reserved | Reserved |
-| 0xF | 1111 | Reserved | Reserved |
+| Func | Binary | Name     | Description                      |
+| ---- | ------ | -------- | -------------------------------- |
+| 0x0  | 0000   | FADD     | Floating-point add               |
+| 0x1  | 0001   | FSUB     | Floating-point subtract          |
+| 0x2  | 0010   | FMUL     | Floating-point multiply          |
+| 0x3  | 0011   | FDIV     | Floating-point divide            |
+| 0x4  | 0100   | FSQRT    | Floating-point square root       |
+| 0x5  | 0101   | FMA      | Fused multiply-add               |
+| 0x6  | 0110   | FCMP     | Floating-point compare           |
+| 0x7  | 0111   | FCVT     | Floating-point convert           |
+| 0x8  | 1000   | BFPADD   | Block floating-point add         |
+| 0x9  | 1001   | BFPMUL   | Block floating-point multiply    |
+| 0xA  | 1010   | APADD    | Arbitrary-precision add          |
+| 0xB  | 1011   | APMUL    | Arbitrary-precision multiply     |
+| 0xC  | 1100   | TAPERED  | Tapered floating-point operation |
+| 0xD  | 1101   | Reserved | Reserved                         |
+| 0xE  | 1110   | Reserved | Reserved                         |
+| 0xF  | 1111   | Reserved | Reserved                         |
 
 #### 2.2.7 A-Type Functions (AI/ML)
 
-| Func | Binary | Name | Description |
-|------|--------|------|-------------|
-| 0x0 | 0000 | CONV | Convolution operation |
-| 0x1 | 0001 | FC | Fully connected layer |
-| 0x2 | 0010 | RELU | ReLU activation |
-| 0x3 | 0011 | SIGMOID | Sigmoid activation |
-| 0x4 | 0100 | TANH | Tanh activation |
-| 0x5 | 0101 | SOFTMAX | Softmax activation |
-| 0x6 | 0110 | POOL | Pooling operation |
-| 0x7 | 0111 | BATCHNORM | Batch normalization |
-| 0x8 | 1000 | DROPOUT | Dropout operation |
-| 0x9 | 1001 | GEMM | General matrix multiply |
-| 0xA | 1010 | GEMV | General matrix-vector multiply |
-| 0xB | 1011 | TRANSPOSE | Matrix transpose |
-| 0xC | 1100 | RESHAPE | Matrix reshape |
-| 0xD | 1101 | GRADIENT | Gradient computation |
-| 0xE | 1110 | WEIGHT_UPDATE | Weight update |
-| 0xF | 1111 | Reserved | Reserved |
+| Func | Binary | Name          | Description                    |
+| ---- | ------ | ------------- | ------------------------------ |
+| 0x0  | 0000   | CONV          | Convolution operation          |
+| 0x1  | 0001   | FC            | Fully connected layer          |
+| 0x2  | 0010   | RELU          | ReLU activation                |
+| 0x3  | 0011   | SIGMOID       | Sigmoid activation             |
+| 0x4  | 0100   | TANH          | Tanh activation                |
+| 0x5  | 0101   | SOFTMAX       | Softmax activation             |
+| 0x6  | 0110   | POOL          | Pooling operation              |
+| 0x7  | 0111   | BATCHNORM     | Batch normalization            |
+| 0x8  | 1000   | DROPOUT       | Dropout operation              |
+| 0x9  | 1001   | GEMM          | General matrix multiply        |
+| 0xA  | 1010   | GEMV          | General matrix-vector multiply |
+| 0xB  | 1011   | TRANSPOSE     | Matrix transpose               |
+| 0xC  | 1100   | RESHAPE       | Matrix reshape                 |
+| 0xD  | 1101   | GRADIENT      | Gradient computation           |
+| 0xE  | 1110   | WEIGHT_UPDATE | Weight update                  |
+| 0xF  | 1111   | Reserved      | Reserved                       |
 
 #### 2.2.8 M-Type Functions (MIMD)
 
-| Func | Binary | Name | Description |
-|------|--------|------|-------------|
-| 0x0 | 0000 | BARRIER | Synchronization barrier |
-| 0x1 | 0001 | LOCK | Acquire lock |
-| 0x2 | 0010 | UNLOCK | Release lock |
-| 0x3 | 0011 | ATOMIC | Atomic operation |
-| 0x4 | 0100 | SEND | Send message |
-| 0x5 | 0101 | RECV | Receive message |
-| 0x6 | 0110 | BROADCAST | Broadcast message |
-| 0x7 | 0111 | REDUCE | Reduction operation |
-| 0x8 | 1000 | SPAWN | Spawn task |
-| 0x9 | 1001 | JOIN | Join task |
-| 0xA | 1010 | YIELD | Yield processor |
-| 0xB | 1011 | PRIORITY | Set priority |
-| 0xC | 1100 | MIGRATE | Migrate task |
-| 0xD | 1101 | Reserved | Reserved |
-| 0xE | 1110 | Reserved | Reserved |
-| 0xF | 1111 | Reserved | Reserved |
+| Func | Binary | Name      | Description             |
+| ---- | ------ | --------- | ----------------------- |
+| 0x0  | 0000   | BARRIER   | Synchronization barrier |
+| 0x1  | 0001   | LOCK      | Acquire lock            |
+| 0x2  | 0010   | UNLOCK    | Release lock            |
+| 0x3  | 0011   | ATOMIC    | Atomic operation        |
+| 0x4  | 0100   | SEND      | Send message            |
+| 0x5  | 0101   | RECV      | Receive message         |
+| 0x6  | 0110   | BROADCAST | Broadcast message       |
+| 0x7  | 0111   | REDUCE    | Reduction operation     |
+| 0x8  | 1000   | SPAWN     | Spawn task              |
+| 0x9  | 1001   | JOIN      | Join task               |
+| 0xA  | 1010   | YIELD     | Yield processor         |
+| 0xB  | 1011   | PRIORITY  | Set priority            |
+| 0xC  | 1100   | MIGRATE   | Migrate task            |
+| 0xD  | 1101   | Reserved  | Reserved                |
+| 0xE  | 1110   | Reserved  | Reserved                |
+| 0xF  | 1111   | Reserved  | Reserved                |
 
 ---
 
@@ -255,87 +255,87 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ### 3.1 General Purpose Registers (GPR)
 
-| Register | Binary | Name | Description |
-|----------|--------|------|-------------|
-| 0x0 | 0000 | R0 | Zero register (always 0) |
-| 0x1 | 0001 | R1 | General purpose |
-| 0x2 | 0010 | R2 | General purpose |
-| 0x3 | 0011 | R3 | General purpose |
-| 0x4 | 0100 | R4 | General purpose |
-| 0x5 | 0101 | R5 | General purpose |
-| 0x6 | 0110 | R6 | General purpose |
-| 0x7 | 0111 | R7 | General purpose |
-| 0x8 | 1000 | R8 | General purpose |
-| 0x9 | 1001 | R9 | General purpose |
-| 0xA | 1010 | R10 | General purpose |
-| 0xB | 1011 | R11 | General purpose |
-| 0xC | 1100 | R12 | General purpose |
-| 0xD | 1101 | R13 | General purpose |
-| 0xE | 1110 | R14 | General purpose |
-| 0xF | 1111 | R15 | General purpose |
+| Register | Binary | Name | Description              |
+| -------- | ------ | ---- | ------------------------ |
+| 0x0      | 0000   | R0   | Zero register (always 0) |
+| 0x1      | 0001   | R1   | General purpose          |
+| 0x2      | 0010   | R2   | General purpose          |
+| 0x3      | 0011   | R3   | General purpose          |
+| 0x4      | 0100   | R4   | General purpose          |
+| 0x5      | 0101   | R5   | General purpose          |
+| 0x6      | 0110   | R6   | General purpose          |
+| 0x7      | 0111   | R7   | General purpose          |
+| 0x8      | 1000   | R8   | General purpose          |
+| 0x9      | 1001   | R9   | General purpose          |
+| 0xA      | 1010   | R10  | General purpose          |
+| 0xB      | 1011   | R11  | General purpose          |
+| 0xC      | 1100   | R12  | General purpose          |
+| 0xD      | 1101   | R13  | General purpose          |
+| 0xE      | 1110   | R14  | General purpose          |
+| 0xF      | 1111   | R15  | General purpose          |
 
 ### 3.2 Floating-Point Registers (FPR)
 
-| Register | Binary | Name | Description |
-|----------|--------|------|-------------|
-| 0x0 | 0000 | F0 | Floating-point register 0 |
-| 0x1 | 0001 | F1 | Floating-point register 1 |
-| 0x2 | 0010 | F2 | Floating-point register 2 |
-| 0x3 | 0011 | F3 | Floating-point register 3 |
-| 0x4 | 0100 | F4 | Floating-point register 4 |
-| 0x5 | 0101 | F5 | Floating-point register 5 |
-| 0x6 | 0110 | F6 | Floating-point register 6 |
-| 0x7 | 0111 | F7 | Floating-point register 7 |
-| 0x8 | 1000 | F8 | Floating-point register 8 |
-| 0x9 | 1001 | F9 | Floating-point register 9 |
-| 0xA | 1010 | F10 | Floating-point register 10 |
-| 0xB | 1011 | F11 | Floating-point register 11 |
-| 0xC | 1100 | F12 | Floating-point register 12 |
-| 0xD | 1101 | F13 | Floating-point register 13 |
-| 0xE | 1110 | F14 | Floating-point register 14 |
-| 0xF | 1111 | F15 | Floating-point register 15 |
+| Register | Binary | Name | Description                |
+| -------- | ------ | ---- | -------------------------- |
+| 0x0      | 0000   | F0   | Floating-point register 0  |
+| 0x1      | 0001   | F1   | Floating-point register 1  |
+| 0x2      | 0010   | F2   | Floating-point register 2  |
+| 0x3      | 0011   | F3   | Floating-point register 3  |
+| 0x4      | 0100   | F4   | Floating-point register 4  |
+| 0x5      | 0101   | F5   | Floating-point register 5  |
+| 0x6      | 0110   | F6   | Floating-point register 6  |
+| 0x7      | 0111   | F7   | Floating-point register 7  |
+| 0x8      | 1000   | F8   | Floating-point register 8  |
+| 0x9      | 1001   | F9   | Floating-point register 9  |
+| 0xA      | 1010   | F10  | Floating-point register 10 |
+| 0xB      | 1011   | F11  | Floating-point register 11 |
+| 0xC      | 1100   | F12  | Floating-point register 12 |
+| 0xD      | 1101   | F13  | Floating-point register 13 |
+| 0xE      | 1110   | F14  | Floating-point register 14 |
+| 0xF      | 1111   | F15  | Floating-point register 15 |
 
 ### 3.3 Vector Registers (VR)
 
-| Register | Binary | Name | Description |
-|----------|--------|------|-------------|
-| 0x0 | 0000 | V0 | Vector register 0 (512-bit) |
-| 0x1 | 0001 | V1 | Vector register 1 (512-bit) |
-| 0x2 | 0010 | V2 | Vector register 2 (512-bit) |
-| 0x3 | 0011 | V3 | Vector register 3 (512-bit) |
-| 0x4 | 0100 | V4 | Vector register 4 (512-bit) |
-| 0x5 | 0101 | V5 | Vector register 5 (512-bit) |
-| 0x6 | 0110 | V6 | Vector register 6 (512-bit) |
-| 0x7 | 0111 | V7 | Vector register 7 (512-bit) |
-| 0x8 | 1000 | V8 | Vector register 8 (512-bit) |
-| 0x9 | 1001 | V9 | Vector register 9 (512-bit) |
-| 0xA | 1010 | V10 | Vector register 10 (512-bit) |
-| 0xB | 1011 | V11 | Vector register 11 (512-bit) |
-| 0xC | 1100 | V12 | Vector register 12 (512-bit) |
-| 0xD | 1101 | V13 | Vector register 13 (512-bit) |
-| 0xE | 1110 | V14 | Vector register 14 (512-bit) |
-| 0xF | 1111 | V15 | Vector register 15 (512-bit) |
+| Register | Binary | Name | Description                  |
+| -------- | ------ | ---- | ---------------------------- |
+| 0x0      | 0000   | V0   | Vector register 0 (512-bit)  |
+| 0x1      | 0001   | V1   | Vector register 1 (512-bit)  |
+| 0x2      | 0010   | V2   | Vector register 2 (512-bit)  |
+| 0x3      | 0011   | V3   | Vector register 3 (512-bit)  |
+| 0x4      | 0100   | V4   | Vector register 4 (512-bit)  |
+| 0x5      | 0101   | V5   | Vector register 5 (512-bit)  |
+| 0x6      | 0110   | V6   | Vector register 6 (512-bit)  |
+| 0x7      | 0111   | V7   | Vector register 7 (512-bit)  |
+| 0x8      | 1000   | V8   | Vector register 8 (512-bit)  |
+| 0x9      | 1001   | V9   | Vector register 9 (512-bit)  |
+| 0xA      | 1010   | V10  | Vector register 10 (512-bit) |
+| 0xB      | 1011   | V11  | Vector register 11 (512-bit) |
+| 0xC      | 1100   | V12  | Vector register 12 (512-bit) |
+| 0xD      | 1101   | V13  | Vector register 13 (512-bit) |
+| 0xE      | 1110   | V14  | Vector register 14 (512-bit) |
+| 0xF      | 1111   | V15  | Vector register 15 (512-bit) |
 
 ### 3.4 Special Purpose Registers
 
-| Register | Binary | Name | Description |
-|----------|--------|------|-------------|
-| 0x0 | 0000 | PC | Program counter |
-| 0x1 | 0001 | SP | Stack pointer |
-| 0x2 | 0010 | FP | Frame pointer |
-| 0x3 | 0011 | LR | Link register |
-| 0x4 | 0100 | FLAGS | Status flags |
-| 0x5 | 0101 | CORE_ID | Core identifier |
-| 0x6 | 0110 | THREAD_ID | Thread identifier |
-| 0x7 | 0111 | Reserved | Reserved |
-| 0x8 | 1000 | Reserved | Reserved |
-| 0x9 | 1001 | Reserved | Reserved |
-| 0xA | 1010 | Reserved | Reserved |
-| 0xB | 1011 | Reserved | Reserved |
-| 0xC | 1100 | Reserved | Reserved |
-| 0xD | 1101 | Reserved | Reserved |
-| 0xE | 1110 | Reserved | Reserved |
-| 0xF | 1111 | Reserved | Reserved |
+| Register | Binary | Name      | Description       |
+| -------- | ------ | --------- | ----------------- |
+| 0x0      | 0000   | PC        | Program counter   |
+| 0x1      | 0001   | SP        | Stack pointer     |
+| 0x2      | 0010   | FP        | Frame pointer     |
+| 0x3      | 0011   | LR        | Link register     |
+| 0x4      | 0100   | FLAGS     | Status flags      |
+| 0x5      | 0101   | CORE_ID   | Core identifier   |
+| 0x6      | 0110   | THREAD_ID | Thread identifier |
+| 0x7      | 0111   | Reserved  | Reserved          |
+| 0x8      | 1000   | Reserved  | Reserved          |
+| 0x9      | 1001   | Reserved  | Reserved          |
+| 0xA      | 1010   | Reserved  | Reserved          |
+| 0xB      | 1011   | Reserved  | Reserved          |
+| 0xC      | 1100   | Reserved  | Reserved          |
+| 0xD      | 1101   | Reserved  | Reserved          |
+| 0xE      | 1110   | Reserved  | Reserved          |
+| 0xF      | 1111   | Reserved  | Reserved          |
 
 ---
 
@@ -343,16 +343,17 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ### 4.1 Immediate Value Types
 
-| Type | Bits | Range | Description |
-|------|------|-------|-------------|
-| I12 | 12-bit | -2048 to 2047 | Small immediate values |
-| I16 | 16-bit | -32768 to 32767 | Medium immediate values |
-| I32 | 32-bit | -2147483648 to 2147483647 | Large immediate values |
-| I48 | 48-bit | -140737488355328 to 140737488355327 | Very large immediate values |
+| Type | Bits   | Range                               | Description                 |
+| ---- | ------ | ----------------------------------- | --------------------------- |
+| I12  | 12-bit | -2048 to 2047                       | Small immediate values      |
+| I16  | 16-bit | -32768 to 32767                     | Medium immediate values     |
+| I32  | 32-bit | -2147483648 to 2147483647           | Large immediate values      |
+| I48  | 48-bit | -140737488355328 to 140737488355327 | Very large immediate values |
 
 ### 4.2 Immediate Value Encoding
 
 #### 4.2.1 I12 Format (12-bit)
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    12-bit Immediate Layout                     │
@@ -364,6 +365,7 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 ```
 
 #### 4.2.2 I16 Format (16-bit)
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    16-bit Immediate Layout                     │
@@ -375,6 +377,7 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 ```
 
 #### 4.2.3 I32 Format (32-bit)
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    32-bit Immediate Layout                     │
@@ -386,6 +389,7 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 ```
 
 #### 4.2.4 I48 Format (48-bit)
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    48-bit Immediate Layout                     │
@@ -402,131 +406,131 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ### 5.1 Integer Arithmetic Instructions
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| ADD | R-Type | 0x0 | 0x0 | Add two registers |
-| SUB | R-Type | 0x0 | 0x1 | Subtract two registers |
-| MUL | R-Type | 0x0 | 0x2 | Multiply two registers |
-| DIV | R-Type | 0x0 | 0x3 | Divide two registers |
-| MOD | R-Type | 0x0 | 0x4 | Modulo two registers |
-| ADDI | I-Type | 0x1 | 0x0 | Add immediate |
-| SUBI | I-Type | 0x1 | 0x1 | Subtract immediate |
-| MULI | I-Type | 0x1 | 0x2 | Multiply immediate |
-| DIVI | I-Type | 0x1 | 0x3 | Divide immediate |
+| Instruction | Format | Opcode | Func | Description            |
+| ----------- | ------ | ------ | ---- | ---------------------- |
+| ADD         | R-Type | 0x0    | 0x0  | Add two registers      |
+| SUB         | R-Type | 0x0    | 0x1  | Subtract two registers |
+| MUL         | R-Type | 0x0    | 0x2  | Multiply two registers |
+| DIV         | R-Type | 0x0    | 0x3  | Divide two registers   |
+| MOD         | R-Type | 0x0    | 0x4  | Modulo two registers   |
+| ADDI        | I-Type | 0x1    | 0x0  | Add immediate          |
+| SUBI        | I-Type | 0x1    | 0x1  | Subtract immediate     |
+| MULI        | I-Type | 0x1    | 0x2  | Multiply immediate     |
+| DIVI        | I-Type | 0x1    | 0x3  | Divide immediate       |
 
 ### 5.2 Logical Instructions
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| AND | R-Type | 0x0 | 0x5 | Bitwise AND |
-| OR | R-Type | 0x0 | 0x6 | Bitwise OR |
-| XOR | R-Type | 0x0 | 0x7 | Bitwise XOR |
-| NOT | R-Type | 0x0 | 0x8 | Bitwise NOT |
-| ANDI | I-Type | 0x1 | 0x4 | AND immediate |
-| ORI | I-Type | 0x1 | 0x5 | OR immediate |
-| XORI | I-Type | 0x1 | 0x6 | XOR immediate |
+| Instruction | Format | Opcode | Func | Description   |
+| ----------- | ------ | ------ | ---- | ------------- |
+| AND         | R-Type | 0x0    | 0x5  | Bitwise AND   |
+| OR          | R-Type | 0x0    | 0x6  | Bitwise OR    |
+| XOR         | R-Type | 0x0    | 0x7  | Bitwise XOR   |
+| NOT         | R-Type | 0x0    | 0x8  | Bitwise NOT   |
+| ANDI        | I-Type | 0x1    | 0x4  | AND immediate |
+| ORI         | I-Type | 0x1    | 0x5  | OR immediate  |
+| XORI        | I-Type | 0x1    | 0x6  | XOR immediate |
 
 ### 5.3 Shift Instructions
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| SHL | R-Type | 0x0 | 0x8 | Shift left |
-| SHR | R-Type | 0x0 | 0x9 | Shift right |
-| ROT | R-Type | 0x0 | 0xA | Rotate |
-| SHLI | I-Type | 0x1 | 0x7 | Shift left immediate |
-| SHRI | I-Type | 0x1 | 0x8 | Shift right immediate |
+| Instruction | Format | Opcode | Func | Description           |
+| ----------- | ------ | ------ | ---- | --------------------- |
+| SHL         | R-Type | 0x0    | 0x8  | Shift left            |
+| SHR         | R-Type | 0x0    | 0x9  | Shift right           |
+| ROT         | R-Type | 0x0    | 0xA  | Rotate                |
+| SHLI        | I-Type | 0x1    | 0x7  | Shift left immediate  |
+| SHRI        | I-Type | 0x1    | 0x8  | Shift right immediate |
 
 ### 5.4 Comparison Instructions
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| CMP | R-Type | 0x0 | 0xB | Compare registers |
-| CMPI | I-Type | 0x1 | 0xC | Compare immediate |
-| TEST | R-Type | 0x0 | 0xD | Test registers |
-| TESTI | I-Type | 0x1 | 0xD | Test immediate |
+| Instruction | Format | Opcode | Func | Description       |
+| ----------- | ------ | ------ | ---- | ----------------- |
+| CMP         | R-Type | 0x0    | 0xB  | Compare registers |
+| CMPI        | I-Type | 0x1    | 0xC  | Compare immediate |
+| TEST        | R-Type | 0x0    | 0xD  | Test registers    |
+| TESTI       | I-Type | 0x1    | 0xD  | Test immediate    |
 
 ### 5.5 Bit Manipulation Instructions
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| CLZ | R-Type | 0x0 | 0xC | Count leading zeros |
-| CTZ | R-Type | 0x0 | 0xD | Count trailing zeros |
-| POPCNT | R-Type | 0x0 | 0xE | Population count |
+| Instruction | Format | Opcode | Func | Description          |
+| ----------- | ------ | ------ | ---- | -------------------- |
+| CLZ         | R-Type | 0x0    | 0xC  | Count leading zeros  |
+| CTZ         | R-Type | 0x0    | 0xD  | Count trailing zeros |
+| POPCNT      | R-Type | 0x0    | 0xE  | Population count     |
 
 ### 5.6 Memory Instructions
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| LOAD | I-Type | 0x1 | 0x9 | Load from memory |
-| LOADU | I-Type | 0x1 | 0xA | Load unaligned |
-| LOADL | I-Type | 0x1 | 0xB | Load locked |
-| STORE | S-Type | 0x2 | 0x0 | Store to memory |
-| STOREU | S-Type | 0x2 | 0x1 | Store unaligned |
-| STOREC | S-Type | 0x2 | 0x2 | Store conditional |
-| STOREL | S-Type | 0x2 | 0x3 | Store locked |
+| Instruction | Format | Opcode | Func | Description       |
+| ----------- | ------ | ------ | ---- | ----------------- |
+| LOAD        | I-Type | 0x1    | 0x9  | Load from memory  |
+| LOADU       | I-Type | 0x1    | 0xA  | Load unaligned    |
+| LOADL       | I-Type | 0x1    | 0xB  | Load locked       |
+| STORE       | S-Type | 0x2    | 0x0  | Store to memory   |
+| STOREU      | S-Type | 0x2    | 0x1  | Store unaligned   |
+| STOREC      | S-Type | 0x2    | 0x2  | Store conditional |
+| STOREL      | S-Type | 0x2    | 0x3  | Store locked      |
 
 ### 5.7 Branch Instructions
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| BEQ | B-Type | 0x3 | 0x0 | Branch if equal |
-| BNE | B-Type | 0x3 | 0x1 | Branch if not equal |
-| BLT | B-Type | 0x3 | 0x2 | Branch if less than |
-| BLE | B-Type | 0x3 | 0x3 | Branch if less than or equal |
-| BGT | B-Type | 0x3 | 0x4 | Branch if greater than |
-| BGE | B-Type | 0x3 | 0x5 | Branch if greater than or equal |
+| Instruction | Format | Opcode | Func | Description                     |
+| ----------- | ------ | ------ | ---- | ------------------------------- |
+| BEQ         | B-Type | 0x3    | 0x0  | Branch if equal                 |
+| BNE         | B-Type | 0x3    | 0x1  | Branch if not equal             |
+| BLT         | B-Type | 0x3    | 0x2  | Branch if less than             |
+| BLE         | B-Type | 0x3    | 0x3  | Branch if less than or equal    |
+| BGT         | B-Type | 0x3    | 0x4  | Branch if greater than          |
+| BGE         | B-Type | 0x3    | 0x5  | Branch if greater than or equal |
 
 ### 5.8 Vector Instructions
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| VADD | V-Type | 0x6 | 0x0 | Vector add |
-| VSUB | V-Type | 0x6 | 0x1 | Vector subtract |
-| VMUL | V-Type | 0x6 | 0x2 | Vector multiply |
-| VDIV | V-Type | 0x6 | 0x3 | Vector divide |
-| VFMA | V-Type | 0x6 | 0x4 | Vector fused multiply-add |
-| VAND | V-Type | 0x6 | 0x5 | Vector AND |
-| VOR | V-Type | 0x6 | 0x6 | Vector OR |
-| VXOR | V-Type | 0x6 | 0x7 | Vector XOR |
+| Instruction | Format | Opcode | Func | Description               |
+| ----------- | ------ | ------ | ---- | ------------------------- |
+| VADD        | V-Type | 0x6    | 0x0  | Vector add                |
+| VSUB        | V-Type | 0x6    | 0x1  | Vector subtract           |
+| VMUL        | V-Type | 0x6    | 0x2  | Vector multiply           |
+| VDIV        | V-Type | 0x6    | 0x3  | Vector divide             |
+| VFMA        | V-Type | 0x6    | 0x4  | Vector fused multiply-add |
+| VAND        | V-Type | 0x6    | 0x5  | Vector AND                |
+| VOR         | V-Type | 0x6    | 0x6  | Vector OR                 |
+| VXOR        | V-Type | 0x6    | 0x7  | Vector XOR                |
 
 ### 5.9 Floating-Point Instructions
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| FADD | F-Type | 0x8 | 0x0 | Floating-point add |
-| FSUB | F-Type | 0x8 | 0x1 | Floating-point subtract |
-| FMUL | F-Type | 0x8 | 0x2 | Floating-point multiply |
-| FDIV | F-Type | 0x8 | 0x3 | Floating-point divide |
-| FSQRT | F-Type | 0x8 | 0x4 | Floating-point square root |
-| FMA | F-Type | 0x8 | 0x5 | Fused multiply-add |
-| FCMP | F-Type | 0x8 | 0x6 | Floating-point compare |
-| FCVT | F-Type | 0x8 | 0x7 | Floating-point convert |
+| Instruction | Format | Opcode | Func | Description                |
+| ----------- | ------ | ------ | ---- | -------------------------- |
+| FADD        | F-Type | 0x8    | 0x0  | Floating-point add         |
+| FSUB        | F-Type | 0x8    | 0x1  | Floating-point subtract    |
+| FMUL        | F-Type | 0x8    | 0x2  | Floating-point multiply    |
+| FDIV        | F-Type | 0x8    | 0x3  | Floating-point divide      |
+| FSQRT       | F-Type | 0x8    | 0x4  | Floating-point square root |
+| FMA         | F-Type | 0x8    | 0x5  | Fused multiply-add         |
+| FCMP        | F-Type | 0x8    | 0x6  | Floating-point compare     |
+| FCVT        | F-Type | 0x8    | 0x7  | Floating-point convert     |
 
 ### 5.10 AI/ML Instructions
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| CONV | A-Type | 0x9 | 0x0 | Convolution operation |
-| FC | A-Type | 0x9 | 0x1 | Fully connected layer |
-| RELU | A-Type | 0x9 | 0x2 | ReLU activation |
-| SIGMOID | A-Type | 0x9 | 0x3 | Sigmoid activation |
-| TANH | A-Type | 0x9 | 0x4 | Tanh activation |
-| SOFTMAX | A-Type | 0x9 | 0x5 | Softmax activation |
-| POOL | A-Type | 0x9 | 0x6 | Pooling operation |
-| BATCHNORM | A-Type | 0x9 | 0x7 | Batch normalization |
+| Instruction | Format | Opcode | Func | Description           |
+| ----------- | ------ | ------ | ---- | --------------------- |
+| CONV        | A-Type | 0x9    | 0x0  | Convolution operation |
+| FC          | A-Type | 0x9    | 0x1  | Fully connected layer |
+| RELU        | A-Type | 0x9    | 0x2  | ReLU activation       |
+| SIGMOID     | A-Type | 0x9    | 0x3  | Sigmoid activation    |
+| TANH        | A-Type | 0x9    | 0x4  | Tanh activation       |
+| SOFTMAX     | A-Type | 0x9    | 0x5  | Softmax activation    |
+| POOL        | A-Type | 0x9    | 0x6  | Pooling operation     |
+| BATCHNORM   | A-Type | 0x9    | 0x7  | Batch normalization   |
 
 ### 5.11 MIMD Instructions
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| BARRIER | M-Type | 0x7 | 0x0 | Synchronization barrier |
-| LOCK | M-Type | 0x7 | 0x1 | Acquire lock |
-| UNLOCK | M-Type | 0x7 | 0x2 | Release lock |
-| ATOMIC | M-Type | 0x7 | 0x3 | Atomic operation |
-| SEND | M-Type | 0x7 | 0x4 | Send message |
-| RECV | M-Type | 0x7 | 0x5 | Receive message |
-| BROADCAST | M-Type | 0x7 | 0x6 | Broadcast message |
-| REDUCE | M-Type | 0x7 | 0x7 | Reduction operation |
+| Instruction | Format | Opcode | Func | Description             |
+| ----------- | ------ | ------ | ---- | ----------------------- |
+| BARRIER     | M-Type | 0x7    | 0x0  | Synchronization barrier |
+| LOCK        | M-Type | 0x7    | 0x1  | Acquire lock            |
+| UNLOCK      | M-Type | 0x7    | 0x2  | Release lock            |
+| ATOMIC      | M-Type | 0x7    | 0x3  | Atomic operation        |
+| SEND        | M-Type | 0x7    | 0x4  | Send message            |
+| RECV        | M-Type | 0x7    | 0x5  | Receive message         |
+| BROADCAST   | M-Type | 0x7    | 0x6  | Broadcast message       |
+| REDUCE      | M-Type | 0x7    | 0x7  | Reduction operation     |
 
 ---
 
@@ -534,58 +538,58 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ### 6.1 Memory Protection Keys (MPK)
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `MPK_SET` | S-Type | 0xE | 0x0 | Set memory protection key |
-| `MPK_GET` | S-Type | 0xE | 0x1 | Get memory protection key |
-| `MPK_ENABLE` | S-Type | 0xE | 0x2 | Enable memory protection |
-| `MPK_DISABLE` | S-Type | 0xE | 0x3 | Disable memory protection |
-| `MPK_CHECK` | S-Type | 0xE | 0x4 | Check memory protection |
+| Instruction   | Format | Opcode | Func | Description               |
+| ------------- | ------ | ------ | ---- | ------------------------- |
+| `MPK_SET`     | S-Type | 0xE    | 0x0  | Set memory protection key |
+| `MPK_GET`     | S-Type | 0xE    | 0x1  | Get memory protection key |
+| `MPK_ENABLE`  | S-Type | 0xE    | 0x2  | Enable memory protection  |
+| `MPK_DISABLE` | S-Type | 0xE    | 0x3  | Disable memory protection |
+| `MPK_CHECK`   | S-Type | 0xE    | 0x4  | Check memory protection   |
 
 ### 6.2 Control Flow Integrity (CFI)
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `CFI_CHECK` | S-Type | 0xE | 0x5 | Check indirect branch target |
-| `CFI_ADD` | S-Type | 0xE | 0x6 | Add valid target to CFI table |
-| `CFI_REMOVE` | S-Type | 0xE | 0x7 | Remove target from CFI table |
-| `CFI_VERIFY` | S-Type | 0xE | 0x8 | Verify CFI table integrity |
+| Instruction  | Format | Opcode | Func | Description                   |
+| ------------ | ------ | ------ | ---- | ----------------------------- |
+| `CFI_CHECK`  | S-Type | 0xE    | 0x5  | Check indirect branch target  |
+| `CFI_ADD`    | S-Type | 0xE    | 0x6  | Add valid target to CFI table |
+| `CFI_REMOVE` | S-Type | 0xE    | 0x7  | Remove target from CFI table  |
+| `CFI_VERIFY` | S-Type | 0xE    | 0x8  | Verify CFI table integrity    |
 
 ### 6.3 Pointer Authentication (PA)
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `PA_SIGN` | S-Type | 0xE | 0x9 | Sign pointer with authentication code |
-| `PA_VERIFY` | S-Type | 0xE | 0xA | Verify pointer authentication code |
-| `PA_STRIP` | S-Type | 0xE | 0xB | Strip authentication code from pointer |
-| `PA_AUTH` | S-Type | 0xE | 0xC | Authenticate and strip pointer |
+| Instruction | Format | Opcode | Func | Description                            |
+| ----------- | ------ | ------ | ---- | -------------------------------------- |
+| `PA_SIGN`   | S-Type | 0xE    | 0x9  | Sign pointer with authentication code  |
+| `PA_VERIFY` | S-Type | 0xE    | 0xA  | Verify pointer authentication code     |
+| `PA_STRIP`  | S-Type | 0xE    | 0xB  | Strip authentication code from pointer |
+| `PA_AUTH`   | S-Type | 0xE    | 0xC  | Authenticate and strip pointer         |
 
 ### 6.4 Secure Enclaves (SE)
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `SE_CREATE` | S-Type | 0xE | 0xD | Create secure enclave |
-| `SE_DESTROY` | S-Type | 0xE | 0xE | Destroy secure enclave |
-| `SE_ENTER` | S-Type | 0xE | 0xF | Enter secure enclave |
-| `SE_EXIT` | S-Type | 0xF | 0x0 | Exit secure enclave |
-| `SE_ATTEST` | S-Type | 0xF | 0x1 | Generate enclave attestation |
+| Instruction  | Format | Opcode | Func | Description                  |
+| ------------ | ------ | ------ | ---- | ---------------------------- |
+| `SE_CREATE`  | S-Type | 0xE    | 0xD  | Create secure enclave        |
+| `SE_DESTROY` | S-Type | 0xE    | 0xE  | Destroy secure enclave       |
+| `SE_ENTER`   | S-Type | 0xE    | 0xF  | Enter secure enclave         |
+| `SE_EXIT`    | S-Type | 0xF    | 0x0  | Exit secure enclave          |
+| `SE_ATTEST`  | S-Type | 0xF    | 0x1  | Generate enclave attestation |
 
 ### 6.5 Cryptographic Acceleration
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `AES_ENC` | S-Type | 0xF | 0x2 | AES encryption |
-| `AES_DEC` | S-Type | 0xF | 0x3 | AES decryption |
-| `AES_KEY` | S-Type | 0xF | 0x4 | AES key expansion |
-| `AES_MIX` | S-Type | 0xF | 0x5 | AES key mixing |
-| `SHA3_224` | S-Type | 0xF | 0x6 | SHA-3 224-bit hash |
-| `SHA3_256` | S-Type | 0xF | 0x7 | SHA-3 256-bit hash |
-| `SHA3_384` | S-Type | 0xF | 0x8 | SHA-3 384-bit hash |
-| `SHA3_512` | S-Type | 0xF | 0x9 | SHA-3 512-bit hash |
-| `RSA_MODEXP` | S-Type | 0xF | 0xA | RSA modular exponentiation |
-| `ECC_POINT_MUL` | S-Type | 0xF | 0xB | ECC point multiplication |
-| `ECC_POINT_ADD` | S-Type | 0xF | 0xC | ECC point addition |
-| `ECC_KEY_GEN` | S-Type | 0xF | 0xD | ECC key generation |
+| Instruction     | Format | Opcode | Func | Description                |
+| --------------- | ------ | ------ | ---- | -------------------------- |
+| `AES_ENC`       | S-Type | 0xF    | 0x2  | AES encryption             |
+| `AES_DEC`       | S-Type | 0xF    | 0x3  | AES decryption             |
+| `AES_KEY`       | S-Type | 0xF    | 0x4  | AES key expansion          |
+| `AES_MIX`       | S-Type | 0xF    | 0x5  | AES key mixing             |
+| `SHA3_224`      | S-Type | 0xF    | 0x6  | SHA-3 224-bit hash         |
+| `SHA3_256`      | S-Type | 0xF    | 0x7  | SHA-3 256-bit hash         |
+| `SHA3_384`      | S-Type | 0xF    | 0x8  | SHA-3 384-bit hash         |
+| `SHA3_512`      | S-Type | 0xF    | 0x9  | SHA-3 512-bit hash         |
+| `RSA_MODEXP`    | S-Type | 0xF    | 0xA  | RSA modular exponentiation |
+| `ECC_POINT_MUL` | S-Type | 0xF    | 0xB  | ECC point multiplication   |
+| `ECC_POINT_ADD` | S-Type | 0xF    | 0xC  | ECC point addition         |
+| `ECC_KEY_GEN`   | S-Type | 0xF    | 0xD  | ECC key generation         |
 
 ---
 
@@ -593,102 +597,263 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ### 7.1 Neural Network Operations
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `CONV` | A-Type | 0x9 | 0x0 | Convolution operation |
-| `FC` | A-Type | 0x9 | 0x1 | Fully connected layer |
-| `RELU` | A-Type | 0x9 | 0x2 | ReLU activation |
-| `SIGMOID` | A-Type | 0x9 | 0x3 | Sigmoid activation |
-| `TANH` | A-Type | 0x9 | 0x4 | Tanh activation |
-| `SOFTMAX` | A-Type | 0x9 | 0x5 | Softmax activation |
-| `POOL` | A-Type | 0x9 | 0x6 | Pooling operation |
-| `BATCHNORM` | A-Type | 0x9 | 0x7 | Batch normalization |
+| Instruction | Format | Opcode | Func | Description           |
+| ----------- | ------ | ------ | ---- | --------------------- |
+| `CONV`      | A-Type | 0x9    | 0x0  | Convolution operation |
+| `FC`        | A-Type | 0x9    | 0x1  | Fully connected layer |
+| `RELU`      | A-Type | 0x9    | 0x2  | ReLU activation       |
+| `SIGMOID`   | A-Type | 0x9    | 0x3  | Sigmoid activation    |
+| `TANH`      | A-Type | 0x9    | 0x4  | Tanh activation       |
+| `SOFTMAX`   | A-Type | 0x9    | 0x5  | Softmax activation    |
+| `POOL`      | A-Type | 0x9    | 0x6  | Pooling operation     |
+| `BATCHNORM` | A-Type | 0x9    | 0x7  | Batch normalization   |
 
 ### 7.2 Advanced AI Operations
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `ATTENTION` | A-Type | 0x9 | 0x8 | Multi-head attention |
-| `TRANSFORMER` | A-Type | 0x9 | 0x9 | Transformer block |
-| `LSTM` | A-Type | 0x9 | 0xA | LSTM cell |
-| `GRU` | A-Type | 0x9 | 0xB | GRU cell |
-| `GAN_TRAIN` | A-Type | 0x9 | 0xC | GAN training |
-| `DIFFUSION` | A-Type | 0x9 | 0xD | Diffusion model |
-| `SPARSE_ATTN` | A-Type | 0x9 | 0xE | Sparse attention |
-| `QUANTIZE` | A-Type | 0x9 | 0xF | Quantization |
+| Instruction   | Format | Opcode | Func | Description          |
+| ------------- | ------ | ------ | ---- | -------------------- |
+| `ATTENTION`   | A-Type | 0x9    | 0x8  | Multi-head attention |
+| `TRANSFORMER` | A-Type | 0x9    | 0x9  | Transformer block    |
+| `LSTM`        | A-Type | 0x9    | 0xA  | LSTM cell            |
+| `GRU`         | A-Type | 0x9    | 0xB  | GRU cell             |
+| `GAN_TRAIN`   | A-Type | 0x9    | 0xC  | GAN training         |
+| `DIFFUSION`   | A-Type | 0x9    | 0xD  | Diffusion model      |
+| `SPARSE_ATTN` | A-Type | 0x9    | 0xE  | Sparse attention     |
+| `QUANTIZE`    | A-Type | 0x9    | 0xF  | Quantization         |
 
 ### 7.3 Extended Precision AI Operations (FP64, FP128, FP256)
 
 #### 7.3.1 FP64 Extended Precision Operations
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `FP64_ADD` | F-Type | 0x9C | 0x0 | FP64 addition |
-| `FP64_SUB` | F-Type | 0x9C | 0x1 | FP64 subtraction |
-| `FP64_MUL` | F-Type | 0x9C | 0x2 | FP64 multiplication |
-| `FP64_DIV` | F-Type | 0x9C | 0x3 | FP64 division |
-| `FP64_SQRT` | F-Type | 0x9C | 0x4 | FP64 square root |
-| `FP64_FMA` | F-Type | 0x9C | 0x5 | FP64 fused multiply-add |
-| `FP64_CMP` | F-Type | 0x9C | 0x6 | FP64 comparison |
-| `FP64_CVT` | F-Type | 0x9C | 0x7 | FP64 conversion |
-| `FP64_ROUND` | F-Type | 0x9C | 0x8 | FP64 rounding |
-| `FP64_ABS` | F-Type | 0x9C | 0x9 | FP64 absolute value |
-| `FP64_NEG` | F-Type | 0x9C | 0xA | FP64 negation |
-| `FP64_MIN` | F-Type | 0x9C | 0xB | FP64 minimum |
-| `FP64_MAX` | F-Type | 0x9C | 0xC | FP64 maximum |
+| Instruction  | Format | Opcode | Func | Description             |
+| ------------ | ------ | ------ | ---- | ----------------------- |
+| `FP64_ADD`   | F-Type | 0x9C   | 0x0  | FP64 addition           |
+| `FP64_SUB`   | F-Type | 0x9C   | 0x1  | FP64 subtraction        |
+| `FP64_MUL`   | F-Type | 0x9C   | 0x2  | FP64 multiplication     |
+| `FP64_DIV`   | F-Type | 0x9C   | 0x3  | FP64 division           |
+| `FP64_SQRT`  | F-Type | 0x9C   | 0x4  | FP64 square root        |
+| `FP64_FMA`   | F-Type | 0x9C   | 0x5  | FP64 fused multiply-add |
+| `FP64_CMP`   | F-Type | 0x9C   | 0x6  | FP64 comparison         |
+| `FP64_CVT`   | F-Type | 0x9C   | 0x7  | FP64 conversion         |
+| `FP64_ROUND` | F-Type | 0x9C   | 0x8  | FP64 rounding           |
+| `FP64_ABS`   | F-Type | 0x9C   | 0x9  | FP64 absolute value     |
+| `FP64_NEG`   | F-Type | 0x9C   | 0xA  | FP64 negation           |
+| `FP64_MIN`   | F-Type | 0x9C   | 0xB  | FP64 minimum            |
+| `FP64_MAX`   | F-Type | 0x9C   | 0xC  | FP64 maximum            |
 
 #### 7.3.2 FP128 Extended Precision Operations
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `FP128_ADD` | F-Type | 0x9D | 0x0 | FP128 addition |
-| `FP128_SUB` | F-Type | 0x9D | 0x1 | FP128 subtraction |
-| `FP128_MUL` | F-Type | 0x9D | 0x2 | FP128 multiplication |
-| `FP128_DIV` | F-Type | 0x9D | 0x3 | FP128 division |
-| `FP128_SQRT` | F-Type | 0x9D | 0x4 | FP128 square root |
-| `FP128_FMA` | F-Type | 0x9D | 0x5 | FP128 fused multiply-add |
-| `FP128_CMP` | F-Type | 0x9D | 0x6 | FP128 comparison |
-| `FP128_CVT` | F-Type | 0x9D | 0x7 | FP128 conversion |
-| `FP128_ROUND` | F-Type | 0x9D | 0x8 | FP128 rounding |
-| `FP128_ABS` | F-Type | 0x9D | 0x9 | FP128 absolute value |
-| `FP128_NEG` | F-Type | 0x9D | 0xA | FP128 negation |
-| `FP128_MIN` | F-Type | 0x9D | 0xB | FP128 minimum |
-| `FP128_MAX` | F-Type | 0x9D | 0xC | FP128 maximum |
+| Instruction   | Format | Opcode | Func | Description              |
+| ------------- | ------ | ------ | ---- | ------------------------ |
+| `FP128_ADD`   | F-Type | 0x9D   | 0x0  | FP128 addition           |
+| `FP128_SUB`   | F-Type | 0x9D   | 0x1  | FP128 subtraction        |
+| `FP128_MUL`   | F-Type | 0x9D   | 0x2  | FP128 multiplication     |
+| `FP128_DIV`   | F-Type | 0x9D   | 0x3  | FP128 division           |
+| `FP128_SQRT`  | F-Type | 0x9D   | 0x4  | FP128 square root        |
+| `FP128_FMA`   | F-Type | 0x9D   | 0x5  | FP128 fused multiply-add |
+| `FP128_CMP`   | F-Type | 0x9D   | 0x6  | FP128 comparison         |
+| `FP128_CVT`   | F-Type | 0x9D   | 0x7  | FP128 conversion         |
+| `FP128_ROUND` | F-Type | 0x9D   | 0x8  | FP128 rounding           |
+| `FP128_ABS`   | F-Type | 0x9D   | 0x9  | FP128 absolute value     |
+| `FP128_NEG`   | F-Type | 0x9D   | 0xA  | FP128 negation           |
+| `FP128_MIN`   | F-Type | 0x9D   | 0xB  | FP128 minimum            |
+| `FP128_MAX`   | F-Type | 0x9D   | 0xC  | FP128 maximum            |
 
 #### 7.3.3 FP256 Ultra-High Precision Operations
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `FP256_ADD` | F-Type | 0x9A | 0x0 | FP256 addition |
-| `FP256_SUB` | F-Type | 0x9A | 0x1 | FP256 subtraction |
-| `FP256_MUL` | F-Type | 0x9A | 0x2 | FP256 multiplication |
-| `FP256_DIV` | F-Type | 0x9A | 0x3 | FP256 division |
-| `FP256_SQRT` | F-Type | 0x9A | 0x4 | FP256 square root |
-| `FP256_FMA` | F-Type | 0x9A | 0x5 | FP256 fused multiply-add |
-| `FP256_CMP` | F-Type | 0x9A | 0x6 | FP256 comparison |
-| `FP256_CVT` | F-Type | 0x9A | 0x7 | FP256 conversion |
-| `FP256_ROUND` | F-Type | 0x9A | 0x8 | FP256 rounding |
-| `FP256_ABS` | F-Type | 0x9A | 0x9 | FP256 absolute value |
-| `FP256_NEG` | F-Type | 0x9A | 0xA | FP256 negation |
-| `FP256_MIN` | F-Type | 0x9A | 0xB | FP256 minimum |
-| `FP256_MAX` | F-Type | 0x9A | 0xC | FP256 maximum |
+| Instruction   | Format | Opcode | Func | Description              |
+| ------------- | ------ | ------ | ---- | ------------------------ |
+| `FP256_ADD`   | F-Type | 0x9A   | 0x0  | FP256 addition           |
+| `FP256_SUB`   | F-Type | 0x9A   | 0x1  | FP256 subtraction        |
+| `FP256_MUL`   | F-Type | 0x9A   | 0x2  | FP256 multiplication     |
+| `FP256_DIV`   | F-Type | 0x9A   | 0x3  | FP256 division           |
+| `FP256_SQRT`  | F-Type | 0x9A   | 0x4  | FP256 square root        |
+| `FP256_FMA`   | F-Type | 0x9A   | 0x5  | FP256 fused multiply-add |
+| `FP256_CMP`   | F-Type | 0x9A   | 0x6  | FP256 comparison         |
+| `FP256_CVT`   | F-Type | 0x9A   | 0x7  | FP256 conversion         |
+| `FP256_ROUND` | F-Type | 0x9A   | 0x8  | FP256 rounding           |
+| `FP256_ABS`   | F-Type | 0x9A   | 0x9  | FP256 absolute value     |
+| `FP256_NEG`   | F-Type | 0x9A   | 0xA  | FP256 negation           |
+| `FP256_MIN`   | F-Type | 0x9A   | 0xB  | FP256 minimum            |
+| `FP256_MAX`   | F-Type | 0x9A   | 0xC  | FP256 maximum            |
 
 ### 7.4 Homomorphic Encryption Operations
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `FHE_ENC` | A-Type | 0x9B | 0x0 | Homomorphic encryption |
-| `FHE_DEC` | A-Type | 0x9B | 0x1 | Homomorphic decryption |
-| `FHE_ADD` | A-Type | 0x9B | 0x2 | Homomorphic addition |
-| `FHE_MUL` | A-Type | 0x9B | 0x3 | Homomorphic multiplication |
-| `FHE_NEG` | A-Type | 0x9B | 0x4 | Homomorphic negation |
-| `FHE_ROT` | A-Type | 0x9B | 0x5 | Homomorphic rotation |
-| `FHE_CONJ` | A-Type | 0x9B | 0x6 | Homomorphic conjugation |
-| `FHE_CMUL` | A-Type | 0x9B | 0x7 | Homomorphic constant multiplication |
-| `FHE_BS` | A-Type | 0x9B | 0x8 | Homomorphic bootstrapping |
-| `FHE_KS` | A-Type | 0x9B | 0x9 | Homomorphic key switching |
-| `FHE_NTT` | A-Type | 0x9B | 0xA | Number Theoretic Transform |
-| `FHE_INTT` | A-Type | 0x9B | 0xB | Inverse Number Theoretic Transform |
+| Instruction | Format | Opcode | Func | Description                         |
+| ----------- | ------ | ------ | ---- | ----------------------------------- |
+| `FHE_ENC`   | A-Type | 0x9B   | 0x0  | Homomorphic encryption              |
+| `FHE_DEC`   | A-Type | 0x9B   | 0x1  | Homomorphic decryption              |
+| `FHE_ADD`   | A-Type | 0x9B   | 0x2  | Homomorphic addition                |
+| `FHE_MUL`   | A-Type | 0x9B   | 0x3  | Homomorphic multiplication          |
+| `FHE_NEG`   | A-Type | 0x9B   | 0x4  | Homomorphic negation                |
+| `FHE_ROT`   | A-Type | 0x9B   | 0x5  | Homomorphic rotation                |
+| `FHE_CONJ`  | A-Type | 0x9B   | 0x6  | Homomorphic conjugation             |
+| `FHE_CMUL`  | A-Type | 0x9B   | 0x7  | Homomorphic constant multiplication |
+| `FHE_BS`    | A-Type | 0x9B   | 0x8  | Homomorphic bootstrapping           |
+| `FHE_KS`    | A-Type | 0x9B   | 0x9  | Homomorphic key switching           |
+| `FHE_NTT`   | A-Type | 0x9B   | 0xA  | Number Theoretic Transform          |
+| `FHE_INTT`  | A-Type | 0x9B   | 0xB  | Inverse Number Theoretic Transform  |
+
+### 7.5 FP8 Precision Operations (8-bit Floating-Point)
+
+#### 7.5.1 FP8 E4M3 Operations (Weights/Activations)
+
+| Instruction     | Format | Opcode | Func | Description                 |
+| --------------- | ------ | ------ | ---- | --------------------------- |
+| `FP8_ADD_E4M3`  | A-Type | 0xA0   | 0x0  | FP8 E4M3 addition           |
+| `FP8_SUB_E4M3`  | A-Type | 0xA0   | 0x1  | FP8 E4M3 subtraction        |
+| `FP8_MUL_E4M3`  | A-Type | 0xA0   | 0x2  | FP8 E4M3 multiplication     |
+| `FP8_FMA_E4M3`  | A-Type | 0xA0   | 0x3  | FP8 E4M3 fused multiply-add |
+| `FP8_DOT_E4M3`  | A-Type | 0xA0   | 0x4  | FP8 E4M3 vector dot product |
+| `FP8_GEMM_E4M3` | A-Type | 0xA0   | 0x5  | FP8 E4M3 matrix multiply    |
+
+#### 7.5.2 FP8 E5M2 Operations (Gradients)
+
+| Instruction     | Format | Opcode | Func | Description                 |
+| --------------- | ------ | ------ | ---- | --------------------------- |
+| `FP8_ADD_E5M2`  | A-Type | 0xA0   | 0x6  | FP8 E5M2 addition           |
+| `FP8_SUB_E5M2`  | A-Type | 0xA0   | 0x7  | FP8 E5M2 subtraction        |
+| `FP8_MUL_E5M2`  | A-Type | 0xA0   | 0x8  | FP8 E5M2 multiplication     |
+| `FP8_FMA_E5M2`  | A-Type | 0xA0   | 0x9  | FP8 E5M2 fused multiply-add |
+| `FP8_DOT_E5M2`  | A-Type | 0xA0   | 0xA  | FP8 E5M2 vector dot product |
+| `FP8_GEMM_E5M2` | A-Type | 0xA0   | 0xB  | FP8 E5M2 matrix multiply    |
+
+#### 7.5.3 FP8 Conversion Operations
+
+| Instruction        | Format | Opcode | Func | Description              |
+| ------------------ | ------ | ------ | ---- | ------------------------ |
+| `FP8_CVT_F32`      | A-Type | 0xA0   | 0xC  | Convert FP8 to FP32      |
+| `FP8_CVT_F16`      | A-Type | 0xA0   | 0xD  | Convert FP8 to FP16      |
+| `F32_CVT_FP8_E4M3` | A-Type | 0xA0   | 0xE  | Convert FP32 to FP8 E4M3 |
+| `F32_CVT_FP8_E5M2` | A-Type | 0xA0   | 0xF  | Convert FP32 to FP8 E5M2 |
+
+### 7.6 TensorFloat-32 (TF32) Operations
+
+| Instruction      | Format | Opcode | Func | Description                                |
+| ---------------- | ------ | ------ | ---- | ------------------------------------------ |
+| `TF32_MUL`       | A-Type | 0xA1   | 0x0  | TF32 multiplication                        |
+| `TF32_FMA`       | A-Type | 0xA1   | 0x1  | TF32 fused multiply-add (FP32 accumulator) |
+| `TF32_GEMM`      | A-Type | 0xA1   | 0x2  | TF32 matrix multiply                       |
+| `TF32_CONV2D`    | A-Type | 0xA1   | 0x3  | TF32 2D convolution                        |
+| `TF32_CONV3D`    | A-Type | 0xA1   | 0x4  | TF32 3D convolution                        |
+| `TF32_DOT`       | A-Type | 0xA1   | 0x5  | TF32 vector dot product                    |
+| `TF32_CVT_F32`   | A-Type | 0xA1   | 0x6  | Convert TF32 to FP32                       |
+| `F32_CVT_TF32`   | A-Type | 0xA1   | 0x7  | Convert FP32 to TF32 (truncate mantissa)   |
+| `TF32_ATTENTION` | A-Type | 0xA1   | 0x8  | TF32 scaled dot-product attention          |
+| `TF32_SOFTMAX`   | A-Type | 0xA1   | 0x9  | TF32 softmax with FP32 accumulation        |
+
+### 7.7 Microscaling (MX) Format Operations
+
+#### 7.7.1 MX Pack/Unpack Operations
+
+| Instruction    | Format | Opcode | Func | Description                                    |
+| -------------- | ------ | ------ | ---- | ---------------------------------------------- |
+| `MX4_PACK`     | A-Type | 0xA2   | 0x0  | Pack FP32 vector to MX4 (4-bit + shared scale) |
+| `MX6_PACK`     | A-Type | 0xA2   | 0x1  | Pack FP32 vector to MX6 (6-bit + shared scale) |
+| `MX9_PACK`     | A-Type | 0xA2   | 0x2  | Pack FP32 vector to MX9 (9-bit + shared scale) |
+| `MXFP8_PACK`   | A-Type | 0xA2   | 0x3  | Pack FP32 to MX-FP8 (8-bit FP + shared scale)  |
+| `MX4_UNPACK`   | A-Type | 0xA2   | 0x4  | Unpack MX4 to FP32                             |
+| `MX6_UNPACK`   | A-Type | 0xA2   | 0x5  | Unpack MX6 to FP32                             |
+| `MX9_UNPACK`   | A-Type | 0xA2   | 0x6  | Unpack MX9 to FP32                             |
+| `MXFP8_UNPACK` | A-Type | 0xA2   | 0x7  | Unpack MX-FP8 to FP32                          |
+
+#### 7.7.2 MX Compute Operations
+
+| Instruction     | Format | Opcode | Func | Description                        |
+| --------------- | ------ | ------ | ---- | ---------------------------------- |
+| `MX_DOT`        | A-Type | 0xA2   | 0x8  | MX dot product (FP32 accumulator)  |
+| `MX_GEMM`       | A-Type | 0xA2   | 0x9  | MX matrix multiply                 |
+| `MX_CONV2D`     | A-Type | 0xA2   | 0xA  | MX 2D convolution                  |
+| `MX_SCALE_ADJ`  | A-Type | 0xA2   | 0xB  | Adjust MX shared scale factor      |
+| `MX_SCALE_FIND` | A-Type | 0xA2   | 0xC  | Find optimal scale for block       |
+| `MX_REQUANT`    | A-Type | 0xA2   | 0xD  | Requantize MX block with new scale |
+
+### 7.8 Posit Number Format Operations
+
+#### 7.8.1 Posit8 Operations (es=0)
+
+| Instruction  | Format | Opcode | Func | Description           |
+| ------------ | ------ | ------ | ---- | --------------------- |
+| `POSIT8_ADD` | A-Type | 0xA3   | 0x0  | Posit8 addition       |
+| `POSIT8_SUB` | A-Type | 0xA3   | 0x1  | Posit8 subtraction    |
+| `POSIT8_MUL` | A-Type | 0xA3   | 0x2  | Posit8 multiplication |
+| `POSIT8_DIV` | A-Type | 0xA3   | 0x3  | Posit8 division       |
+
+#### 7.8.2 Posit16 Operations (es=1)
+
+| Instruction   | Format | Opcode | Func | Description                |
+| ------------- | ------ | ------ | ---- | -------------------------- |
+| `POSIT16_ADD` | A-Type | 0xA3   | 0x4  | Posit16 addition           |
+| `POSIT16_SUB` | A-Type | 0xA3   | 0x5  | Posit16 subtraction        |
+| `POSIT16_MUL` | A-Type | 0xA3   | 0x6  | Posit16 multiplication     |
+| `POSIT16_DIV` | A-Type | 0xA3   | 0x7  | Posit16 division           |
+| `POSIT16_FMA` | A-Type | 0xA3   | 0x8  | Posit16 fused multiply-add |
+
+#### 7.8.3 Posit32 Operations (es=2)
+
+| Instruction    | Format | Opcode | Func | Description                |
+| -------------- | ------ | ------ | ---- | -------------------------- |
+| `POSIT32_ADD`  | A-Type | 0xA4   | 0x0  | Posit32 addition           |
+| `POSIT32_SUB`  | A-Type | 0xA4   | 0x1  | Posit32 subtraction        |
+| `POSIT32_MUL`  | A-Type | 0xA4   | 0x2  | Posit32 multiplication     |
+| `POSIT32_DIV`  | A-Type | 0xA4   | 0x3  | Posit32 division           |
+| `POSIT32_SQRT` | A-Type | 0xA4   | 0x4  | Posit32 square root        |
+| `POSIT32_FMA`  | A-Type | 0xA4   | 0x5  | Posit32 fused multiply-add |
+| `POSIT32_DOT`  | A-Type | 0xA4   | 0x6  | Posit32 vector dot product |
+
+#### 7.8.4 Posit Conversion and Quire Operations
+
+| Instruction       | Format | Opcode | Func | Description                       |
+| ----------------- | ------ | ------ | ---- | --------------------------------- |
+| `POSIT_CVT_F32`   | A-Type | 0xA4   | 0x7  | Convert Posit to FP32             |
+| `F32_CVT_POSIT8`  | A-Type | 0xA4   | 0x8  | Convert FP32 to Posit8            |
+| `F32_CVT_POSIT16` | A-Type | 0xA4   | 0x9  | Convert FP32 to Posit16           |
+| `F32_CVT_POSIT32` | A-Type | 0xA4   | 0xA  | Convert FP32 to Posit32           |
+| `QUIRE_INIT`      | A-Type | 0xA4   | 0xB  | Initialize quire accumulator      |
+| `QUIRE_FMAE`      | A-Type | 0xA4   | 0xC  | Fused multiply-add-exact to quire |
+| `QUIRE_ROUND`     | A-Type | 0xA4   | 0xD  | Round quire to Posit              |
+
+### 7.9 High-Precision AI Operations (FP64/FP128)
+
+#### 7.9.1 FP64 Neural Network Operations
+
+| Instruction      | Format | Opcode | Func | Description                       |
+| ---------------- | ------ | ------ | ---- | --------------------------------- |
+| `FP64_MATMUL`    | A-Type | 0xA5   | 0x0  | FP64 matrix multiply              |
+| `FP64_CONV2D`    | A-Type | 0xA5   | 0x1  | FP64 2D convolution               |
+| `FP64_SOFTMAX`   | A-Type | 0xA5   | 0x2  | FP64 softmax (numerically stable) |
+| `FP64_ATTENTION` | A-Type | 0xA5   | 0x3  | FP64 scaled dot-product attention |
+| `FP64_LAYERNORM` | A-Type | 0xA5   | 0x4  | FP64 layer normalization          |
+| `FP64_GELU`      | A-Type | 0xA5   | 0x5  | FP64 GELU activation              |
+| `FP64_SWISH`     | A-Type | 0xA5   | 0x6  | FP64 Swish activation             |
+| `FP64_KAHAN_SUM` | A-Type | 0xA5   | 0x7  | FP64 Kahan compensated summation  |
+
+#### 7.9.2 FP128 Neural Network Operations
+
+| Instruction        | Format | Opcode | Func | Description                |
+| ------------------ | ------ | ------ | ---- | -------------------------- |
+| `FP128_MATMUL`     | A-Type | 0xA5   | 0x8  | FP128 matrix multiply      |
+| `FP128_ATTENTION`  | A-Type | 0xA5   | 0x9  | FP128 attention mechanism  |
+| `FP128_SOFTMAX`    | A-Type | 0xA5   | 0xA  | FP128 softmax              |
+| `FP128_GRADIENT`   | A-Type | 0xA5   | 0xB  | FP128 gradient computation |
+| `FP128_ACCUMULATE` | A-Type | 0xA5   | 0xC  | FP128 exact accumulation   |
+| `FP128_LAYERNORM`  | A-Type | 0xA5   | 0xD  | FP128 layer normalization  |
+
+### 7.10 Mixed-Precision Training Operations
+
+| Instruction      | Format | Opcode | Func | Description                                              |
+| ---------------- | ------ | ------ | ---- | -------------------------------------------------------- |
+| `MIXED_FWD`      | A-Type | 0xA6   | 0x0  | Mixed-precision forward pass (FP16 compute, FP8 weights) |
+| `MIXED_BWD`      | A-Type | 0xA6   | 0x1  | Mixed-precision backward pass (FP16 gradients)           |
+| `MIXED_UPDATE`   | A-Type | 0xA6   | 0x2  | Mixed-precision weight update (FP32 master weights)      |
+| `LOSS_SCALE`     | A-Type | 0xA6   | 0x3  | Apply loss scaling factor                                |
+| `GRAD_UNSCALE`   | A-Type | 0xA6   | 0x4  | Unscale gradients                                        |
+| `GRAD_CLIP`      | A-Type | 0xA6   | 0x5  | Gradient clipping                                        |
+| `GRAD_NORM`      | A-Type | 0xA6   | 0x6  | Compute gradient norm                                    |
+| `FP8_QUANTIZE`   | A-Type | 0xA6   | 0x7  | Quantize to FP8 with histogram-based scaling             |
+| `FP8_DEQUANTIZE` | A-Type | 0xA6   | 0x8  | Dequantize FP8 to FP32                                   |
+| `AMAX_HISTORY`   | A-Type | 0xA6   | 0x9  | Update absmax history for dynamic scaling                |
+| `SCALE_COMPUTE`  | A-Type | 0xA6   | 0xA  | Compute optimal FP8 scale from history                   |
 
 ---
 
@@ -696,29 +861,29 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ### 8.1 Basic Vector Operations
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `VADD` | V-Type | 0xA | 0x0 | Vector addition |
-| `VSUB` | V-Type | 0xA | 0x1 | Vector subtraction |
-| `VMUL` | V-Type | 0xA | 0x2 | Vector multiplication |
-| `VDIV` | V-Type | 0xA | 0x3 | Vector division |
-| `VFMA` | V-Type | 0xA | 0x4 | Vector fused multiply-add |
-| `VSQRT` | V-Type | 0xA | 0x5 | Vector square root |
-| `VDOT` | V-Type | 0xA | 0x6 | Vector dot product |
-| `VCROSS` | V-Type | 0xA | 0x7 | Vector cross product |
+| Instruction | Format | Opcode | Func | Description               |
+| ----------- | ------ | ------ | ---- | ------------------------- |
+| `VADD`      | V-Type | 0xA    | 0x0  | Vector addition           |
+| `VSUB`      | V-Type | 0xA    | 0x1  | Vector subtraction        |
+| `VMUL`      | V-Type | 0xA    | 0x2  | Vector multiplication     |
+| `VDIV`      | V-Type | 0xA    | 0x3  | Vector division           |
+| `VFMA`      | V-Type | 0xA    | 0x4  | Vector fused multiply-add |
+| `VSQRT`     | V-Type | 0xA    | 0x5  | Vector square root        |
+| `VDOT`      | V-Type | 0xA    | 0x6  | Vector dot product        |
+| `VCROSS`    | V-Type | 0xA    | 0x7  | Vector cross product      |
 
 ### 8.2 Advanced Vector Operations
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `VGATHER` | V-Type | 0xA | 0x8 | Vector gather |
-| `VSCATTER` | V-Type | 0xA | 0x9 | Vector scatter |
-| `VSHUFFLE` | V-Type | 0xA | 0xA | Vector shuffle |
-| `VPERMUTE` | V-Type | 0xA | 0xB | Vector permute |
-| `VBLEND` | V-Type | 0xA | 0xC | Vector blend |
-| `VTRANSPOSE` | V-Type | 0xA | 0xD | Vector transpose |
-| `VREDUCE` | V-Type | 0xA | 0xE | Vector reduction |
-| `VMASK` | V-Type | 0xA | 0xF | Vector mask operations |
+| Instruction  | Format | Opcode | Func | Description            |
+| ------------ | ------ | ------ | ---- | ---------------------- |
+| `VGATHER`    | V-Type | 0xA    | 0x8  | Vector gather          |
+| `VSCATTER`   | V-Type | 0xA    | 0x9  | Vector scatter         |
+| `VSHUFFLE`   | V-Type | 0xA    | 0xA  | Vector shuffle         |
+| `VPERMUTE`   | V-Type | 0xA    | 0xB  | Vector permute         |
+| `VBLEND`     | V-Type | 0xA    | 0xC  | Vector blend           |
+| `VTRANSPOSE` | V-Type | 0xA    | 0xD  | Vector transpose       |
+| `VREDUCE`    | V-Type | 0xA    | 0xE  | Vector reduction       |
+| `VMASK`      | V-Type | 0xA    | 0xF  | Vector mask operations |
 
 ---
 
@@ -726,35 +891,35 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ### 9.1 Hardware Transactional Memory
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `HTM_BEGIN` | M-Type | 0x7 | 0x8 | Begin hardware transaction |
-| `HTM_END` | M-Type | 0x7 | 0x9 | Commit hardware transaction |
-| `HTM_ABORT` | M-Type | 0x7 | 0xA | Abort hardware transaction |
-| `HTM_TEST` | M-Type | 0x7 | 0xB | Test transaction status |
-| `HTM_RETRY` | M-Type | 0x7 | 0xC | Retry failed transaction |
+| Instruction | Format | Opcode | Func | Description                 |
+| ----------- | ------ | ------ | ---- | --------------------------- |
+| `HTM_BEGIN` | M-Type | 0x7    | 0x8  | Begin hardware transaction  |
+| `HTM_END`   | M-Type | 0x7    | 0x9  | Commit hardware transaction |
+| `HTM_ABORT` | M-Type | 0x7    | 0xA  | Abort hardware transaction  |
+| `HTM_TEST`  | M-Type | 0x7    | 0xB  | Test transaction status     |
+| `HTM_RETRY` | M-Type | 0x7    | 0xC  | Retry failed transaction    |
 
 ### 9.2 NUMA Operations
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `NUMA_NODES` | M-Type | 0x7 | 0xD | Get number of NUMA nodes |
-| `NUMA_DISTANCE` | M-Type | 0x7 | 0xE | Get distance between nodes |
-| `NUMA_AFFINITY` | M-Type | 0x7 | 0xF | Set thread affinity to node |
-| `NUMA_MIGRATE` | M-Type | 0x8 | 0x0 | Migrate data between nodes |
-| `NUMA_ALLOC` | M-Type | 0x8 | 0x1 | Allocate memory on specific node |
-| `NUMA_FREE` | M-Type | 0x8 | 0x2 | Free NUMA-allocated memory |
+| Instruction     | Format | Opcode | Func | Description                      |
+| --------------- | ------ | ------ | ---- | -------------------------------- |
+| `NUMA_NODES`    | M-Type | 0x7    | 0xD  | Get number of NUMA nodes         |
+| `NUMA_DISTANCE` | M-Type | 0x7    | 0xE  | Get distance between nodes       |
+| `NUMA_AFFINITY` | M-Type | 0x7    | 0xF  | Set thread affinity to node      |
+| `NUMA_MIGRATE`  | M-Type | 0x8    | 0x0  | Migrate data between nodes       |
+| `NUMA_ALLOC`    | M-Type | 0x8    | 0x1  | Allocate memory on specific node |
+| `NUMA_FREE`     | M-Type | 0x8    | 0x2  | Free NUMA-allocated memory       |
 
 ### 9.3 Message Passing
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `MPI_SEND` | M-Type | 0x8 | 0x3 | Send message to target core |
-| `MPI_RECV` | M-Type | 0x8 | 0x4 | Receive message from source core |
-| `MPI_BROADCAST` | M-Type | 0x8 | 0x5 | Broadcast message to all cores |
-| `MPI_REDUCE` | M-Type | 0x8 | 0x6 | Reduce operation across cores |
-| `MPI_SCATTER` | M-Type | 0x8 | 0x7 | Scatter data to multiple cores |
-| `MPI_GATHER` | M-Type | 0x8 | 0x8 | Gather data from multiple cores |
+| Instruction     | Format | Opcode | Func | Description                      |
+| --------------- | ------ | ------ | ---- | -------------------------------- |
+| `MPI_SEND`      | M-Type | 0x8    | 0x3  | Send message to target core      |
+| `MPI_RECV`      | M-Type | 0x8    | 0x4  | Receive message from source core |
+| `MPI_BROADCAST` | M-Type | 0x8    | 0x5  | Broadcast message to all cores   |
+| `MPI_REDUCE`    | M-Type | 0x8    | 0x6  | Reduce operation across cores    |
+| `MPI_SCATTER`   | M-Type | 0x8    | 0x7  | Scatter data to multiple cores   |
+| `MPI_GATHER`    | M-Type | 0x8    | 0x8  | Gather data from multiple cores  |
 
 ---
 
@@ -762,36 +927,36 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ### 10.1 Decimal Floating-Point
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `DFP_ADD` | F-Type | 0x8 | 0x8 | Decimal floating-point addition |
-| `DFP_SUB` | F-Type | 0x8 | 0x9 | Decimal floating-point subtraction |
-| `DFP_MUL` | F-Type | 0x8 | 0xA | Decimal floating-point multiplication |
-| `DFP_DIV` | F-Type | 0x8 | 0xB | Decimal floating-point division |
-| `DFP_SQRT` | F-Type | 0x8 | 0xC | Decimal floating-point square root |
-| `DFP_ROUND` | F-Type | 0x8 | 0xD | Decimal floating-point rounding |
+| Instruction | Format | Opcode | Func | Description                           |
+| ----------- | ------ | ------ | ---- | ------------------------------------- |
+| `DFP_ADD`   | F-Type | 0x8    | 0x8  | Decimal floating-point addition       |
+| `DFP_SUB`   | F-Type | 0x8    | 0x9  | Decimal floating-point subtraction    |
+| `DFP_MUL`   | F-Type | 0x8    | 0xA  | Decimal floating-point multiplication |
+| `DFP_DIV`   | F-Type | 0x8    | 0xB  | Decimal floating-point division       |
+| `DFP_SQRT`  | F-Type | 0x8    | 0xC  | Decimal floating-point square root    |
+| `DFP_ROUND` | F-Type | 0x8    | 0xD  | Decimal floating-point rounding       |
 
 ### 10.2 Interval Arithmetic
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `INT_ADD` | F-Type | 0x8 | 0xE | Interval addition |
-| `INT_SUB` | F-Type | 0x8 | 0xF | Interval subtraction |
-| `INT_MUL` | F-Type | 0x9 | 0x0 | Interval multiplication |
-| `INT_DIV` | F-Type | 0x9 | 0x1 | Interval division |
-| `INT_SQRT` | F-Type | 0x9 | 0x2 | Interval square root |
-| `INT_WIDTH` | F-Type | 0x9 | 0x3 | Compute interval width |
+| Instruction | Format | Opcode | Func | Description             |
+| ----------- | ------ | ------ | ---- | ----------------------- |
+| `INT_ADD`   | F-Type | 0x8    | 0xE  | Interval addition       |
+| `INT_SUB`   | F-Type | 0x8    | 0xF  | Interval subtraction    |
+| `INT_MUL`   | F-Type | 0x9    | 0x0  | Interval multiplication |
+| `INT_DIV`   | F-Type | 0x9    | 0x1  | Interval division       |
+| `INT_SQRT`  | F-Type | 0x9    | 0x2  | Interval square root    |
+| `INT_WIDTH` | F-Type | 0x9    | 0x3  | Compute interval width  |
 
 ### 10.3 Complex Numbers
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `COMPLEX_ADD` | F-Type | 0x9 | 0x4 | Complex addition |
-| `COMPLEX_SUB` | F-Type | 0x9 | 0x5 | Complex subtraction |
-| `COMPLEX_MUL` | F-Type | 0x9 | 0x6 | Complex multiplication |
-| `COMPLEX_DIV` | F-Type | 0x9 | 0x7 | Complex division |
-| `COMPLEX_CONJ` | F-Type | 0x9 | 0x8 | Complex conjugate |
-| `COMPLEX_ABS` | F-Type | 0x9 | 0x9 | Complex absolute value |
+| Instruction    | Format | Opcode | Func | Description            |
+| -------------- | ------ | ------ | ---- | ---------------------- |
+| `COMPLEX_ADD`  | F-Type | 0x9    | 0x4  | Complex addition       |
+| `COMPLEX_SUB`  | F-Type | 0x9    | 0x5  | Complex subtraction    |
+| `COMPLEX_MUL`  | F-Type | 0x9    | 0x6  | Complex multiplication |
+| `COMPLEX_DIV`  | F-Type | 0x9    | 0x7  | Complex division       |
+| `COMPLEX_CONJ` | F-Type | 0x9    | 0x8  | Complex conjugate      |
+| `COMPLEX_ABS`  | F-Type | 0x9    | 0x9  | Complex absolute value |
 
 ---
 
@@ -799,23 +964,23 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ### 11.1 Real-Time Operations
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `RT_SET_PRIORITY` | S-Type | 0x5 | 0x0 | Set real-time priority |
-| `RT_GET_PRIORITY` | S-Type | 0x5 | 0x1 | Get current priority |
-| `RT_SET_DEADLINE` | S-Type | 0x5 | 0x2 | Set task deadline |
-| `RT_CHECK_DEADLINE` | S-Type | 0x5 | 0x3 | Check deadline violation |
-| `RT_YIELD` | S-Type | 0x5 | 0x4 | Yield CPU to higher priority task |
+| Instruction         | Format | Opcode | Func | Description                       |
+| ------------------- | ------ | ------ | ---- | --------------------------------- |
+| `RT_SET_PRIORITY`   | S-Type | 0x5    | 0x0  | Set real-time priority            |
+| `RT_GET_PRIORITY`   | S-Type | 0x5    | 0x1  | Get current priority              |
+| `RT_SET_DEADLINE`   | S-Type | 0x5    | 0x2  | Set task deadline                 |
+| `RT_CHECK_DEADLINE` | S-Type | 0x5    | 0x3  | Check deadline violation          |
+| `RT_YIELD`          | S-Type | 0x5    | 0x4  | Yield CPU to higher priority task |
 
 ### 11.2 Safety Operations
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `SAFETY_INIT` | S-Type | 0x5 | 0x5 | Initialize safety system |
-| `SAFETY_CHECK` | S-Type | 0x5 | 0x6 | Perform safety check |
-| `SAFETY_FAULT` | S-Type | 0x5 | 0x7 | Report safety fault |
-| `SAFETY_RESET` | S-Type | 0x5 | 0x8 | Reset safety system |
-| `SAFETY_SHUTDOWN` | S-Type | 0x5 | 0x9 | Safe shutdown procedure |
+| Instruction       | Format | Opcode | Func | Description              |
+| ----------------- | ------ | ------ | ---- | ------------------------ |
+| `SAFETY_INIT`     | S-Type | 0x5    | 0x5  | Initialize safety system |
+| `SAFETY_CHECK`    | S-Type | 0x5    | 0x6  | Perform safety check     |
+| `SAFETY_FAULT`    | S-Type | 0x5    | 0x7  | Report safety fault      |
+| `SAFETY_RESET`    | S-Type | 0x5    | 0x8  | Reset safety system      |
+| `SAFETY_SHUTDOWN` | S-Type | 0x5    | 0x9  | Safe shutdown procedure  |
 
 ---
 
@@ -823,23 +988,23 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 
 ### 12.1 Performance Counters
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `PERF_START` | S-Type | 0x6 | 0x0 | Start performance counting |
-| `PERF_STOP` | S-Type | 0x6 | 0x1 | Stop performance counting |
-| `PERF_READ` | S-Type | 0x6 | 0x2 | Read performance counter |
-| `PERF_RESET` | S-Type | 0x6 | 0x3 | Reset performance counter |
-| `PERF_SELECT` | S-Type | 0x6 | 0x4 | Select counter events |
+| Instruction   | Format | Opcode | Func | Description                |
+| ------------- | ------ | ------ | ---- | -------------------------- |
+| `PERF_START`  | S-Type | 0x6    | 0x0  | Start performance counting |
+| `PERF_STOP`   | S-Type | 0x6    | 0x1  | Stop performance counting  |
+| `PERF_READ`   | S-Type | 0x6    | 0x2  | Read performance counter   |
+| `PERF_RESET`  | S-Type | 0x6    | 0x3  | Reset performance counter  |
+| `PERF_SELECT` | S-Type | 0x6    | 0x4  | Select counter events      |
 
 ### 12.2 Trace Operations
 
-| Instruction | Format | Opcode | Func | Description |
-|-------------|--------|--------|------|-------------|
-| `TRACE_START` | S-Type | 0x6 | 0x5 | Start trace collection |
-| `TRACE_STOP` | S-Type | 0x6 | 0x6 | Stop trace collection |
-| `TRACE_READ` | S-Type | 0x6 | 0x7 | Read trace data |
-| `TRACE_CLEAR` | S-Type | 0x6 | 0x8 | Clear trace buffer |
-| `TRACE_CONFIG` | S-Type | 0x6 | 0x9 | Configure trace parameters |
+| Instruction    | Format | Opcode | Func | Description                |
+| -------------- | ------ | ------ | ---- | -------------------------- |
+| `TRACE_START`  | S-Type | 0x6    | 0x5  | Start trace collection     |
+| `TRACE_STOP`   | S-Type | 0x6    | 0x6  | Stop trace collection      |
+| `TRACE_READ`   | S-Type | 0x6    | 0x7  | Read trace data            |
+| `TRACE_CLEAR`  | S-Type | 0x6    | 0x8  | Clear trace buffer         |
+| `TRACE_CONFIG` | S-Type | 0x6    | 0x9  | Configure trace parameters |
 
 ---
 
@@ -908,6 +1073,7 @@ All AlphaAHB V5 instructions are **64-bit** wide, providing ample space for comp
 This instruction encoding specification provides the complete foundation for implementing the AlphaAHB V5 ISA. The 64-bit instruction format allows for complex operations while maintaining simplicity, and the comprehensive opcode and function code tables support all the advanced features of the architecture.
 
 The encoding system is designed to be:
+
 - **Efficient**: 64-bit instructions provide ample space for complex operations
 - **Extensible**: Reserved opcodes and function codes allow for future expansion
 - **Consistent**: Uniform encoding patterns across instruction types

@@ -32,10 +32,10 @@ lazy val root = (project in file("."))
     // Additional dependencies
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.15" % "test",
     libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.17.0" % "test",
-    
-    // Compiler plugin for Chisel
-    addCompilerPlugin("org.chipsalliance" % "chisel-plugin" % "3.6.1" cross CrossVersion.full),
-    
+
+    // Compiler plugin for Chisel (not needed for Chisel 3.6+, integrated into main library)
+    // addCompilerPlugin("org.chipsalliance" % "chisel-plugin" % "3.6.1" cross CrossVersion.full),
+
     // Build settings
     Compile / scalaSource := baseDirectory.value / "src" / "main" / "scala",
     Test / scalaSource := baseDirectory.value / "src" / "test" / "scala",

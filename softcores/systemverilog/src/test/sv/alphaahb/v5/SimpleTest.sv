@@ -36,7 +36,7 @@ module SimpleTest;
     always_ff @(posedge clk) begin
         if (rst_n) begin
             test_memory_valid <= 1'b1;
-            test_memory_data <= test_memory[test_memory_addr[MEMORY_SIZE-1:0]];
+            test_memory_data <= test_memory[test_memory_addr[9:0]]; // Fixed: Use correct bit range for 1024-entry array
         end
     end
     
@@ -90,17 +90,22 @@ module SimpleTest;
     
     task test_clock_functionality();
         logic prev_clk;
+        int transitions = 0;
         test_count++;
         $display("Test %0d: Clock functionality", test_count);
-        
-        // Check if clock is toggling - wait for multiple cycles
-        prev_clk = clk;
-        #20; // Wait for 2 clock cycles
-        if (clk != prev_clk) begin
-            $display("  PASS: Clock is toggling");
+
+        // Fixed: Check for actual clock transitions over multiple cycles
+        repeat(4) begin  // Check 4 times
+            prev_clk = clk;
+            #5;  // Wait half clock period
+            if (clk != prev_clk) transitions++;
+        end
+
+        if (transitions >= 3) begin  // At least 3 transitions means clock is working
+            $display("  PASS: Clock is toggling (%0d transitions detected)", transitions);
             pass_count++;
         end else begin
-            $display("  FAIL: Clock is not toggling");
+            $display("  FAIL: Clock is not toggling properly (%0d transitions detected)", transitions);
             fail_count++;
         end
     endtask

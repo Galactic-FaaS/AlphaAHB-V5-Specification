@@ -30,7 +30,7 @@ endpackage
 
 package alphaahb_v5_vector_pkg;
     typedef logic [511:0] vector_512_t;
-    typedef logic [255:0] ai_vector_t;
+    typedef logic [511:0] ai_vector_t;
 endpackage
 
 module AlphaAHBV5Core (
@@ -186,11 +186,25 @@ module AlphaAHBV5Core (
         .exception(vector_exception)
     );
     
-    // Advanced AI/ML Unit
+    // AI/ML input selection based on instruction encoding
+    // Bits [47:32] of immediate specify weight buffer address
+    // Bits [31:16] of immediate specify bias register
+    // Bits [15:0] of immediate specify operation config
+    logic [511:0] ai_state_data;
+    logic [511:0] ai_input_data;
+    logic [511:0] ai_weight_data;
+    logic [511:0] ai_bias_data;
+    
+    assign ai_input_data = vpr[rs1[4:0]];         // Input from vector register rs1 (full 512 bits)
+    assign ai_weight_data = vpr[rs2[4:0]];        // Weights from vector register rs2 (full 512 bits)
+    assign ai_bias_data = {8{gpr[immediate[21:16]]}};  // Bias replicated from GPR (8x64 = 512 bits)
+    assign ai_state_data = vpr[rd[4:0]];          // State/Accumulator from destination register
+    
     AdvancedAIMLUnit ai_inst (
-        .input_data(ai_result),  // Simplified connection
-        .weight_data(ai_result), // Simplified connection
-        .bias_data(ai_result),   // Simplified connection
+        .input_data(ai_input_data),   // Real input from vector register
+        .weight_data(ai_weight_data), // Real weights from vector register
+        .bias_data(ai_bias_data),     // Real bias from general purpose register
+        .state_data(ai_state_data),   // Real state from destination register
         .funct(funct),
         .config(immediate[7:0]),
         .result(ai_result),
@@ -233,14 +247,43 @@ module AlphaAHBV5Core (
         .pte_read_valid(1'b0)
     );
     
-    // Advanced Branch Predictor
+    // Advanced Branch Predictor with proper feedback loop
+    // Branch outcome feedback comes from execute stage comparison
+    logic        branch_actually_taken;
+    logic [63:0] branch_actual_target;
+    logic        branch_update_valid;
+    
+    // Determine if branch was actually taken based on execute stage results
+    always_comb begin
+        branch_actually_taken = 1'b0;
+        branch_actual_target = execute_pc + 8;  // Default: fall through
+        branch_update_valid = 1'b0;
+        
+        // Check if current instruction in execute stage is a branch
+        if (opcode == 4'h3) begin  // Branch opcode
+            case (funct)
+                4'h0: branch_actually_taken = alu_flags.zero;              // BEQ
+                4'h1: branch_actually_taken = !alu_flags.zero;             // BNE
+                4'h2: branch_actually_taken = alu_flags.negative;          // BLT
+                4'h3: branch_actually_taken = !alu_flags.negative;         // BGE
+                4'h4: branch_actually_taken = !alu_flags.negative && !alu_flags.zero; // BGT
+                4'h5: branch_actually_taken = alu_flags.negative || alu_flags.zero;   // BLE
+                4'hC: branch_actually_taken = alu_flags.carry;             // BC
+                4'hD: branch_actually_taken = alu_flags.overflow;          // BO
+                default: branch_actually_taken = 1'b0;
+            endcase
+            branch_actual_target = rs1_data + immediate;  // Branch target
+            branch_update_valid = execute_en;
+        end
+    end
+    
     AdvancedBranchPredictor branch_predictor_inst (
         .clk(clk),
         .rst_n(rst_n),
         .pc(pc),
-        .branch_taken(1'b0),  // Simplified
-        .actual_target(0),
-        .update(1'b0),
+        .branch_taken(branch_actually_taken),     // Real branch outcome from execute
+        .actual_target(branch_actual_target),     // Real branch target
+        .update(branch_update_valid),             // Update predictor on branch retirement
         .predicted_target(predicted_target),
         .predicted_taken(predicted_taken),
         .prediction_valid(prediction_valid)
@@ -334,17 +377,30 @@ module AlphaAHBV5Core (
             decode_pc <= fetch_pc;
             current_inst <= if_data;
             
-            // Decode instruction fields
+            // Decode instruction fields according to AlphaAHB V5 encoding
             opcode <= if_data[63:60];
             funct <= if_data[59:56];
             rs2 <= if_data[55:52];
             rs1 <= if_data[51:48];
-            immediate <= {{48{if_data[47]}}, if_data[47:0]};  // Sign extend
-            rd <= if_data[51:48];  // Simplified
+            immediate <= {{48{if_data[47]}}, if_data[47:32]};  // Sign extend 16-bit immediate
+            
+            // Destination register decoding varies by instruction type:
+            // R-type (opcode 0x0-0x2): rd is bits [53:48]
+            // I-type (opcode 0x3-0x5): rd is bits [53:48], immediate in [47:32]
+            // V-type (opcode 0x6-0x7): vd is bits [53:48]
+            // A-type (opcode 0x8-0x9): ad is bits [53:48]
+            case (if_data[63:60])  // opcode
+                4'h0, 4'h1, 4'h2: rd <= if_data[53:48];  // R-type: rd field
+                4'h3: rd <= 6'h0;                         // Branch: no destination
+                4'h4, 4'h5: rd <= if_data[53:48];        // Load/Store: rd field
+                4'h6, 4'h7: rd <= {1'b0, if_data[52:48]}; // Vector: vd (5-bit)
+                4'h8, 4'h9: rd <= {2'b0, if_data[51:48]}; // AI/ML: ad (4-bit)
+                default: rd <= if_data[53:48];           // Default extraction
+            endcase
             
             // Read register data
-            rs1_data <= gpr[rs1];
-            rs2_data <= gpr[rs2];
+            rs1_data <= gpr[if_data[51:48]];
+            rs2_data <= gpr[if_data[55:52]];
             rs1_ready <= 1'b1;
             rs2_ready <= 1'b1;
         end

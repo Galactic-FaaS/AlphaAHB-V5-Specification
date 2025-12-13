@@ -593,8 +593,87 @@ clean:
 
 .PHONY: all clean
 """
+        elif language == Language.CPP:
+            makefile_content = f"""
+# Makefile for {project_name}
+# AlphaAHB V5 C++ Project
+
+CXX = alphaahb-g++
+AS = alphaahb-as
+LD = alphaahb-ld
+OBJCOPY = alphaahb-objcopy
+
+TARGET = {project_name}
+SOURCES = main.cpp
+OBJECTS = $(SOURCES:.cpp=.o)
+
+CXXFLAGS = -Wall -Wextra -O2 -std=c++17 -fno-exceptions -fno-rtti
+ASFLAGS = -g
+LDFLAGS = -T linker.ld
+
+.PHONY: all clean
+
+all: $(TARGET).bin
+
+$(TARGET).bin: $(TARGET).elf
+\t$(OBJCOPY) -O binary $< $@
+
+$(TARGET).elf: $(OBJECTS)
+\t$(LD) $(LDFLAGS) -o $@ $^
+
+%.o: %.cpp
+\t$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+clean:
+\trm -f $(OBJECTS) $(TARGET).elf $(TARGET).bin
+
+.PHONY: all clean
+"""
+        elif language == Language.RUST:
+            makefile_content = f"""
+# Makefile for {project_name}
+# AlphaAHB V5 Rust Project
+
+CARGO = cargo
+TARGET_ARCH = riscv64gc-unknown-none-elf
+TARGET = {project_name}
+
+.PHONY: all clean build run
+
+all: build
+
+build:
+\t$(CARGO) build --release --target $(TARGET_ARCH)
+
+clean:
+\t$(CARGO) clean
+
+run: build
+\talphaahb-sim target/$(TARGET_ARCH)/release/$(TARGET)
+"""
+        elif language == Language.PYTHON:
+            makefile_content = f"""
+# Makefile for {project_name}
+# AlphaAHB V5 Python Project
+
+PYTHON = python3
+MAIN_SCRIPT = main.py
+
+.PHONY: all run clean test
+
+all: run
+
+run:
+\t$(PYTHON) $(MAIN_SCRIPT)
+
+clean:
+\trm -rf __pycache__ *.pyc
+
+test:
+\t$(PYTHON) -m unittest discover tests
+"""
         else:
-            makefile_content = "# Makefile placeholder"
+            makefile_content = "# Makefile generation not supported for this language"
         
         return GeneratedCode(
             filename="Makefile",

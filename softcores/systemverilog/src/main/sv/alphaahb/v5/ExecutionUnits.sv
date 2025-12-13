@@ -259,32 +259,49 @@ module AdvancedFloatingPointUnit (
                     inexact_exc = 1'b0;
                     div_zero_exc = 1'b0;
                 end else begin
-                    // Normal addition (simplified for this example)
-                    result = rs1_data + rs2_data;
+                    // Normal addition (IEEE 754)
+                    shortreal r1_real = $bitstoshortreal(rs1_data);
+                    shortreal r2_real = $bitstoshortreal(rs2_data);
+                    result = $shortrealtobits(r1_real + r2_real);
+                    
+                    // Check for exception conditions after operation
+                    if ($isinf($bitstoshortreal(result))) overflow_exc = 1'b1;
+                    else overflow_exc = 1'b0;
+                    
+                    if ($bitstoshortreal(result) == 0.0 && r1_real != 0.0 && r2_real != 0.0) underflow_exc = 1'b1;
+                    else underflow_exc = 1'b0;
+                    
                     invalid_exc = 1'b0;
-                    overflow_exc = 1'b0;
-                    underflow_exc = 1'b0;
                     inexact_exc = 1'b0;
                     div_zero_exc = 1'b0;
                 end
             end
             4'h1: begin // FSUB - Floating Point Subtraction
-                result = rs1_data - rs2_data;
-                invalid_exc = 1'b0;
-                overflow_exc = 1'b0;
-                underflow_exc = 1'b0;
+                shortreal r1_real = $bitstoshortreal(rs1_data);
+                shortreal r2_real = $bitstoshortreal(rs2_data);
+                result = $shortrealtobits(r1_real - r2_real);
+                
+                invalid_exc = $isnan($bitstoshortreal(result));
+                overflow_exc = $isinf($bitstoshortreal(result));
+                underflow_exc = (result == 0) && (rs1_data != rs2_data);
                 inexact_exc = 1'b0;
                 div_zero_exc = 1'b0;
             end
             4'h2: begin // FMUL - Floating Point Multiplication
-                result = rs1_data * rs2_data;
-                invalid_exc = 1'b0;
-                overflow_exc = 1'b0;
-                underflow_exc = 1'b0;
+                shortreal r1_real = $bitstoshortreal(rs1_data);
+                shortreal r2_real = $bitstoshortreal(rs2_data);
+                result = $shortrealtobits(r1_real * r2_real);
+                
+                invalid_exc = $isnan($bitstoshortreal(result));
+                overflow_exc = $isinf($bitstoshortreal(result));
+                underflow_exc = (result == 0) && (rs1_data != 0) && (rs2_data != 0);
                 inexact_exc = 1'b0;
                 div_zero_exc = 1'b0;
             end
             4'h3: begin // FDIV - Floating Point Division
+                shortreal r1_real = $bitstoshortreal(rs1_data);
+                shortreal r2_real = $bitstoshortreal(rs2_data);
+                
                 if (rs2_is_zero && !rs1_is_zero) begin
                     result = {rs1_sign ^ rs2_sign, 8'hFF, 23'h0}; // Infinity
                     invalid_exc = 1'b0;
@@ -292,33 +309,52 @@ module AdvancedFloatingPointUnit (
                     underflow_exc = 1'b0;
                     inexact_exc = 1'b0;
                     div_zero_exc = 1'b1;
-                end else begin
-                    result = rs1_data / rs2_data;
-                    invalid_exc = 1'b0;
+                end else if (rs2_is_zero && rs1_is_zero) begin
+                    result = {1'b0, 8'hFF, 1'b1, 22'h0}; // NaN
+                    invalid_exc = 1'b1;
                     overflow_exc = 1'b0;
                     underflow_exc = 1'b0;
+                    inexact_exc = 1'b0;
+                    div_zero_exc = 1'b0;
+                end else begin
+                    result = $shortrealtobits(r1_real / r2_real);
+                    invalid_exc = $isnan($bitstoshortreal(result));
+                    overflow_exc = $isinf($bitstoshortreal(result));
+                    underflow_exc = (result == 0) && (rs1_data != 0);
                     inexact_exc = 1'b0;
                     div_zero_exc = 1'b0;
                 end
             end
             4'h4: begin // FSQRT - Floating Point Square Root
-                result = rs1_data;
-                invalid_exc = 1'b0;
+                shortreal r1_real = $bitstoshortreal(rs1_data);
+                if (r1_real < 0.0) begin
+                    result = {1'b0, 8'hFF, 1'b1, 22'h0}; // NaN for negative input
+                    invalid_exc = 1'b1; 
+                end else begin
+                    result = $shortrealtobits($sqrt(r1_real));
+                    invalid_exc = 1'b0;
+                end
                 overflow_exc = 1'b0;
                 underflow_exc = 1'b0;
                 inexact_exc = 1'b0;
                 div_zero_exc = 1'b0;
             end
             4'h5: begin // FMA - Fused Multiply-Add
-                result = rs1_data * rs2_data + rs1_data;
+                shortreal r1_real = $bitstoshortreal(rs1_data);
+                shortreal r2_real = $bitstoshortreal(rs2_data);
+                // Note: SystemVerilog doesn't have a 3-operand FMA so we simulate it
+                // Ideally this should maintain higher precision intermediate
+                result = $shortrealtobits((r1_real * r2_real) + r1_real); // Simplified mapping: rs1*rs2 + rs1 (accumulator)
                 invalid_exc = 1'b0;
-                overflow_exc = 1'b0;
+                overflow_exc = $isinf($bitstoshortreal(result));
                 underflow_exc = 1'b0;
                 inexact_exc = 1'b0;
                 div_zero_exc = 1'b0;
             end
             4'h6: begin // FCMP - Floating Point Compare
-                result = (rs1_data < rs2_data) ? 32'h3F800000 : 32'h0; // 1.0 or 0.0
+                shortreal r1_real = $bitstoshortreal(rs1_data);
+                shortreal r2_real = $bitstoshortreal(rs2_data);
+                result = (r1_real < r2_real) ? 32'h3F800000 : 32'h0; // 1.0 or 0.0
                 invalid_exc = 1'b0;
                 overflow_exc = 1'b0;
                 underflow_exc = 1'b0;

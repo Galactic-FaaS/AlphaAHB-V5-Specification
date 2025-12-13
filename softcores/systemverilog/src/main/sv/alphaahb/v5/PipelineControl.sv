@@ -405,6 +405,8 @@ module AdvancedLoadStoreQueue (
     input  logic        is_store,
     input  logic        allocate_en,
     input  logic        commit_en,
+    input  logic        mem_op_complete, // Added: Real memory completion signal
+    input  logic [4:0]  mem_op_tag,      // Added: Tag to identify completed op
     output logic        full,
     output logic        empty,
     output alphaahb_v5_pipeline_pkg::load_store_queue_entry_t commit_inst,
@@ -484,8 +486,10 @@ module AdvancedLoadStoreQueue (
             // Mark as ready when memory operation completes
             for (int i = 0; i < alphaahb_v5_pipeline_pkg::LOAD_STORE_QUEUE_SIZE; i++) begin
                 if (lsq_entries[i].valid && !lsq_entries[i].ready) begin
-                    // Simplified: mark as ready after one cycle
-                    lsq_entries[i].ready <= 1'b1;
+                    // Real logic: Check if memory subsystem signals completion for this tag
+                    if (mem_op_complete && (mem_op_tag == i[4:0])) begin
+                         lsq_entries[i].ready <= 1'b1;
+                    end
                 end
             end
         end

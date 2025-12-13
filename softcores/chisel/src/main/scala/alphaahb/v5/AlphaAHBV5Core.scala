@@ -400,11 +400,43 @@ class AlphaAHBV5System(numCores: Int = 4) extends Module {
     io.privilegeLevel(i) := cores(i).io.privilegeLevel
   }
 
-  // Memory interface (simplified - in real system would have arbitration)
-  io.memAddr := cores(0).io.memAddr
-  io.memWdata := cores(0).io.memWdata
-  io.memWe := cores(0).io.memWe
-  io.memRe := cores(0).io.memRe
+  // Memory interface with Round-Robin Arbitration
+  val request = Wire(Vec(numCores, Bool()))
+  for (i <- 0 until numCores) {
+    request(i) := cores(i).io.memWe || cores(i).io.memRe
+  }
+
+  // Arbiter
+  val grant = RegInit(1.U(numCores.W))
+  val nextGrant = Wire(UInt(numCores.W))
+  
+  // Simple Rotate Priority
+  // If current grant has no request, rotate left until find one? 
+  // Standard RR: Update grant on Transaction completion or Frame?
+  // Here we switch on cycle? Or wait for MemReady?
+  // Assuming MemReady indicates transaction done.
+  
+  // Priority Encoder on rotated requests
+  val mask = grant - 1.U
+  val higherPro = request.asUInt & ~mask
+  val lowerPro = request.asUInt & mask
+  val nextOneHot = Mux(higherPro.orR, PriorityEncoderOH(higherPro), PriorityEncoderOH(lowerPro))
+  
+  when(io.memReady || !request.asUInt.orR) {
+     grant := Mux(nextOneHot.orR, nextOneHot, 1.U) // Default to core 0 if idle
+  }
+
+  // Mux Outputs
+  io.memAddr := Mux1H(grant, cores.map(_.io.memAddr))
+  io.memWdata := Mux1H(grant, cores.map(_.io.memWdata))
+  io.memWe := Mux1H(grant, cores.map(_.io.memWe))
+  io.memRe := Mux1H(grant, cores.map(_.io.memRe)) 
+  
+  // Connect responses only to granted core
+  for (i <- 0 until numCores) {
+     cores(i).io.memRdata := io.memRdata
+     cores(i).io.memReady := io.memReady && grant(i)
+  }
 }
 
 // ============================================================================

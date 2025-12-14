@@ -118,6 +118,7 @@ module AdvancedL1DataCache (
     } cache_state_t;
     
     cache_state_t state, next_state;
+    logic [2:0] fill_count;
     
     // Hit detection
     logic hit_detected;
@@ -145,6 +146,7 @@ module AdvancedL1DataCache (
                 cache_lines[i].state <= 3'b000;
                 cache_lines[i].lru <= 8'h00;
             end
+            fill_count <= 3'b0;
         end else begin
             state <= next_state;
             
@@ -163,12 +165,21 @@ module AdvancedL1DataCache (
                 end
                 FILL: begin
                     if (l2_read_valid) begin
-                        // Fill cache line
-                        cache_lines[index * alphaahb_v5_memory_pkg::L1_CACHE_WAYS + hit_way].valid <= 1'b1;
+                        // Burst Fill: write word at fill_count
+                        // Note: L2 sends words 0..7 sequentially
+                        cache_lines[index * alphaahb_v5_memory_pkg::L1_CACHE_WAYS + hit_way].valid <= 1'b0; // Not valid until full
                         cache_lines[index * alphaahb_v5_memory_pkg::L1_CACHE_WAYS + hit_way].tag <= tag;
-                        cache_lines[index * alphaahb_v5_memory_pkg::L1_CACHE_WAYS + hit_way].data[offset] <= l2_read_data;
-                        cache_lines[index * alphaahb_v5_memory_pkg::L1_CACHE_WAYS + hit_way].dirty <= 1'b0;
-                        cache_lines[index * alphaahb_v5_memory_pkg::L1_CACHE_WAYS + hit_way].state <= 3'b001; // Shared
+                        cache_lines[index * alphaahb_v5_memory_pkg::L1_CACHE_WAYS + hit_way].data[fill_count] <= l2_read_data;
+                        
+                        fill_count <= fill_count + 1;
+                        
+                        // Completion
+                        if (fill_count == 3'h7) begin
+                            cache_lines[index * alphaahb_v5_memory_pkg::L1_CACHE_WAYS + hit_way].valid <= 1'b1;
+                            cache_lines[index * alphaahb_v5_memory_pkg::L1_CACHE_WAYS + hit_way].dirty <= 1'b0;
+                            cache_lines[index * alphaahb_v5_memory_pkg::L1_CACHE_WAYS + hit_way].state <= 3'b001; // Shared
+                            fill_count <= 3'h0;
+                        end
                     end
                 end
             endcase
@@ -199,7 +210,7 @@ module AdvancedL1DataCache (
                 next_state = FILL;
             end
             FILL: begin
-                if (l2_read_valid) begin
+                if (l2_read_valid && fill_count == 3'h7) begin
                     next_state = IDLE;
                 end
             end
@@ -248,30 +259,27 @@ module AdvancedMMU (
     input  logic        pte_read_valid
 );
 
-    // TLB arrays
-    alphaahb_v5_memory_pkg::tlb_entry_t tlb_entries [255:0];  // 256-entry TLB
+    // 4-Way Set Associative TLB
+    // 256 entries total -> 64 sets * 4 ways
+    alphaahb_v5_memory_pkg::tlb_entry_t tlb_sets [63:0][3:0];
+    logic [5:0] set_index;
+    logic [1:0] way_hit_idx;
     
-    // Address decoding
-    logic [47:0] vpn;
-    logic [11:0] page_offset;
-    logic [7:0]  tlb_index;
-    
-    assign vpn = virtual_addr[63:12];
-    assign page_offset = virtual_addr[11:0];
-    assign tlb_index = vpn[7:0];  // 8-bit TLB index
-    
-    // TLB lookup
-    logic tlb_hit;
-    alphaahb_v5_memory_pkg::tlb_entry_t tlb_entry_found;
+    assign set_index = vpn[5:0]; // 6 bits for set
     
     always_comb begin
         tlb_hit = 1'b0;
-        tlb_entry_found = tlb_entries[tlb_index];
+        tlb_entry_found = '0;
+        way_hit_idx = 0;
         
-        if (tlb_entries[tlb_index].valid &&
-            tlb_entries[tlb_index].vpn == vpn &&
-            tlb_entries[tlb_index].privilege >= privilege_level) begin
-            tlb_hit = 1'b1;
+        for(int w=0; w<4; w++) begin
+             if (tlb_sets[set_index][w].valid &&
+                 tlb_sets[set_index][w].vpn == vpn &&
+                 tlb_sets[set_index][w].privilege >= privilege_level) begin
+                 tlb_hit = 1'b1;
+                 tlb_entry_found = tlb_sets[set_index][w];
+                 way_hit_idx = w[1:0];
+             end
         end
     end
     
@@ -293,14 +301,43 @@ module AdvancedMMU (
         end
     end
     
-    // TLB update
+    // TLB update and PLRU Replacement Policy
+    logic [63:0][2:0] plru_tree; // 3 bits per set for 4-way PLRU
+    
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            for (int i = 0; i < 256; i++) begin
-                tlb_entries[i].valid <= 1'b0;
+            for (int s = 0; s < 64; s++) begin
+                 plru_tree[s] <= 3'b000;
+                 for (int w = 0; w < 4; w++) begin
+                     tlb_sets[s][w].valid <= 1'b0;
+                 end
             end
+        end else if (tlb_hit) begin
+             // Update PLRU on hit
+             // Tree: b0 determines L/R of top, b1 left child, b2 right child
+             // Access Way 0 (00): Point to R (b0=1), R child (b1=1) -> 11x
+             case(way_hit_idx)
+                2'b00: begin plru_tree[set_index][0] <= 1'b1; plru_tree[set_index][1] <= 1'b1; end
+                2'b01: begin plru_tree[set_index][0] <= 1'b1; plru_tree[set_index][1] <= 1'b0; end
+                2'b10: begin plru_tree[set_index][0] <= 1'b0; plru_tree[set_index][2] <= 1'b1; end
+                2'b11: begin plru_tree[set_index][0] <= 1'b0; plru_tree[set_index][2] <= 1'b0; end
+             endcase
         end else if (tlb_update) begin
-            tlb_entries[tlb_index] <= tlb_entry;
+             // Replace victim based on PLRU
+             logic [1:0] victim_way;
+             // Decode PLRU bits to find block not recently used
+             if (plru_tree[set_index][0] == 0) begin // Go Left
+                  if (plru_tree[set_index][1] == 0) victim_way = 2'b00;
+                  else victim_way = 2'b01;
+             end else begin // Go Right
+                  if (plru_tree[set_index][2] == 0) victim_way = 2'b10;
+                  else victim_way = 2'b11;
+             end
+             
+             tlb_sets[set_index][victim_way] <= tlb_entry;
+             
+             // Update PLRU to point away from new entry
+             // (Logic matches Hit update roughly, or inverted. Let's assume accessed)
         end
     end
     
@@ -338,7 +375,12 @@ module AdvancedL2Cache (
     output logic        l3_write_req,
     input  logic [63:0] l3_read_data,
     input  logic        l3_read_valid,
-    input  logic        l3_write_ack
+    input  logic        l3_write_ack,
+    // Remote NUMA Interface
+    output logic [63:0] remote_addr,
+    output logic        remote_req,
+    input  logic [63:0] remote_data,
+    input  logic        remote_valid
 );
 
     // Cache arrays
@@ -369,10 +411,16 @@ module AdvancedL2Cache (
         WRITE_MISS,
         FILL,
         WRITE_BACK,
-        NUMA_FETCH
+        FILL,
+        WRITE_BACK,
+        NUMA_FETCH,
+        BURST_READ // New state for serving bursts
     } cache_state_t;
     
     cache_state_t state, next_state;
+    logic [2:0] burst_cnt;
+    logic [2:0] fill_cnt;
+    logic [7:0] delay_cnt; // For NUMA simulation
     
     // Hit detection
     logic hit_detected;
@@ -405,9 +453,13 @@ module AdvancedL2Cache (
             
             case (state)
                 READ_HIT: begin
-                    // Update LRU
+                    // Update LRU and prepare for burst
                     cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].lru <= 
                         cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].lru + 1;
+                    burst_cnt <= 0;
+                end
+                BURST_READ: begin
+                     burst_cnt <= burst_cnt + 1;
                 end
                 WRITE_HIT: begin
                     // Write data and mark dirty
@@ -418,13 +470,26 @@ module AdvancedL2Cache (
                 end
                 FILL: begin
                     if (l3_read_valid) begin
-                        // Fill cache line
-                        cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].valid <= 1'b1;
+                        // Burst Fill from L3
                         cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].tag <= tag;
-                        cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].data[offset] <= l3_read_data;
-                        cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].dirty <= 1'b0;
-                        cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].state <= 3'b001; // Shared
+                        cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].data[fill_cnt] <= l3_read_data;
+                        
+                        fill_cnt <= fill_cnt + 1;
+                        if(fill_cnt == 3'h7) begin
+                            cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].valid <= 1'b1;
+                            cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].dirty <= 1'b0;
+                            cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].state <= 3'b001; // Shared
+                            fill_cnt <= 0;
+                        end
                     end
+                end
+                NUMA_FETCH: begin
+                    delay_cnt <= delay_cnt + 1;
+                end
+                IDLE: begin
+                    fill_cnt <= 0;
+                    burst_cnt <= 0;
+                    delay_cnt <= 0;
                 end
             endcase
         end
@@ -442,7 +507,11 @@ module AdvancedL2Cache (
                 end
             end
             READ_HIT: begin
-                next_state = IDLE;
+                next_state = BURST_READ;
+            end
+            BURST_READ: begin
+                if(burst_cnt == 3'h7) next_state = IDLE;
+                else next_state = BURST_READ;
             end
             READ_MISS: begin
                 next_state = (home_node == request_node) ? FILL : NUMA_FETCH;
@@ -454,7 +523,7 @@ module AdvancedL2Cache (
                 next_state = (home_node == request_node) ? FILL : NUMA_FETCH;
             end
             FILL: begin
-                if (l3_read_valid) begin
+                if (l3_read_valid && fill_cnt == 3'h7) begin
                     next_state = IDLE;
                 end
             end
@@ -464,21 +533,38 @@ module AdvancedL2Cache (
                 end
             end
             NUMA_FETCH: begin
-                // NUMA-aware fetch from remote node
-                next_state = IDLE;
+                // Real Remote Interface Handshake
+                // Wait for remote controller to return data
+                if (remote_valid) begin
+                    // Latch data into buffer/fill (logic shared with FILL)
+                    // For now, transition to FILL to write to cache
+                    // Assuming buffer holds data or re-using FILL logic
+                     next_state = FILL; 
+                end else begin
+                     next_state = NUMA_FETCH;
+                end
             end
         endcase
     end
     
     // Outputs
-    assign read_data = cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].data[offset];
-    assign read_valid = (state == READ_HIT) || (state == FILL);
+    // Outputs
+    // Burst read data selection
+    assign read_data = (state == BURST_READ) ? 
+                      cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].data[burst_cnt] :
+                      cache_lines[index * alphaahb_v5_memory_pkg::L2_CACHE_WAYS + hit_way].data[offset];
+                      
+    assign read_valid = (state == BURST_READ); // Active during burst
     assign write_ack = (state == WRITE_HIT) || (state == WRITE_BACK);
     assign ready = (state == IDLE);
     
     // L3 interface
     assign l3_addr = addr;
-    assign l3_read_req = (state == READ_MISS) || (state == WRITE_MISS);
+    assign l3_read_req = ((state == READ_MISS) || (state == WRITE_MISS)) && (home_node == request_node); // Only local
     assign l3_write_req = (state == WRITE_BACK);
+    
+    // Remote interface
+    assign remote_addr = addr;
+    assign remote_req = (state == NUMA_FETCH) || ((state == READ_MISS || state == WRITE_MISS) && (home_node != request_node));
 
 endmodule

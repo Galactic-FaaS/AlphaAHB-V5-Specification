@@ -107,7 +107,7 @@ module AlphaAHBV5Core (
     logic [3:0]  funct;
     logic [5:0]  rd, rs1, rs2;
     logic [63:0] immediate;
-    logic [63:0] rs1_data, rs2_data;
+    logic [63:0] rs1_data, rs2_data, rs3_data;
     logic        rs1_ready, rs2_ready;
     
     // Execution units
@@ -165,6 +165,7 @@ module AlphaAHBV5Core (
     AdvancedFloatingPointUnit fpu_inst (
         .rs1_data(rs1_data[31:0]),
         .rs2_data(rs2_data[31:0]),
+        .rs3_data(rs3_data[31:0]), // Added Accumulator operand
         .funct(funct),
         .rounding_mode(flags[2:0]),
         .result(fpu_result),
@@ -201,6 +202,8 @@ module AlphaAHBV5Core (
     assign ai_state_data = vpr[rd[4:0]];          // State/Accumulator from destination register
     
     AdvancedAIMLUnit ai_inst (
+        .clk(clk),
+        .rst_n(rst_n),
         .input_data(ai_input_data),   // Real input from vector register
         .weight_data(ai_weight_data), // Real weights from vector register
         .bias_data(ai_bias_data),     // Real bias from general purpose register
@@ -228,6 +231,18 @@ module AlphaAHBV5Core (
         .ready(l1_ready)
     );
     
+    // TLB Control Signals
+    logic tlb_write_enable;
+    alphaahb_v5_memory_pkg::tlb_entry_t tlb_write_data;
+    
+    // Cast RS1/RS2 data to TLB entry format (simplified mapping for core injection)
+    // Assuming rs1_data contains VPN/ASID and rs2_data contains PPN/Flags
+    // For this hardening, we assume specific packing.
+    assign tlb_write_data.vpn = rs1_data[63:12]; // Virtual Page Number
+    assign tlb_write_data.ppn = rs2_data[47:0];  // Physical Page Number
+    assign tlb_write_data.valid = 1'b1;
+    assign tlb_write_data.privilege = rs2_data[63:62]; // Priv Level
+    
     // Advanced Memory Management Unit
     AdvancedMMU mmu_inst (
         .clk(clk),
@@ -239,8 +254,8 @@ module AlphaAHBV5Core (
         .valid(mmu_valid),
         .page_fault(page_fault),
         .tlb_miss(tlb_miss),
-        .tlb_update(1'b0),
-        .tlb_entry(0),
+        .tlb_update(tlb_write_enable), // Driven by System Op
+        .tlb_entry(tlb_write_data),    // Driven by Register Data
         .pte_addr(),
         .pte_read_req(),
         .pte_data(0),
@@ -330,22 +345,44 @@ module AlphaAHBV5Core (
         .commit_valid(commit_valid)
     );
     
+    // Advanced Load/Store Queue Wires
+    logic [63:0] lsq_mem_addr;
+    logic [63:0] lsq_mem_wdata;
+    logic [7:0]  lsq_mem_mask;
+    logic        lsq_mem_load;
+    logic        lsq_mem_store;
+    logic [4:0]  lsq_mem_tag;
+    logic        lsq_mem_valid;
+    
     // Advanced Load/Store Queue
     AdvancedLoadStoreQueue load_store_queue_inst (
         .clk(clk),
         .rst_n(rst_n),
         .pc(pc),
-        .addr(mem_addr),
-        .data(mem_write_data),
-        .mask(mem_write_mask),
-        .is_load(mem_read_req),
-        .is_store(mem_write_req),
-        .allocate_en(decode_en),
-        .commit_en(memory_en),
-        .full(),
+        .addr(mem_addr_buffer), // Input from Execute stage (allocation addr)
+        .data(mem_wdata_buffer), // Input from Execute stage (store data)
+        .mask(mem_mask_buffer),
+        .is_load(mem_read_req_alloc), // Allocation request type
+        .is_store(mem_write_req_alloc),
+        .allocate_en(decode_en), // Allocate on Decode
+        .commit_en(writeback_en), // Retire on Writeback
+        .mem_op_complete(l1_hit || !l1_miss), // Ack when L1 accepts or hits
+        .mem_op_tag(lsq_mem_tag), // Tag of the op currently interacting with memory
+        
+        .full(), // Should stall decode if full
         .empty(),
         .commit_inst(lsq_commit_inst),
-        .commit_valid(lsq_commit_valid)
+        .commit_valid(lsq_commit_valid),
+        
+        // Memory Issue Interface
+        .mem_issue_addr(lsq_mem_addr),
+        .mem_issue_data(lsq_mem_wdata),
+        .mem_issue_mask(lsq_mem_mask),
+        .mem_issue_load(lsq_mem_load),
+        .mem_issue_store(lsq_mem_store),
+        .mem_issue_tag(lsq_mem_tag), // Output tag to Memory System
+        .mem_issue_valid(lsq_mem_valid),
+        .mem_issue_ready(!pipeline_stall) // Cache ready to accept?
     );
     
     // ============================================================================
@@ -401,6 +438,8 @@ module AlphaAHBV5Core (
             // Read register data
             rs1_data <= gpr[if_data[51:48]];
             rs2_data <= gpr[if_data[55:52]];
+            rs3_data <= gpr[if_data[53:48]]; // Read destination (accumulator) for FMA
+
             rs1_ready <= 1'b1;
             rs2_ready <= 1'b1;
         end
@@ -430,129 +469,70 @@ module AlphaAHBV5Core (
                 4'h8: begin // AI/ML operations
                     // AI result already computed
                 end
+                4'h9: begin // SYSTEM Operations (TLB, CSR, etc)
+                    if (funct == 4'h1) begin // TLB Write Instruction
+                        tlb_write_req <= 1'b1; // Signal to writeback/commit stage
+                    end
+                end
                 default: begin
                     // Other operations
                 end
             endcase
+        end else begin
+            tlb_write_req <= 1'b0;
         end
     end
+    
+    logic tlb_write_req; // Pipeline reg
     
     // ============================================================================
     // Memory Stage
     // ============================================================================
     
+    // Rename the pipeline vars to _alloc
+    logic mem_write_req_alloc;
+    logic mem_read_req_alloc; // Added missing decl
+    
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             memory_pc <= 0;
+            mem_read_req_alloc <= 1'b0; // Reset internal alloc signals
+            mem_write_req_alloc <= 1'b0;
         end else if (memory_en && !pipeline_stall) begin
             memory_pc <= execute_pc;
             
-            // Memory operations
+            // Memory Stage: Now driven by LSQ for allocation
             if (opcode == 4'h4) begin // Load
-                mem_read_req <= 1'b1;
-                mem_addr <= rs1_data + immediate;
+                 mem_read_req_alloc <= 1'b1;
+                 mem_addr_buffer <= rs1_data + immediate; // Need buffer, can't drive output mem_addr
+                 mem_write_req_alloc <= 1'b0;
             end else if (opcode == 4'h5) begin // Store
-                mem_write_req <= 1'b1;
-                mem_addr <= rs1_data + immediate;
-                mem_write_data <= rs2_data;
-                mem_write_mask <= 8'hFF;
+                 mem_write_req_alloc <= 1'b1;
+                 mem_addr_buffer <= rs1_data + immediate;
+                 mem_wdata_buffer <= rs2_data;
+                 mem_read_req_alloc <= 1'b0;
+            end else begin
+                 mem_read_req_alloc <= 1'b0;
+                 mem_write_req_alloc <= 1'b0;
             end
         end else begin
-            mem_read_req <= 1'b0;
-            mem_write_req <= 1'b0;
+             // Hold or clear? If pipeline stall, hold.
+             // If not stall but no valid instruction (bubble), clear.
+             // Logic above handles "memory_en" which usually implies valid.
         end
     end
     
-    // ============================================================================
-    // Writeback Stage
-    // ============================================================================
-    
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            writeback_pc <= 0;
-        end else if (writeback_en && !pipeline_stall) begin
-            writeback_pc <= memory_pc;
-            
-            // Write back results
-            if (rd != 0) begin  // Don't write to R0
-                case (opcode)
-                    4'h1: gpr[rd] <= alu_result;  // Integer
-                    4'h6: fpr[rd] <= fpu_result;  // Floating-point
-                    4'h7: vpr[rd[4:0]] <= vector_result;  // Vector
-                    4'h8: /* AI result handling */;  // AI/ML
-                    4'h4: gpr[rd] <= l1_read_data;  // Load
-                    default: /* Other operations */;
-                endcase
-            end
-            
-            // Update flags
-            flags <= {flags[31:5], alu_flags.negative, alu_flags.overflow, alu_flags.carry, alu_flags.zero, alu_flags.parity};
-            
-            // Update performance counters
-            inst_retired_count <= inst_retired_count + 1;
-        end
-    end
-    
-    // ============================================================================
-    // Control Logic
-    // ============================================================================
-    
-    // Pipeline enable signals
-    assign fetch_en = 1'b1;
-    assign decode_en = if_valid;
-    assign execute_en = decode_en;
-    assign memory_en = execute_en;
-    assign writeback_en = memory_en;
-    
-    // Pipeline stall conditions
-    assign pipeline_stall = l1_miss || tlb_miss || page_fault || exception_occurred;
-    
-    // Pipeline flush conditions
-    assign pipeline_flush = branch_mispredict_count > 0 || exception_occurred;
-    
-    // Exception handling
-    assign exception_occurred = fpu_invalid || fpu_overflow || fpu_underflow || fpu_div_zero || 
-                               vector_exception || ai_exception || page_fault;
-    assign exception_code = fpu_invalid ? 4'h1 : 
-                           fpu_overflow ? 4'h2 : 
-                           fpu_underflow ? 4'h3 : 
-                           fpu_div_zero ? 4'h4 : 
-                           vector_exception ? 4'h5 : 
-                           ai_exception ? 4'h6 : 
-                           page_fault ? 4'h7 : 4'h0;
-    
-    // ============================================================================
-    // Performance Counters
-    // ============================================================================
-    
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            cycle_count <= 0;
-            cache_miss_count <= 0;
-            branch_mispredict_count <= 0;
-        end else begin
-            cycle_count <= cycle_count + 1;
-            if (l1_miss) cache_miss_count <= cache_miss_count + 1;
-            if (predicted_taken != 1'b0) branch_mispredict_count <= branch_mispredict_count + 1;
-        end
-    end
-    
-    // ============================================================================
-    // Debug Interface
-    // ============================================================================
-    
-    assign debug_pc = pc;
-    assign debug_regs = gpr;
-    assign debug_flags = flags;
-    assign debug_halt = exception_occurred;
-    
-    // Performance counter outputs
-    assign perf_inst_retired = inst_retired_count;
-    assign perf_cycles = cycle_count;
-    assign perf_cache_misses = cache_miss_count;
-    assign perf_branch_mispredicts = branch_mispredict_count;
-    
-    // Interrupt handling
-    assign interrupt_ack = interrupt_req != 0;
+    // Internal buffers for inputs to LSQ (since ports used to be outputs)
+    logic [63:0] mem_addr_buffer; 
+    logic [63:0] mem_wdata_buffer;
+    logic [7:0]  mem_mask_buffer;
+    assign mem_mask_buffer = 8'hFF; // Constant for now
 
+    // Wire LSQ outputs to Core Memory Interface (Ports)
+    assign mem_addr       = lsq_mem_addr;
+    assign mem_write_data = lsq_mem_wdata;
+    assign mem_write_mask = lsq_mem_mask; // Or lsq output
+    assign mem_read_req   = lsq_mem_valid && lsq_mem_load;
+    assign mem_write_req  = lsq_mem_valid && lsq_mem_store;
+    
 endmodule

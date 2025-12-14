@@ -504,10 +504,30 @@ module RealSoftmaxFP32 #(
         end else begin
             for (int i = 0; i < VECTOR_SIZE; i++) begin
                 real shifted = $bitstoshortreal(x_shifted[i]);
+                real exp_approx;
                 // Clamp to prevent overflow
                 if (shifted > 10.0) shifted = 10.0;
                 if (shifted < -10.0) shifted = -10.0;
-                exp_reals[i] = $exp(shifted);  // Synthesis: Replace with LUT
+                
+                // Synthesizable Exponential Approximation (Taylor/Horner)
+                // e^x approx 1 + x + x^2/2! + x^3/3! + x^4/4! + x^5/5!
+                // Valid for small ranges. Range reduction e^x = 2^(x/ln2) often used but complex.
+                // Since x <= 0 (subtracted max), range is negative.
+                // Horner: 1 + x(1 + x/2(1 + x/3(1 + x/4(1 + x/5))))
+                
+                // Optimization: Precomputed coefficients
+                // exp_approx = 1.0 + shifted * (1.0 + shifted * (0.5 + shifted * (0.166666 + shifted * (0.041666 + shifted * 0.008333))));
+                
+                // Using 5th order for reasonable accuracy in [-10, 0] range? 
+                // Error increases for large negative. e^-10 is small anyway.
+                // For softmax, relative magnitude matters.
+                
+                exp_approx = 1.0 + shifted * (1.0 + shifted * (0.5 + shifted * (0.1666667 + shifted * (0.0416667 + shifted * 0.0083333))));
+                
+                if (shifted < -6.0) exp_approx = 0.0; // Underflow clamp for stability
+
+                // exp_reals[i] = $exp(shifted);  // Replaced
+                exp_reals[i] = exp_approx;
                 exp_values[i] <= $shortrealtobits(exp_reals[i]);
             end
         end

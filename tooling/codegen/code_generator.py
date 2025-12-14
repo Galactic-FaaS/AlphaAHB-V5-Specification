@@ -35,6 +35,7 @@ class Language(Enum):
     CPP = "cpp"
     RUST = "rust"
     PYTHON = "python"
+    SYSTEM_VERILOG = "system_verilog"
 
 @dataclass
 class CodeTemplate:
@@ -628,6 +629,76 @@ clean:
 \trm -f $(OBJECTS) $(TARGET).elf $(TARGET).bin
 
 .PHONY: all clean
+"""
+        elif language == Language.SYSTEM_VERILOG:
+            makefile_content = f"""
+# Makefile for {project_name} - AlphaAHB V5 Hardened Core
+# Supporting Verilator (Lint/Sim) and Vivado (Synth)
+
+# Project Configuration
+PROJECT = {project_name}
+TOP_MODULE = AlphaAHBV5Core
+
+# Tool Definitions
+VERILATOR = verilator
+VIVADO = vivado
+
+# Directories
+SV_DIR = ../softcores/systemverilog/src/main/sv/alphaahb/v5
+BUILD_DIR = build
+
+# Source Files (Comprehensive Hardened List)
+SOURCES = \\
+    $(SV_DIR)/alphaahb_v5_memory_pkg.sv \\
+    $(SV_DIR)/alphaahb_v5_pipeline_pkg.sv \\
+    $(SV_DIR)/RealHighPrecisionAIML.sv \\
+    $(SV_DIR)/RealMemoryOperations.sv \\
+    $(SV_DIR)/RealActivationFunctions.sv \\
+    $(SV_DIR)/SecuritySubsystem.sv \\
+    $(SV_DIR)/VectorAIUnits.sv \\
+    $(SV_DIR)/ExecutionUnits.sv \\
+    $(SV_DIR)/MemoryHierarchy.sv \\
+    $(SV_DIR)/PipelineControl.sv \\
+    $(SV_DIR)/AlphaAHBV5Core.sv \\
+    $(SV_DIR)/AlphaMMIMDSoC.sv
+
+# Verilator Flags
+VERILATOR_FLAGS = -sv --lint-only -Wall -Wno-DECLFILENAME --top-module $(TOP_MODULE)
+
+# Default Target
+all: lint
+
+# Create Build Directory
+$(BUILD_DIR):
+\tmkdir -p $(BUILD_DIR)
+
+# Linting with Verilator
+lint: $(SOURCES)
+\techo "Running Verilator Lint..."
+\t$(VERILATOR) $(VERILATOR_FLAGS) $(SOURCES)
+
+# Vivado Synthesis Tcl Generation
+synth_tcl: $(BUILD_DIR)
+\techo "create_project -force $(PROJECT) ./$(BUILD_DIR) -part xcvu9p-flga2104-2L-e" > $(BUILD_DIR)/synth.tcl
+\techo "add_files [list $(SOURCES)]" >> $(BUILD_DIR)/synth.tcl
+\techo "set_property top $(TOP_MODULE) [current_fileset]" >> $(BUILD_DIR)/synth.tcl
+\techo "launch_runs synth_1 -jobs 8" >> $(BUILD_DIR)/synth.tcl
+\techo "wait_on_run synth_1" >> $(BUILD_DIR)/synth.tcl
+\techo "exit" >> $(BUILD_DIR)/synth.tcl
+
+# Run Synthesis
+synth: synth_tcl
+\t$(VIVADO) -mode batch -source $(BUILD_DIR)/synth.tcl
+
+# Simulation (Verilator C++ Testbench Generation)
+sim_build: $(SOURCES)
+\t$(VERILATOR) -sv --cc --exe --build -j 4 --top-module $(TOP_MODULE) $(SOURCES) \\
+        --Mdir $(BUILD_DIR)/verilator_obj
+
+clean:
+\trm -rf $(BUILD_DIR)
+
+.PHONY: all lint synth synth_tcl sim_build clean
 """
         elif language == Language.RUST:
             makefile_content = f"""

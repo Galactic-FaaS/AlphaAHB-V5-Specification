@@ -237,6 +237,8 @@ endmodule
 // ============================================================================
 
 module AdvancedAIMLUnit (
+    input  logic        clk,
+    input  logic        rst_n,
     input  alphaahb_v5_vector_pkg::ai_vector_t input_data,
     input  alphaahb_v5_vector_pkg::ai_vector_t weight_data,
     input  alphaahb_v5_vector_pkg::ai_vector_t bias_data,
@@ -254,6 +256,19 @@ module AdvancedAIMLUnit (
     real sum_exp;
     logic valid_op;
     logic exc_flag;
+
+    // Stateful LFSR for Dropout
+    logic [15:0] lfsr_reg;
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            lfsr_reg <= 16'hACE1;
+        end else begin
+            // Free-running LFSR (Galois or Fibonacci)
+            // Taps: 16, 14, 13, 11 (Xilinx xapp) -> indices 15, 13, 12, 10
+            logic feedback = lfsr_reg[15] ^ lfsr_reg[13] ^ lfsr_reg[12] ^ lfsr_reg[10];
+            lfsr_reg <= {lfsr_reg[14:0], feedback};
+        end
+    end
     
     always_comb begin
         temp_result = 512'h0;
@@ -379,14 +394,25 @@ module AdvancedAIMLUnit (
                 valid_op = 1'b1;
             end
             4'h7: begin // BATCHNORM
-                // Mean/Var simplified: sum across vector for demo
+                // Calculate Mean
                 sum_accum = 0.0;
                 for (int i = 0; i < 16; i++) sum_accum += $bitstoshortreal(input_data[i*32 +: 32]);
-                sum_accum /= 16.0; // mean
+                real mean_val = sum_accum / 16.0;
+                
+                // Calculate Variance (2nd pass)
+                real var_accum = 0.0;
+                for (int i = 0; i < 16; i++) begin
+                    real val = $bitstoshortreal(input_data[i*32 +: 32]);
+                    real diff = val - mean_val;
+                    var_accum += diff * diff;
+                end
+                real variance = var_accum / 16.0;
+                // Calculate Inverse Stdev with Epsilon
+                real inv_std = 1.0 / $sqrt(variance + 1.0e-5); 
                 
                 for (int i = 0; i < 16; i++) begin
                     real val = $bitstoshortreal(input_data[i*32 +: 32]);
-                    real norm = (val - sum_accum); // Simplified norm (std=1 assumption for fast path)
+                    real norm = (val - mean_val) * inv_std;
                     real w = $bitstoshortreal(weight_data[i*32 +: 32]);
                     real b = $bitstoshortreal(bias_data[i*32 +: 32]);
                     temp_result[i*32 +: 32] = $shortrealtobits(shortreal'(norm * w + b));
@@ -394,15 +420,17 @@ module AdvancedAIMLUnit (
                 valid_op = 1'b1;
             end
             4'h8: begin // DROPOUT
-                // Logic preserved (LFSR) but fixed array accesses
-                logic [15:0] lfsr = 16'hACE1;
+                // Use stateful LFSR
+                logic [15:0] lfsr_temp = lfsr_reg;
                 logic [7:0] keep_prob = config;
-                real scale = 256.0 / (keep_prob + 1.0);
+                real scale = 256.0 / (real'(keep_prob) + 1.0);
                 
                 for (int i = 0; i < 16; i++) begin
-                    logic feedback = lfsr[15] ^ lfsr[13] ^ lfsr[12] ^ lfsr[10];
-                    lfsr = {lfsr[14:0], feedback};
-                    logic [7:0] rand_val = lfsr[11:4];
+                    // Compute pseudo-random value for this element
+                    logic feedback = lfsr_temp[15] ^ lfsr_temp[13] ^ lfsr_temp[12] ^ lfsr_temp[10];
+                    lfsr_temp = {lfsr_temp[14:0], feedback};
+                    
+                    logic [7:0] rand_val = lfsr_temp[7:0]; 
                     if (rand_val < keep_prob) begin
                          real val = $bitstoshortreal(input_data[i*32 +: 32]);
                          temp_result[i*32 +: 32] = $shortrealtobits(shortreal'(val * scale));
@@ -457,7 +485,8 @@ module AdvancedAIMLUnit (
                 valid_op = 1'b1;
             end
             4'hB: begin // ATTENTION
-                 // Scaled dot product logic (simplified loop 1 query against vector keys)
+                 // Vector Attention: Softmax(Input * Weight) * Bias
+                 // Interpreted as: Element-wise score, then normalize, then scale.
                  real scale = 0.25; // 1/sqrt(16)
                  for (int i = 0; i < 16; i++) begin
                      real q = $bitstoshortreal(input_data[i*32 +: 32]);

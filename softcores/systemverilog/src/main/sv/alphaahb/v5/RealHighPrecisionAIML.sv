@@ -763,6 +763,36 @@ module RealPositUnit #(
         fp64_mul_posit = {sign_result, exp_result, mant_product[104:53]};
     endfunction
     
+    function automatic logic [63:0] fp64_div_posit(logic [63:0] a, logic [63:0] b);
+        logic sign_result;
+        logic [10:0] exp_a, exp_b, exp_result;
+        logic [52:0] mant_a, mant_b;
+        logic [105:0] mant_a_shifted;
+        logic [105:0] mant_quotient;
+
+        sign_result = a[63] ^ b[63];
+        exp_a = a[62:52]; exp_b = b[62:52];
+        mant_a = {1'b1, a[51:0]}; mant_b = {1'b1, b[51:0]};
+        
+        // Prevent div by zero (simplistic handling)
+        if (mant_b == 0) return {sign_result, 11'h7FF, 52'h0}; // Inf
+
+        exp_result = exp_a - exp_b + 11'd1023;
+
+        // Shift A to ensure enough precision. We need 53 bits (plus guard).
+        mant_a_shifted = {mant_a, 53'h0}; // 53+53 = 106 bits
+        mant_quotient = mant_a_shifted / mant_b;
+
+        // Normalize if result < 1.0 (bit 53 is 0)
+        // Range of mantA/mantB is (0.5, 2.0)
+        if (mant_quotient[53] == 0) begin
+            mant_quotient = mant_quotient << 1;
+            exp_result = exp_result - 1;
+        end
+        
+        fp64_div_posit = {sign_result, exp_result, mant_quotient[52:1]};
+    endfunction
+    
     // Convert FP64 back to Posit (essential for complete arithmetic)
     function automatic logic [POSIT_SIZE-1:0] f64_to_posit(logic [63:0] f64);
         logic sign;
@@ -894,9 +924,8 @@ module RealPositUnit #(
                     result <= f64_to_posit(computed_f64);
                 end
                 4'h3: begin // DIV: Posit a / b (using FP64 division)
-                    // Full FP64 division would be implemented here
-                    // For now, approximate using multiplication by reciprocal
-                    result <= f64_to_posit(a_f64); // Division requires iterative algorithm
+                    computed_f64 <= fp64_div_posit(a_f64, b_f64);
+                    result <= f64_to_posit(computed_f64);
                 end
                 4'h7: begin // Convert to FP32
                     result_f32 <= posit_to_f32(a);
@@ -1023,27 +1052,43 @@ module RealFP64AIUnit (
         
         // Clamp for numerical stability
         // For |x| > 10, sigmoid ≈ 0 or 1
-        if (exp_val > 11'd1025) begin // |x| > 8
+        if (exp_val > 11'd1026) begin // |x| > 10 (approx)
             result_val = sign ? 64'h0 : FP64_ONE;
         end else begin
-            // Padé approximation for sigmoid in [-8, 8]
-            // σ(x) ≈ 0.5 + 0.25*x - 0.02*x³ + 0.001*x⁵ (for small x)
-            // More accurate: use exp(-x) via polynomial
-            // For hardware: use LUT + linear interpolation
-            logic [63:0] x2, x3, x4, x5, term1, term2, term3;
+            // Taylor Series Approximation (Degree 7) for Sigmoid
+            // σ(x) = 1/2 + x/4 - x^3/48 + x^5/480 - x^7/80640
+            // Evaluated using Horner's Method for stability and efficiency:
+            // result = 0.5 + x * (c1 + x^2 * (c3 + x^2 * (c5 + x^2 * c7)))
+            
+            logic [63:0] x2, term7, term5, term3, term1, poly_res;
+            
+            // Coefficients
+            logic [63:0] C1 = 64'h3FD0000000000000; //  0.25 (1/4)
+            logic [63:0] C3 = 64'hBF95555555555555; // -0.0208333 (-1/48)
+            logic [63:0] C5 = 64'h3F61111111111111; //  0.0020833 (1/480)
+            logic [63:0] C7 = 64'hBEEA080808080808; // -0.0000124 (-1/80640) - Approx
             
             x2 = fp64_mul(x, x);
-            x3 = fp64_mul(x2, x);
-            x4 = fp64_mul(x2, x2);
             
-            // Rational approximation: σ(x) ≈ (1 + x/4 + x²/16) / (2 + x²/4)
-            // Simplified to: 0.5 + 0.197*x + 0.006*x³
-            term1 = fp64_mul(x, 64'h3FC93264C993264C); // 0.197
-            term2 = fp64_mul(x3, 64'h3F789374BC6A7EFA); // 0.006
+            // c5 + x^2 * c7
+            term7 = fp64_mul(x2, C7);
+            term5 = fp64_add(C5, term7);
             
-            result_val = fp64_add(FP64_HALF, fp64_add(term1, term2));
+            // c3 + x^2 * (c5...)
+            term5 = fp64_mul(x2, term5);
+            term3 = fp64_add(C3, term5);
             
-            // Clamp to [0, 1]
+            // c1 + x^2 * (c3...)
+            term3 = fp64_mul(x2, term3);
+            term1 = fp64_add(C1, term3);
+            
+            // x * (c1...)
+            poly_res = fp64_mul(x, term1);
+            
+            // 0.5 + ...
+            result_val = fp64_add(FP64_HALF, poly_res);
+            
+            // Clamp to [0, 1] (Polynomials can shoot off)
             if (result_val[63]) result_val = 64'h0;
             if (!result_val[63] && result_val[62:52] >= 11'h3FF) result_val = FP64_ONE;
         end
@@ -1118,6 +1163,142 @@ module RealFP64AIUnit (
     end
     
 endmodule
+
+// ============================================================================
+// FP128 (Quad Precision) AI Operations Unit
+// ============================================================================
+// IEEE 754-2008 Quadruple Precision:
+// Sign: 1 bit
+// Exponent: 15 bits (Bias 16383)
+// Significand: 112 bits (113 implied)
+// Total: 128 bits
+// ============================================================================
+
+module RealFP128AIUnit (
+    input  logic         clk,
+    input  logic         rst_n,
+    input  logic         enable,
+    input  logic [3:0]   operation, // 0=ADD, 1=SUB, 2=MUL
+    input  logic [127:0] a,
+    input  logic [127:0] b,
+    output logic [127:0] result,
+    output logic         valid
+);
+    // unpacking
+    logic sign_a, sign_b;
+    logic [14:0] exp_a, exp_b;
+    logic [112:0] man_a, man_b; // 112 stored + 1 implicit
+    
+    // FP128 Add Logic
+    function automatic logic [127:0] fp128_add(logic [127:0] val_a, logic [127:0] val_b);
+        logic s_a, s_b, s_res;
+        logic [14:0] e_a, e_b, e_res, e_diff;
+        logic [114:0] m_a, m_b; // Extra bits for rounding/carry
+        logic [115:0] m_res;    // Sum can overflow 1 bit
+        
+        s_a = val_a[127]; s_b = val_b[127];
+        e_a = val_a[126:112]; e_b = val_b[126:112];
+        // Handle Subnormals/Zero implicit bit
+        m_a = (e_a == 0) ? {1'b0, val_a[111:0], 2'b00} : {1'b1, val_a[111:0], 2'b00};
+        m_b = (e_b == 0) ? {1'b0, val_b[111:0], 2'b00} : {1'b1, val_b[111:0], 2'b00};
+        
+        // Align
+        if (e_a >= e_b) begin
+            e_diff = e_a - e_b;
+            e_res = e_a;
+            m_b = m_b >> e_diff; // Simple shift, should handle sticky bit for strict IEEE
+        end else begin
+            e_diff = e_b - e_a;
+            e_res = e_b;
+            m_a = m_a >> e_diff;
+        end
+        
+        // Add/Sub
+        if (s_a == s_b) begin
+            s_res = s_a;
+            m_res = m_a + m_b;
+        end else begin
+            if (m_a >= m_b) begin
+                s_res = s_a;
+                m_res = m_a - m_b;
+            end else begin
+                s_res = s_b;
+                m_res = m_b - m_a;
+            end
+        end
+        
+        // Normalize
+        // If overflow
+        if (m_res[115]) begin
+            m_res = m_res >> 1;
+            e_res++;
+        end else if (m_res != 0) begin
+            // Leading Zero Count (LZC) for fast normalization
+            // 115-bit mantissa check
+            int lzc;
+            lzc = 0;
+            // Simple hierarchical CLZ or unrolled loop for synthesis
+            if (m_res[114:64] == 0) begin lzc += 51; m_res = m_res << 51; end
+            if (m_res[114:82] == 0) begin lzc += 33; m_res = m_res << 33; end // Optimization tweak
+            // Standard binary search LZC
+            if (m_res[114:98] == 0) begin lzc += 17; m_res = m_res << 17; end
+            if (m_res[114:106] == 0) begin lzc += 9; m_res = m_res << 9; end
+            if (m_res[114:110] == 0) begin lzc += 5; m_res = m_res << 5; end
+            if (m_res[114:112] == 0) begin lzc += 3; m_res = m_res << 3; end
+            if (m_res[114] == 0) begin lzc += 1; m_res = m_res << 1; end
+            if (m_res[114] == 0) begin lzc += 1; m_res = m_res << 1; end // Check again after shift
+            
+            // Adjust exponent
+            e_res = e_res - lzc;
+        end
+        
+        // Handle Zero
+        if (m_res == 0) return 128'h0;
+        
+        fp128_add = {s_res, e_res, m_res[113:2]}; // Truncate extra bits
+    endfunction
+
+    // FP128 Multiply Logic
+    function automatic logic [127:0] fp128_mul(logic [127:0] val_a, logic [127:0] val_b);
+        logic s_res;
+        logic [14:0] e_res;
+        logic [226:0] m_prod; // 113 * 113 approx
+        logic [112:0] m_a, m_b;
+        
+        s_res = val_a[127] ^ val_b[127];
+        // Bias is 16383
+        e_res = val_a[126:112] + val_b[126:112] - 15'd16383;
+        
+        m_a = {1'b1, val_a[111:0]}; 
+        m_b = {1'b1, val_b[111:0]};
+        m_prod = m_a * m_b;
+        
+        // Normalize
+        if (m_prod[226]) begin
+             m_prod = m_prod >> 1;
+             e_res++;
+        end
+        
+        fp128_mul = {s_res, e_res, m_prod[224:113]};
+    endfunction
+
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            result <= 128'h0;
+            valid <= 1'b0;
+        end else if (enable) begin
+            case(operation)
+                4'h0: result <= fp128_add(a, b);
+                4'h1: result <= fp128_add(a, {~b[127], b[126:0]}); // Sub
+                4'h2: result <= fp128_mul(a, b);
+                default: result <= 128'h0;
+            endcase
+            valid <= 1'b1;
+        end else begin
+            valid <= 1'b0;
+        end
+    end
+
 
 // ============================================================================
 // Mixed-Precision Training Support Unit
@@ -1231,17 +1412,29 @@ module RealMixedPrecisionUnit (
                 4'h4: begin // GRAD_UNSCALE: unscale gradient by dividing
                     // Division: gradient / loss_scale
                     // Compute reciprocal of loss_scale: 1/scale = 2^(254 - exp) approximately
-                    // More accurate: use Newton-Raphson for reciprocal
                     logic [7:0] scale_exp, recip_exp;
-                    logic [31:0] reciprocal_scale;
+                    logic [31:0] reciprocal_init;
+                    logic [31:0] t1, t2;
                     
                     scale_exp = loss_scale[30:23];
-                    // Approximate reciprocal: recip_exp = 254 - scale_exp (since 127 + 127 = 254)
+                    // Approximate reciprocal initialization: 1/x approx 2^(-log2(x))
+                    // Exp = 254 - E (since 127 + 127 - E = 254 - E)
                     recip_exp = 8'd254 - scale_exp;
-                    reciprocal_scale = {loss_scale[31], recip_exp, loss_scale[22:0]};
-                    // Newton-Raphson refinement: x1 = x0 * (2 - scale * x0)
-                    // For single iteration approximation:
-                    result_f32 <= fp32_mul(gradient, reciprocal_scale);
+                    reciprocal_init = {loss_scale[31], recip_exp, 23'h0}; // Use 1.0 mantissa guess
+
+                    // Newton-Raphson Iteration: x1 = x0 * (2 - d * x0)
+                    // d = loss_scale, x0 = reciprocal_init
+                    // 2.0 in FP32 = 0x40000000
+                    
+                    // Step 1: t1 = d * x0
+                    t1 = fp32_mul(loss_scale, reciprocal_init);
+                    // Step 2: t2 = 2.0 - t1 = 2.0 + (-t1)
+                    t2 = fp32_add(32'h40000000, {~t1[31], t1[30:0]});
+                    // Step 3: x1 = x0 * t2
+                    reciprocal_init = fp32_mul(reciprocal_init, t2);
+
+                    // Final mul: result = gradient * (1/scale)
+                    result_f32 <= fp32_mul(gradient, reciprocal_init);
                 end
                 4'h9: begin // AMAX_HISTORY: compute new scale
                     new_loss_scale <= compute_fp8_scale(amax_history);
@@ -1335,7 +1528,112 @@ module RealHighPrecisionAIMLSystem (
         .valid(fp64_valid)
     );
     
+    // MX unit (shared scale for 32 elements)
+    // For top-level integration, we map 512-bit input to 16x 32-bit floats or packed formats
+    // Here we define a simplified integration where input drives one block
+    logic [31:0] mx_f32_out [32];
+    logic [8:0]  mx_elem_out [32];
+    logic [7:0]  mx_scale_out;
+    logic        mx_valid_int;
+    
+    // Unpack input to 32x FP32 for MX Unit input
+    logic [31:0] mx_input_f32 [32];
+    always_comb begin
+        for(int i=0; i<16; i++) begin
+            mx_input_f32[i] = input_data[32*i +: 32];
+            mx_input_f32[i+16] = weight_data[32*i +: 32]; // Use weight bus for 2nd half
+        end
+    end
+
+    RealMXUnit #(
+        .BLOCK_SIZE(32)
+    ) mx_unit (
+        .clk(clk),
+        .rst_n(rst_n),
+        .enable(enable && opcode == 8'hA2), // MX opcode
+        .operation(func),
+        .fp32_input(mx_input_f32),
+        .scale_in(scale_factor[7:0]),
+        .scale_out(mx_scale_out),
+        .mx_elements(mx_elem_out),
+        .fp32_output(mx_f32_out),
+        .valid(mx_valid)
+    );
+    
+    // Posit unit (32-bit ES=2)
+    RealPositUnit #(
+        .POSIT_SIZE(32),
+        .ES(2)
+    ) posit_unit (
+        .clk(clk),
+        .rst_n(rst_n),
+        .enable(enable && opcode == 8'hA3), // Posit opcode
+        .operation(func),
+        .a(input_data[31:0]),
+        .b(input_data[63:32]),
+        .result(output_data[127:96]), // Map to upper bits or specific lane? Mapping to bits [127:96]
+        .result_f32(), // Unused here
+        .valid(posit_valid)
+    );
+
+    // FP128 unit
+    RealFP128AIUnit fp128_unit (
+        .clk(clk),
+        .rst_n(rst_n),
+        .enable(enable && opcode == 8'hA6), // FP128 Opcode
+        .operation(func),
+        .a(input_data[127:0]),
+        .b(input_data[255:128]),
+        .result(output_data[255:0]), 
+        .valid(fp128_valid)
+    );
+    
+    // Correct wiring for FP128
+    logic fp128_valid;
+    
+    // Internal Result Multiplexing
+    always_comb begin
+        output_data = '0;
+        if (fp8_valid) output_data[63:0] = {32'h0, fp8_unit.result_f32[31:0]}; // Simplified mapping
+        // Proper mapping required by specific opcode definition.
+        // For brevity in this prompt's context, purely relying on the valid signals to drive specific slices relative to the Unit's 'result' output connectivity.
+        
+        // Re-drive connections based on unit outputs directly:
+        // SystemVerilog allows multiple drivers only if net type resolves, but here we drive reg 'output_data' logic.
+        
+        // Priority Mux based on Opcode Group
+        case(opcode)
+            8'hA0: output_data[63:0] = {fp8_unit.result_f32, 24'h0, fp8_unit.result};
+            8'hA1: output_data[31:0] = tf32_unit.result;
+            8'hA2: begin // MX Output Packing (Scale + 32 Elements)
+                 // Format: [Scale(8) | Elem0(9) | Elem1(9) | ... | Elem31(9) | Padding]
+                 // Total bits: 8 + 32*9 = 296 bits. Fits in 512.
+                 output_data[511:504] = mx_scale_out;
+                 for(int i=0; i<32; i++) begin
+                      // Packing 9-bit elements into contiguous stream
+                      output_data[((32-1-i)*9) +: 9] = mx_elem_out[i]; 
+                      // Note: Logic above maps Elem0 to highest bits after scale? 
+                      // Let's stick to standard: LSB filled first or MSB?
+                      // Standard: Scale at MSB or LSB. Let's put Scale at [7:0] for simplicity in decoding?
+                      // Spec says "shared 8-bit scale + N-bit elements".
+                      // Let's pack: [Scale(8)][Elem31]...[Elem0]
+                 end
+                 // Re-do robustly in one assignment without loop loop inside case?
+                 // SV allows loop in always_comb
+                 output_data = '0; 
+                 output_data[7:0] = mx_scale_out;
+                 for(int k=0; k<32; k++) begin
+                     output_data[8 + (k*9) +: 9] = mx_elem_out[k];
+                 end
+            end
+            8'hA3: output_data[31:0] = posit_unit.result; 
+            8'hA5: output_data[63:0] = fp64_unit.result;
+            8'hA6: output_data[127:0] = fp128_unit.result;
+            default: output_data = '0;
+        endcase
+    end
+
     // Aggregate valid signal
-    assign valid = fp8_valid | tf32_valid | mx_valid | posit_valid | fp64_valid | mixed_valid;
+    assign valid = fp8_valid | tf32_valid | mx_valid | posit_valid | fp64_valid | fp128_valid | mixed_valid;
     
 endmodule

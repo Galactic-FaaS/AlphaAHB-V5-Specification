@@ -171,22 +171,54 @@ module RealScaledDotProductAttentionFP32 #(
         fp32_add = {sign_a, exp_result, mant_result[22:0]};
     endfunction
 
-    // FP32 square root (using Newton-Raphson iteration)
+    // FP32 square root (Real iterative implementation for constant calc)
     function automatic logic [31:0] fp32_sqrt(logic [31:0] x);
         logic [7:0] exp;
         logic [23:0] mant;
         logic [7:0] exp_result;
         logic [23:0] mant_result;
-
+        logic [47:0] val;
+        logic [47:0] root;
+        logic [47:0] one;
+        
         exp = x[30:23];
         mant = {1'b1, x[22:0]};
+        
+        // Handle exponent: floor((E-127)/2) + 127
+        // If E is odd, we multiply mantissa by 2 effectively (handled below)
+        if ((exp - 127) % 2 != 0) begin
+           exp_result = (exp - 127 - 1) / 2 + 127;
+           mant = mant << 1; // 2 * mantissa
+        end else begin
+           exp_result = (exp - 127) / 2 + 127;
+        end
 
-        // Divide exponent by 2
-        exp_result = (exp - 8'd127) / 2 + 8'd127;
-
-        // Approximate mantissa sqrt (lookup table would be more accurate)
-        mant_result = mant >> 1;
-
+        // Integer Square Root for Mantissa (Fixed Point)
+        // mant is 1.xxxx (24 bits) or 2.xxxx (25 bits effectively after shift)
+        // We want 23 fractional bits output.
+        // Scale up: val = mant << 23 (approx 48 bits range)
+        val = {24'h0, mant}; 
+        val = val << 23; 
+        
+        // Simple iterative integer sqrt: root = sqrt(val)
+        root = 0;
+        one = 1'b1 << 46; // Highest power of 4 <= val max
+        while (one > val) one = one >> 2;
+        
+        while (one != 0) begin
+            if (val >= root + one) begin
+                val = val - (root + one);
+                root = root + (one << 1);
+            end
+            root = root >> 1;
+            one = one >> 2;
+        end
+        
+        // Root is now roughly in 1.xx format scaled
+        // root should be around 1.0 (0x800000) or 1.414 (0xB504F3)
+        // Need to extract 23 mantissa bits
+        mant_result = root[23:0]; 
+        
         fp32_sqrt = {1'b0, exp_result, mant_result[22:0]};
     endfunction
 

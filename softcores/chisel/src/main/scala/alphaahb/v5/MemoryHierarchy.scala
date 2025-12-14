@@ -381,7 +381,7 @@ class AdvancedMMU extends Module {
   io.pageFault := false.B
   io.ready := true.B
 
-  // TLB update on miss (simplified)
+
   // TLB update on miss (Real logic)
   val sTlbIdle :: sTlbWalk :: Nil = Enum(2)
   val tlbState = RegInit(sTlbIdle)

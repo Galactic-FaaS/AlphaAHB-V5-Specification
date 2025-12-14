@@ -197,23 +197,41 @@ module RealVectorGather #(
                         mask[current_element] &&
                         !requested[current_element]) begin
 
-                        // Issue read request
-                        mem_addr <= element_addrs[current_element];
-                        mem_read_en <= 1'b1;
-
-                        // Set size based on element width
+                        // Alignment Check
+                        logic unaligned;
+                        unaligned = 1'b0;
                         case (ELEMENT_WIDTH)
-                            8:  mem_size <= 3'b000;  // Byte
-                            16: mem_size <= 3'b001;  // Half-word
-                            32: mem_size <= 3'b010;  // Word
-                            64: mem_size <= 3'b011;  // Double-word
-                            default: mem_size <= 3'b011;
+                            16: if (element_addrs[current_element][0]) unaligned = 1'b1;
+                            32: if (element_addrs[current_element][1:0] != 0) unaligned = 1'b1;
+                            64: if (element_addrs[current_element][2:0] != 0) unaligned = 1'b1;
                         endcase
 
-                        requested[current_element] <= 1'b1;
-                        outstanding_requests[current_element] <= 1'b1;
-                        num_outstanding <= num_outstanding + 1;
-                        current_element <= current_element + 1;
+                        if (unaligned) begin
+                            // Error: Unaligned access
+                            error_flag <= 1'b1;
+                            result_buffer[current_element] <= '0; // Fail silent/zero
+                            received[current_element] <= 1'b1; // Mark done
+                            requested[current_element] <= 1'b1; // Mark requested (to skip)
+                            current_element <= current_element + 1;
+                        end else begin
+                            // Issue valid request
+                            mem_addr <= element_addrs[current_element];
+                            mem_read_en <= 1'b1;
+
+                            // Set size based on element width
+                            case (ELEMENT_WIDTH)
+                                8:  mem_size <= 3'b000;  // Byte
+                                16: mem_size <= 3'b001;  // Half-word
+                                32: mem_size <= 3'b010;  // Word
+                                64: mem_size <= 3'b011;  // Double-word
+                                default: mem_size <= 3'b011;
+                            endcase
+
+                            requested[current_element] <= 1'b1;
+                            outstanding_requests[current_element] <= 1'b1;
+                            num_outstanding <= num_outstanding + 1;
+                            current_element <= current_element + 1;
+                        end
 
                     end else if (mem_read_en && mem_ready) begin
                         // Previous request accepted
@@ -428,22 +446,39 @@ module RealVectorScatter #(
                         mask[current_element] &&
                         !written[current_element]) begin
 
-                        // Issue write request
-                        mem_addr <= element_addrs[current_element];
-                        mem_wdata <= source[current_element];
-                        mem_write_en <= 1'b1;
-
+                        // Alignment Check
+                        logic unaligned;
+                        unaligned = 1'b0;
                         case (ELEMENT_WIDTH)
-                            8:  mem_size <= 3'b000;
-                            16: mem_size <= 3'b001;
-                            32: mem_size <= 3'b010;
-                            64: mem_size <= 3'b011;
-                            default: mem_size <= 3'b011;
+                            16: if (element_addrs[current_element][0]) unaligned = 1'b1;
+                            32: if (element_addrs[current_element][1:0] != 0) unaligned = 1'b1;
+                            64: if (element_addrs[current_element][2:0] != 0) unaligned = 1'b1;
                         endcase
 
-                        written[current_element] <= 1'b1;
-                        num_outstanding <= num_outstanding + 1;
-                        current_element <= current_element + 1;
+                        if (unaligned) begin
+                            // Error: Unaligned access
+                            error_flag <= 1'b1;
+                            written[current_element] <= 1'b1; // Mark done
+                            acknowledged[current_element] <= 1'b1; // Fake ack
+                            current_element <= current_element + 1;
+                        end else begin
+                            // Issue write request
+                            mem_addr <= element_addrs[current_element];
+                            mem_wdata <= source[current_element];
+                            mem_write_en <= 1'b1;
+
+                            case (ELEMENT_WIDTH)
+                                8:  mem_size <= 3'b000;
+                                16: mem_size <= 3'b001;
+                                32: mem_size <= 3'b010;
+                                64: mem_size <= 3'b011;
+                                default: mem_size <= 3'b011;
+                            endcase
+
+                            written[current_element] <= 1'b1;
+                            num_outstanding <= num_outstanding + 1;
+                            current_element <= current_element + 1;
+                        end
 
                     end else if (mem_write_en && mem_ready) begin
                         mem_write_en <= 1'b0;

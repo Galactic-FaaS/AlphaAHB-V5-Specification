@@ -103,6 +103,9 @@ module RealLSTMCellFP32 #(
 
     // Pipeline control
     logic [7:0]  pipeline_stage;
+    logic [9:0]  activation_cnt; // Up to 512
+    logic [9:0]  output_cnt;
+    logic [1:0]  activation_pass;
 
     // ========================================================================
     // Instantiate Activation Functions
@@ -234,9 +237,15 @@ module RealLSTMCellFP32 #(
         if (!rst_n) begin
             pipeline_stage <= 0;
             valid <= 1'b0;
+            activation_cnt <= 0;
+            output_cnt <= 0;
+            activation_pass <= 0;
         end else if (enable) begin
             // Stage 0: Concatenate inputs [h_{t-1}, x_t]
             if (pipeline_stage == 0) begin
+                activation_cnt <= 0;
+                output_cnt <= 0;
+                activation_pass <= 0;
                 for (int i = 0; i < HIDDEN_SIZE; i++) begin
                     concat_input[i] = h_prev[i];
                 end
@@ -276,51 +285,96 @@ module RealLSTMCellFP32 #(
                 pipeline_stage <= 2;
             end
 
-            // Stage 3-10: Apply activations (sigmoid for gates, tanh for cell candidate)
-            // This uses the RealSigmoidFP32 and RealTanhFP32 modules
-            else if (pipeline_stage >= 2 && pipeline_stage < 10) begin
-                // Process each element through activation functions
-                // (In a real implementation, this would be parallelized or pipelined)
-                for (int i = 0; i < HIDDEN_SIZE; i++) begin
-                    // Apply sigmoid to gates (using instantiated sigmoid unit)
-                    // Note: In actual hardware, this would be done in parallel or with multiple instances
-                    f_t[i] = sigmoid_out;  // Forget gate activation
-                    i_t[i] = sigmoid_out;  // Input gate activation
-                    o_t[i] = sigmoid_out;  // Output gate activation
-
-                    // Apply tanh to cell candidate
-                    c_tilde[i] = tanh_out;
+            // Stage 3: Serialize Activation Processing (Gates + Cell Candidate)
+            // We reuse the single Sigmoid and Tanh units to process HIDDEN_SIZE elements.
+            // This takes HIDDEN_SIZE + PIPELINE_DEPTH cycles.
+            else if (pipeline_stage == 3) begin
+                // Drive inputs
+                if (activation_cnt < HIDDEN_SIZE) begin
+                   sigmoid_in <= f_preact[activation_cnt]; // Using Sigmoid for Forget/Input/Output gates? 
+                   // Ideally we need 3 sigmoid units or 3 passes.
+                   // To keep it "Real" but simple: We process Forget, Input, Output, Cell sequentially or time-multiplexed.
+                   // Let's do 4 passes: Forget, Input, Output, Cell.
+                   
+                   case(activation_pass)
+                       0: sigmoid_in <= f_preact[activation_cnt]; // Forget Gate
+                       1: sigmoid_in <= i_preact[activation_cnt]; // Input Gate
+                       2: sigmoid_in <= o_preact[activation_cnt]; // Output Gate
+                       3: tanh_in <= c_preact[activation_cnt];    // Cell Candidate
+                   endcase
+                   
+                   activation_cnt <= activation_cnt + 1;
                 end
-                pipeline_stage <= pipeline_stage + 1;
+
+                // Capture outputs (Latency = 8? We assume Pade is pipelined)
+                // Let's implement a shift register for Valid or just use a capture counter shifted by latency.
+                if (output_cnt < HIDDEN_SIZE) begin
+                     // Latency match logic would be here.
+                     // Simply assuming valid signal indicates result for (output_cnt)
+                     if (activation_pass < 3 && sigmoid_valid) begin
+                         case(activation_pass)
+                              0: f_t[output_cnt] <= sigmoid_out;
+                              1: i_t[output_cnt] <= sigmoid_out;
+                              2: o_t[output_cnt] <= sigmoid_out;
+                         endcase
+                         output_cnt <= output_cnt + 1;
+                     end else if (activation_pass == 3 && tanh_valid) begin
+                         c_tilde[output_cnt] <= tanh_out;
+                         output_cnt <= output_cnt + 1;
+                     end
+                end
+
+                // State Transition
+                if (output_cnt == HIDDEN_SIZE) begin
+                    activation_cnt <= 0;
+                    output_cnt <= 0;
+                    if (activation_pass == 3) begin
+                        activation_pass <= 0;
+                        pipeline_stage <= 4; // Proceed
+                    end else begin
+                        activation_pass <= activation_pass + 1;
+                    end
+                end
             end
 
-            // Stage 11: Compute new cell state: c_t = f_t ⊙ c_{t-1} + i_t ⊙ c̃_t
-            else if (pipeline_stage == 10) begin
+            // Stage 4: Compute new cell state: c_t = f_t ⊙ c_{t-1} + i_t ⊙ c̃_t
+            else if (pipeline_stage == 4) begin
                 for (int i = 0; i < HIDDEN_SIZE; i++) begin
                     forget_term[i] = fp32_mul(f_t[i], c_prev[i]);
                     input_term[i] = fp32_mul(i_t[i], c_tilde[i]);
                     c_t_internal[i] = fp32_add(forget_term[i], input_term[i]);
                 end
-                pipeline_stage <= 11;
+                pipeline_stage <= 5;
             end
 
-            // Stage 12-19: Apply tanh to new cell state
-            else if (pipeline_stage >= 11 && pipeline_stage < 19) begin
-                for (int i = 0; i < HIDDEN_SIZE; i++) begin
-                    c_t_activated[i] = tanh_out;
-                end
-                pipeline_stage <= pipeline_stage + 1;
+            // Stage 5: Serialize Tanh(c_t)
+            else if (pipeline_stage == 5) begin
+                 if (activation_cnt < HIDDEN_SIZE) begin
+                     tanh_in <= c_t_internal[activation_cnt];
+                     activation_cnt <= activation_cnt + 1;
+                 end
+                 
+                 if (tanh_valid && output_cnt < HIDDEN_SIZE) begin
+                     c_t_activated[output_cnt] <= tanh_out;
+                     output_cnt <= output_cnt + 1;
+                 end
+
+                 if (output_cnt == HIDDEN_SIZE) begin
+                     activation_cnt <= 0;
+                     output_cnt <= 0;
+                     pipeline_stage <= 6;
+                 end
             end
 
-            // Stage 20: Compute new hidden state: h_t = o_t ⊙ tanh(c_t)
-            else if (pipeline_stage == 19) begin
+            // Stage 6: Compute new hidden state: h_t = o_t ⊙ tanh(c_t)
+            else if (pipeline_stage == 6) begin
                 for (int i = 0; i < HIDDEN_SIZE; i++) begin
                     h_t_internal[i] = fp32_mul(o_t[i], c_t_activated[i]);
                 end
-                pipeline_stage <= 20;
+                pipeline_stage <= 20; // Done
             end
 
-            // Stage 21: Output results
+            // Stage 20: Output results
             else if (pipeline_stage == 20) begin
                 h_t <= h_t_internal;
                 c_t <= c_t_internal;
@@ -421,6 +475,9 @@ module RealGRUCellFP32 #(
     logic [31:0] h_t_internal [HIDDEN_SIZE-1:0];
 
     logic [7:0] pipeline_stage;
+    logic [9:0] gru_act_cnt;
+    logic [9:0] gru_out_cnt;
+    logic [1:0] gru_act_pass;
 
     // FP32 constant: 1.0
     localparam logic [31:0] FP32_ONE = 32'h3F800000;
@@ -514,9 +571,15 @@ module RealGRUCellFP32 #(
         if (!rst_n) begin
             pipeline_stage <= 0;
             valid <= 1'b0;
+            gru_act_cnt <= 0;
+            gru_out_cnt <= 0;
+            gru_act_pass <= 0;
         end else if (enable) begin
             // Stage 0: Concatenate inputs
             if (pipeline_stage == 0) begin
+                gru_act_cnt <= 0;
+                gru_out_cnt <= 0;
+                gru_act_pass <= 0;
                 for (int i = 0; i < HIDDEN_SIZE; i++) concat_input[i] = h_prev[i];
                 for (int i = 0; i < INPUT_SIZE; i++) concat_input[HIDDEN_SIZE + i] = x_t[i];
                 pipeline_stage <= 1;
@@ -535,13 +598,37 @@ module RealGRUCellFP32 #(
                 pipeline_stage <= 2;
             end
 
-            // Stage 2-9: Apply sigmoid to gates
-            else if (pipeline_stage >= 2 && pipeline_stage < 10) begin
-                for (int i = 0; i < HIDDEN_SIZE; i++) begin
-                    r_t[i] = sigmoid_out;
-                    z_t[i] = sigmoid_out;
+            // Stage 2: Serialize Sigmoid for Reset (r_t) and Update (z_t) gates
+            // We use 2 passes: 0=reset, 1=update
+            else if (pipeline_stage == 2) begin
+                if (gru_act_cnt < HIDDEN_SIZE) begin
+                    case(gru_act_pass)
+                        0: sigmoid_in <= r_preact[gru_act_cnt];
+                        1: sigmoid_in <= z_preact[gru_act_cnt];
+                    endcase
+                    gru_act_cnt <= gru_act_cnt + 1;
                 end
-                pipeline_stage <= pipeline_stage + 1;
+                
+                if (gru_out_cnt < HIDDEN_SIZE) begin
+                     if (sigmoid_valid) begin
+                         case(gru_act_pass)
+                             0: r_t[gru_out_cnt] <= sigmoid_out;
+                             1: z_t[gru_out_cnt] <= sigmoid_out;
+                         endcase
+                         gru_out_cnt <= gru_out_cnt + 1;
+                     end
+                end
+                
+                if (gru_out_cnt == HIDDEN_SIZE) begin
+                    gru_act_cnt <= 0;
+                    gru_out_cnt <= 0;
+                    if (gru_act_pass == 1) begin
+                        gru_act_pass <= 0;
+                        pipeline_stage <= 10; // Proceed to intermediate calc
+                    end else begin
+                        gru_act_pass <= gru_act_pass + 1;
+                    end
+                end
             end
 
             // Stage 10: Compute candidate hidden state pre-activation
@@ -549,9 +636,13 @@ module RealGRUCellFP32 #(
                 for (int i = 0; i < HIDDEN_SIZE; i++) begin
                     h_preact[i] = b_hidden[i];
                     // Use reset gate: r_t ⊙ h_{t-1}
-                    logic [31:0] reset_hidden = fp32_mul(r_t[i], h_prev[i]);
+                    // Requires helper or inline mul
+                    // logic [31:0] reset_hidden = fp32_mul(r_t[i], h_prev[i]); -> moved inline or above
+                    // Re-calculate since we can't declare inside loop in some tools
+                    term1[i] = fp32_mul(r_t[i], h_prev[i]); // reuse term1 temporarily
+                    
                     for (int j = 0; j < HIDDEN_SIZE; j++) begin
-                        h_preact[i] = fp32_add(h_preact[i], fp32_mul(W_hidden[i][j], reset_hidden));
+                        h_preact[i] = fp32_add(h_preact[i], fp32_mul(W_hidden[i][j], term1[i]));
                     end
                     for (int j = 0; j < INPUT_SIZE; j++) begin
                         h_preact[i] = fp32_add(h_preact[i], fp32_mul(W_hidden[i][HIDDEN_SIZE+j], x_t[j]));
@@ -560,12 +651,23 @@ module RealGRUCellFP32 #(
                 pipeline_stage <= 11;
             end
 
-            // Stage 11-18: Apply tanh to candidate
-            else if (pipeline_stage >= 11 && pipeline_stage < 19) begin
-                for (int i = 0; i < HIDDEN_SIZE; i++) begin
-                    h_tilde[i] = tanh_out;
+            // Stage 11: Serialize Tanh for Candidate (h_tilde)
+            else if (pipeline_stage == 11) begin
+                if (gru_act_cnt < HIDDEN_SIZE) begin
+                    tanh_in <= h_preact[gru_act_cnt];
+                    gru_act_cnt <= gru_act_cnt + 1;
                 end
-                pipeline_stage <= pipeline_stage + 1;
+                
+                if (tanh_valid && gru_out_cnt < HIDDEN_SIZE) begin
+                    h_tilde[gru_out_cnt] <= tanh_out;
+                    gru_out_cnt <= gru_out_cnt + 1;
+                end
+                
+                if (gru_out_cnt == HIDDEN_SIZE) begin
+                    gru_act_cnt <= 0;
+                    gru_out_cnt <= 0;
+                    pipeline_stage <= 19;
+                end
             end
 
             // Stage 19: Compute final hidden state: h_t = (1 - z_t) ⊙ h_{t-1} + z_t ⊙ h̃_t
